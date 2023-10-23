@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="PIC-do-0Bz">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Home PageVC-->
+        <scene sceneID="a41-W9-zg9">
+            <objects>
+                <viewController storyboardIdentifier="HomeVC" id="PIC-do-0Bz" customClass="HomePageVC" customModule="Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="EUJ-Ax-Vw9"/>
+                        <viewControllerLayoutGuide type="bottom" id="Eo8-dx-kug"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="3mJ-ht-0Q9">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ZEGOCLOUND" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Sz-yl-rwh">
+                                <rect key="frame" x="132" y="128" width="150" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="K28-DM-d7O"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
+                                <color key="textColor" red="0.0" green="0.33333333329999998" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Room ID" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QDb-vV-Tas">
+                                <rect key="frame" x="30" y="228" width="354" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="9tW-t2-4u2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Auc-ce-SLi">
+                                <rect key="frame" x="127" y="308" width="160" height="29"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="160" id="yNF-wB-AH0"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Start a live streaming">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="joinLiveAsHostClick:" destination="PIC-do-0Bz" eventType="touchUpInside" id="3ps-zH-wdD"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hfW-h5-DfA">
+                                <rect key="frame" x="127" y="377" width="160" height="29"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="160" id="KgN-SF-uVD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Watch a live streaming">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="joinLiveAsAudienceClick:" destination="PIC-do-0Bz" eventType="touchUpInside" id="Hat-IQ-rKR"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="QDb-vV-Tas" firstAttribute="top" secondItem="8Sz-yl-rwh" secondAttribute="bottom" constant="60" id="2z3-nU-chQ"/>
+                            <constraint firstItem="hfW-h5-DfA" firstAttribute="top" secondItem="Auc-ce-SLi" secondAttribute="bottom" constant="40" id="7u4-kC-cuo"/>
+                            <constraint firstItem="8Sz-yl-rwh" firstAttribute="top" secondItem="EUJ-Ax-Vw9" secondAttribute="bottom" constant="80" id="Hlf-OR-F8D"/>
+                            <constraint firstItem="Auc-ce-SLi" firstAttribute="centerX" secondItem="3mJ-ht-0Q9" secondAttribute="centerX" id="MhR-6v-bes"/>
+                            <constraint firstItem="QDb-vV-Tas" firstAttribute="leading" secondItem="3mJ-ht-0Q9" secondAttribute="leading" constant="30" id="RUY-3Z-N4Q"/>
+                            <constraint firstAttribute="trailing" secondItem="QDb-vV-Tas" secondAttribute="trailing" constant="30" id="fCu-gh-fAU"/>
+                            <constraint firstItem="hfW-h5-DfA" firstAttribute="centerX" secondItem="3mJ-ht-0Q9" secondAttribute="centerX" id="gQw-xM-mAA"/>
+                            <constraint firstItem="8Sz-yl-rwh" firstAttribute="centerX" secondItem="3mJ-ht-0Q9" secondAttribute="centerX" id="utU-eO-bfi"/>
+                            <constraint firstItem="Auc-ce-SLi" firstAttribute="top" secondItem="QDb-vV-Tas" secondAttribute="bottom" constant="40" id="yly-jj-vJt"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="roomIDTextField" destination="QDb-vV-Tas" id="xsS-iL-fhI"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ELl-Q2-sUx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1380" y="80"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		860624732AF341A4006B04A8 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624722AF341A4006B04A8 /* KeyCenter.swift */; };
 		86325CB32A25DB24004185B1 /* ZIMService+UserRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86325CB22A25DB24004185B1 /* ZIMService+UserRequest.swift */; };
 		86325CB52A25DC66004185B1 /* ZegoLiveStreamingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86325CB42A25DC66004185B1 /* ZegoLiveStreamingManager.swift */; };
 		86325CB72A272A8F004185B1 /* ZIMService+Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86325CB62A272A8F004185B1 /* ZIMService+Room.swift */; };
@@ -62,7 +63,6 @@
 		8E318D7929D573D5001596F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E318D7829D573D5001596F3 /* Assets.xcassets */; };
 		8E318D7C29D573D5001596F3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E318D7A29D573D5001596F3 /* LaunchScreen.storyboard */; };
 		8E318D8C29D586D6001596F3 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E318D8B29D586D6001596F3 /* HomeViewController.swift */; };
-		8E318D8E29D681FC001596F3 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E318D8D29D681FC001596F3 /* KeyCenter.swift */; };
 		8E7E12392A72516000CA8791 /* ZIMService+EventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7E12382A72516000CA8791 /* ZIMService+EventHandler.swift */; };
 		8E7E123C2A72517600CA8791 /* ZegoDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7E123A2A72517600CA8791 /* ZegoDefine.swift */; };
 		8E7E123D2A72517600CA8791 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7E123B2A72517600CA8791 /* Utils.swift */; };
@@ -74,6 +74,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		860624722AF341A4006B04A8 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		86325CB22A25DB24004185B1 /* ZIMService+UserRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZIMService+UserRequest.swift"; sourceTree = "<group>"; };
 		86325CB42A25DC66004185B1 /* ZegoLiveStreamingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoLiveStreamingManager.swift; sourceTree = "<group>"; };
 		86325CB62A272A8F004185B1 /* ZIMService+Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZIMService+Room.swift"; sourceTree = "<group>"; };
@@ -128,7 +129,6 @@
 		8E318D7B29D573D5001596F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8E318D7D29D573D5001596F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E318D8B29D586D6001596F3 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		8E318D8D29D681FC001596F3 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		8E7E12382A72516000CA8791 /* ZIMService+EventHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZIMService+EventHandler.swift"; sourceTree = "<group>"; };
 		8E7E123A2A72517600CA8791 /* ZegoDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZegoDefine.swift; sourceTree = "<group>"; };
 		8E7E123B2A72517600CA8791 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -311,7 +311,7 @@
 				863B28522A554C1B00613C8F /* Internal */,
 				8E318D6F29D573D4001596F3 /* AppDelegate.swift */,
 				8E318D7129D573D4001596F3 /* SceneDelegate.swift */,
-				8E318D8D29D681FC001596F3 /* KeyCenter.swift */,
+				860624722AF341A4006B04A8 /* KeyCenter.swift */,
 				86325CB42A25DC66004185B1 /* ZegoLiveStreamingManager.swift */,
 				86A8ACCB2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift */,
 				86A8AD062A67D3AB00E4076E /* ZegoCallManager.swift */,
@@ -493,11 +493,11 @@
 				86A8ACF52A653B1E00E4076E /* ZegoLiveAudioRoomSeat.swift in Sources */,
 				8EAE31F629D6C58700305045 /* ExpressService.swift in Sources */,
 				8E7E123D2A72517600CA8791 /* Utils.swift in Sources */,
+				860624732AF341A4006B04A8 /* KeyCenter.swift in Sources */,
 				86AEB25629FBA55200DA4BF3 /* ZIMService+RoomRequest.swift in Sources */,
 				86325CB32A25DB24004185B1 /* ZIMService+UserRequest.swift in Sources */,
 				8E1B926B29DBD1260097C9ED /* VideoView.swift in Sources */,
 				863B28612A56AC2500613C8F /* PKService.swift in Sources */,
-				8E318D8E29D681FC001596F3 /* KeyCenter.swift in Sources */,
 				86A8ACCE2A5D641300E4076E /* ZegoSeatView.swift in Sources */,
 				86325CB72A272A8F004185B1 /* ZIMService+Room.swift in Sources */,
 				86A8ACF12A65344700E4076E /* UIImageView+Extension.swift in Sources */,

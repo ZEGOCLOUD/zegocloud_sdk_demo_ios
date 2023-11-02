@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		860624662AEF820C006B04A8 /* PKService+ZIMEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624652AEF820C006B04A8 /* PKService+ZIMEventHandler.swift */; };
+		860624682AEF8260006B04A8 /* PKService+ExpressEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624672AEF8260006B04A8 /* PKService+ExpressEventHandler.swift */; };
+		8606246A2AF0DE32006B04A8 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624692AF0DE32006B04A8 /* Array+Extension.swift */; };
+		8606246C2AF1FA5B006B04A8 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8606246B2AF1FA5B006B04A8 /* String+Extension.swift */; };
+		8606246F2AF25695006B04A8 /* PKBattleViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8606246E2AF25695006B04A8 /* PKBattleViewContainer.swift */; };
+		860624712AF25D06006B04A8 /* PKBattleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624702AF25D06006B04A8 /* PKBattleView.swift */; };
 		86325CB32A25DB24004185B1 /* ZIMService+UserRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86325CB22A25DB24004185B1 /* ZIMService+UserRequest.swift */; };
 		86325CB52A25DC66004185B1 /* ZegoLiveStreamingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86325CB42A25DC66004185B1 /* ZegoLiveStreamingManager.swift */; };
 		86325CB72A272A8F004185B1 /* ZIMService+Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86325CB62A272A8F004185B1 /* ZIMService+Room.swift */; };
@@ -74,6 +80,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		860624652AEF820C006B04A8 /* PKService+ZIMEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PKService+ZIMEventHandler.swift"; sourceTree = "<group>"; };
+		860624672AEF8260006B04A8 /* PKService+ExpressEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PKService+ExpressEventHandler.swift"; sourceTree = "<group>"; };
+		860624692AF0DE32006B04A8 /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
+		8606246B2AF1FA5B006B04A8 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		8606246E2AF25695006B04A8 /* PKBattleViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKBattleViewContainer.swift; sourceTree = "<group>"; };
+		860624702AF25D06006B04A8 /* PKBattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKBattleView.swift; sourceTree = "<group>"; };
 		86325CB22A25DB24004185B1 /* ZIMService+UserRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZIMService+UserRequest.swift"; sourceTree = "<group>"; };
 		86325CB42A25DC66004185B1 /* ZegoLiveStreamingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoLiveStreamingManager.swift; sourceTree = "<group>"; };
 		86325CB62A272A8F004185B1 /* ZIMService+Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZIMService+Room.swift"; sourceTree = "<group>"; };
@@ -153,6 +165,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8606246D2AF25670006B04A8 /* PK */ = {
+			isa = PBXGroup;
+			children = (
+				8606246E2AF25695006B04A8 /* PKBattleViewContainer.swift */,
+				860624702AF25D06006B04A8 /* PKBattleView.swift */,
+			);
+			path = PK;
+			sourceTree = "<group>";
+		};
 		863B28522A554C1B00613C8F /* Internal */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +226,7 @@
 		863B28572A56A80100613C8F /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				8606246D2AF25670006B04A8 /* PK */,
 				86A8AD0D2A67D3F900E4076E /* Call */,
 				8E1B926A29DBD1250097C9ED /* VideoView.swift */,
 				863B28592A56A82A00613C8F /* CoHost */,
@@ -256,6 +278,8 @@
 				86325CB82A2741E4004185B1 /* PKInvitation.swift */,
 				863B285E2A56ABC300613C8F /* PKDefines.swift */,
 				863B28602A56AC2500613C8F /* PKService.swift */,
+				860624652AEF820C006B04A8 /* PKService+ZIMEventHandler.swift */,
+				860624672AEF8260006B04A8 /* PKService+ExpressEventHandler.swift */,
 			);
 			path = PK;
 			sourceTree = "<group>";
@@ -331,6 +355,8 @@
 				86A8AD0B2A67D3E200E4076E /* UIColor+Hex.swift */,
 				8E1B928E29DE6D900097C9ED /* Dictionary+Extension.swift */,
 				86A8ACF02A65344700E4076E /* UIImageView+Extension.swift */,
+				860624692AF0DE32006B04A8 /* Array+Extension.swift */,
+				8606246B2AF1FA5B006B04A8 /* String+Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -460,11 +486,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				863B285F2A56ABC300613C8F /* PKDefines.swift in Sources */,
+				860624662AEF820C006B04A8 /* PKService+ZIMEventHandler.swift in Sources */,
 				86A8ACFB2A67D39100E4076E /* AppIDViewController.swift in Sources */,
 				8E318D8C29D586D6001596F3 /* HomeViewController.swift in Sources */,
 				8E1B926629DAD0160097C9ED /* ExpressService+Room.swift in Sources */,
 				86E17B622A3301770086C9C0 /* ExpressService+SEI.swift in Sources */,
 				8E1B926829DAD2CF0097C9ED /* ExpressService+EventHandler.swift in Sources */,
+				860624682AEF8260006B04A8 /* PKService+ExpressEventHandler.swift in Sources */,
 				86325CB52A25DC66004185B1 /* ZegoLiveStreamingManager.swift in Sources */,
 				8EAE31F229D6C3F800305045 /* ZegoSDKManager.swift in Sources */,
 				86A8ACCC2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift in Sources */,
@@ -485,8 +513,10 @@
 				86325CB92A2741E4004185B1 /* PKInvitation.swift in Sources */,
 				86A8ACC42A5BF11A00E4076E /* ZIMServiceDelegate.swift in Sources */,
 				86A8AD152A6A34CB00E4076E /* CallService.swift in Sources */,
+				8606246F2AF25695006B04A8 /* PKBattleViewContainer.swift in Sources */,
 				8E7E123C2A72517600CA8791 /* ZegoDefine.swift in Sources */,
 				8E318D7229D573D4001596F3 /* SceneDelegate.swift in Sources */,
+				8606246A2AF0DE32006B04A8 /* Array+Extension.swift in Sources */,
 				86A8AD032A67D39C00E4076E /* CallWaitingViewController.swift in Sources */,
 				863B28502A4E7FED00613C8F /* CoHostTableViewCell.swift in Sources */,
 				8E1B926429DACEE00097C9ED /* ExpressService+Device.swift in Sources */,
@@ -498,6 +528,7 @@
 				8E1B926B29DBD1260097C9ED /* VideoView.swift in Sources */,
 				863B28612A56AC2500613C8F /* PKService.swift in Sources */,
 				8E318D8E29D681FC001596F3 /* KeyCenter.swift in Sources */,
+				860624712AF25D06006B04A8 /* PKBattleView.swift in Sources */,
 				86A8ACCE2A5D641300E4076E /* ZegoSeatView.swift in Sources */,
 				86325CB72A272A8F004185B1 /* ZIMService+Room.swift in Sources */,
 				86A8ACF12A65344700E4076E /* UIImageView+Extension.swift in Sources */,
@@ -512,6 +543,7 @@
 				8E1B928F29DE6D900097C9ED /* Dictionary+Extension.swift in Sources */,
 				8E7E12392A72516000CA8791 /* ZIMService+EventHandler.swift in Sources */,
 				86A8ACF72A653B2B00E4076E /* ZIMService+Avatar.swift in Sources */,
+				8606246C2AF1FA5B006B04A8 /* String+Extension.swift in Sources */,
 				86A8AD012A67D39C00E4076E /* CallingViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

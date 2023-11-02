@@ -324,7 +324,7 @@ class LiveStreamingViewController: UIViewController {
     
     @IBAction func pkButtonClick(_ sender: UIButton) {
         if liveManager.pkState == .isStartPK {
-            liveManager.sendPKBattlesStopRequest()
+            liveManager.endPKBattle()
             sender.setTitle("Start PK Battle", for: .normal)
         } else if liveManager.pkState == .isNoPK {
             sender.setTitle("Cancel PK Battle", for: .normal)
@@ -334,10 +334,10 @@ class LiveStreamingViewController: UIViewController {
                 guard let userID = userIDTextField.text else {
                     return
                 }
-                self?.liveManager.sendPKBattlesStartRequest(userID: userID) { [weak self] code, message in
-                    if message.count > 0 {
+                self?.liveManager.invitePKbattle(targetUserIDList: [userID]) { [weak self] code, requestID in
+                    if code != 0 {
                         sender.setTitle("Start PK Battle", for: .normal)
-                        self?.view.makeToast(message, position: .center)
+                        self?.view.makeToast("invite pkbattle fail", position: .center)
                     }
                 }
             }
@@ -353,13 +353,13 @@ class LiveStreamingViewController: UIViewController {
             self.present(pkAlterView, animated: true)
         } else {
             sender.setTitle("Start PK Battle", for: .normal)
-            liveManager.cancelPKBattleRequest()
+            liveManager.endPKBattle()
         }
     }
     
     @IBAction func muteAnotherAudioClick(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
-        liveManager.muteAnotherHostAudio(mute: sender.isSelected)
+        liveManager.mutePKUser(mute: sender.isSelected, callback: nil)
     }
     
     @IBAction func memberButtonClick(_ sender: Any) {

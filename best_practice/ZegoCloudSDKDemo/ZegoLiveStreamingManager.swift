@@ -25,6 +25,8 @@ import ZegoExpressEngine
     
     @objc optional func onMixerStreamTaskFail(errorCode: Int)
     
+    @objc optional func getMixLayoutConfig(streamList: [String], videoConfig: ZegoMixerVideoConfig) -> [ZegoMixerInput]
+    
 }
 
 class ZegoLiveStreamingManager: NSObject {
@@ -82,39 +84,82 @@ class ZegoLiveStreamingManager: NSObject {
         coHostService?.clearData()
         pkService?.clearData()
     }
+    
+    func getMixLayoutConfig(streamList: [String], videoConfig: ZegoMixerVideoConfig) -> [ZegoMixerInput]? {
+        var inputList: [ZegoMixerInput]?
+        for delegate in eventDelegates.allObjects {
+            inputList = delegate.getMixLayoutConfig?(streamList: streamList, videoConfig: videoConfig)
+        }
+        return inputList
+    }
+    
 }
     
 
 
 extension ZegoLiveStreamingManager {
     
-    func sendPKBattlesStartRequest(userID: String, callback: CommonCallback?) {
-        pkService?.sendPKBattlesStartRequest(userID: userID, callback: callback)
+    func startPKBattle(anotherHostID: String, callback: UserRequestCallback?) {
+        pkService?.startPKBattle(targetUserIDList: [anotherHostID], callback: callback)
+    }
+
+    func startPKBattle(anotherHostIDList: [String], callback: UserRequestCallback?) {
+        pkService?.startPKBattle(targetUserIDList: anotherHostIDList, callback: callback)
     }
     
-    func sendPKBattleResumeRequest(userID: String) {
-        pkService?.sendPKBattleResumeRequest(userID: userID)
+    func invitePKBattle(targetUserID: String, callback: UserRequestCallback?) {
+        pkService?.invitePKbattle(targetUserIDList: [targetUserID], callback: callback)
     }
     
-    func sendPKBattlesStopRequest() {
-        pkService?.sendPKBattlesStopRequest()
+    func invitePKbattle(targetUserIDList: [String], callback: UserRequestCallback?) {
+        pkService?.invitePKbattle(targetUserIDList: targetUserIDList, callback: callback)
     }
     
-    func cancelPKBattleRequest() {
-        pkService?.cancelPKBattleRequest()
+//    func sendPKBattlesStartRequest(userID: String, callback: CommonCallback?) {
+//        pkService?.sendPKBattlesStartRequest(userID: userID, callback: callback)
+//    }
+//    
+//    func sendPKBattleResumeRequest(userID: String) {
+//        pkService?.sendPKBattleResumeRequest(userID: userID)
+//    }
+//    
+//    func sendPKBattlesStopRequest() {
+//        pkService?.sendPKBattlesStopRequest()
+//    }
+    
+    func cancelPKBattleRequest(requestID: String, targetUserID: String) {
+        pkService?.cancelPKBattle(requestID: requestID, userID: targetUserID)
     }
     
     func acceptPKStartRequest(requestID: String) {
-        pkService?.acceptPKStartRequest(requestID: requestID)
+        pkService?.acceptPKBattle(requestID: requestID)
     }
     
     func rejectPKStartRequest(requestID: String) {
-        pkService?.rejectPKStartRequest(requestID: requestID)
+        pkService?.rejectPKBattle(requestID: requestID)
     }
     
-    func muteAnotherHostAudio(mute: Bool) {
-        pkService?.muteAnotherHostAudio(mute: mute)
+    func removePKBattle(userID: String) {
+        pkService?.removePKBattle(userID: userID)
     }
+    
+    func endPKBattle() {
+        if let pkInfo = pkService?.pkInfo {
+            pkService?.endPKBattle(requestID: pkInfo.requestID, callback: nil)
+            pkService?.stopPKBattles()
+        }
+    }
+    
+    func quitPKBattle() {
+        if let pkInfo = pkService?.pkInfo {
+            pkService?.quitPKBattle(requestID: pkInfo.requestID, callback: nil)
+            pkService?.stopPKBattles()
+        }
+    }
+    
+//    func muteAnotherHostAudio(mute: Bool) {
+//        pkService?.muteAnotherHostAudio(mute: mute)
+//    }
     
     func isLocalUserHost() -> Bool {
         return coHostService?.isLocalUserHost() ?? false
@@ -140,16 +185,17 @@ extension ZegoLiveStreamingManager {
         return "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_\(ZegoSDKManager.shared.currentUser?.id ?? "")_main_cohost"
     }
     
-    func removeRoomData() {
-//        coHostService?.removeRoomData();
-//        pkService?.removeRoomData();
+    func isPKUser(userID: String) -> Bool {
+        return pkService?.isPKUser(userID: userID) ?? false
     }
     
-    func removeUserData() {
-//        coHostService?.removeUserData();
-//        pkService?.removeUserData();
+    func isPKUserMuted(userID: String) -> Bool {
+        return pkService?.isPKUserMuted(userID: userID) ?? false
     }
     
+    func mutePKUser(mute: Bool, callback: ZegoMixerStartCallback?) {
+        pkService?.mutePKUser(muteIndexList: [1], mute: mute, callback: callback)
+    }
 }
 
 extension ZegoLiveStreamingManager: ExpressServiceDelegate {

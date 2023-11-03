@@ -43,11 +43,19 @@ class ZegoLiveStreamingManager: NSObject {
             return pkService?.pkInfo
         }
     }
-    var pkState: RoomPKState {
+    
+    var isPKStarted: Bool {
         get {
-            return pkService?.roomPKState ?? .isNoPK
+            return pkService?.isPKStarted ?? false
         }
     }
+    
+//    var pkState: RoomPKState {
+//        get {
+//            
+//            return pkService?.roomPKState ?? .isNoPK
+//        }
+//    }
     
     var hostUser: ZegoSDKUser? {
         get {
@@ -74,7 +82,7 @@ class ZegoLiveStreamingManager: NSObject {
     
     func leaveRoom() {
         if isLocalUserHost() {
-            pkService?.sendPKBattlesStopRequest()
+            quitPKBattle()
         }
         ZegoSDKManager.shared.logoutRoom()
         clearData()

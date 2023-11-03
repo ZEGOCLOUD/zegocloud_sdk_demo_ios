@@ -32,7 +32,7 @@ class HomeViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        
+        ZegoLiveStreamingManager.shared.addUserLoginListeners()
         if let liveVC = segue.destination as? LiveStreamingViewController {
             liveVC.isMySelfHost = segue.identifier! == "start_live"
             liveVC.liveID = liveIDTextField.text ?? ""

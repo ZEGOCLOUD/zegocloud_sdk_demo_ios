@@ -12,8 +12,8 @@ extension PKService: ExpressServiceDelegate {
     
     func onRoomUserUpdate(_ updateType: ZegoUpdateType, userList: [ZegoUser], roomID: String) {
         if updateType == .delete {
-            if liveManager.hostUser?.id == nil && roomPKState == .isStartPK && liveManager.isLocalUserHost() {
-                roomPKState = .isNoPK
+            if liveManager.hostUser?.id == nil && isPKStarted && liveManager.isLocalUserHost() {
+                isPKStarted = false
                 for delegate in eventDelegates.allObjects {
                     delegate.onPKEnded?()
                     delegate.onStopPlayMixerStream?()
@@ -52,9 +52,9 @@ extension PKService: ExpressServiceDelegate {
     
     func onPlayerSyncRecvSEI(_ data: Data, streamID: String) {
         if let dataString = String(data: data, encoding: .utf8) {
-            var seiData = dataString.toDict
-            seiTimeDict.updateValue(Int(Date().timeIntervalSince1970 * 1000), forKey: "time")
+            let seiData = dataString.toDict
             let key = seiData?["sender_id"] as? String ?? ""
+            seiTimeDict.updateValue(Int(Date().timeIntervalSince1970 * 1000), forKey: key)
             let isMicOpen: Bool = seiData?["mic"] as? Bool ?? false
             let isCameraOpen: Bool = seiData?["cam"] as? Bool ?? false
             
@@ -65,14 +65,18 @@ extension PKService: ExpressServiceDelegate {
                 let camChanged: Bool = pkUser.camera != isCameraOpen
                 if micChanged {
                     pkUser.microphone = isMicOpen
-                    for delegate in eventDelegates.allObjects {
-                        delegate.onPKUserMicrophoneOpen?(userID: pkUser.userID, isMicOpen: isMicOpen)
+                    DispatchQueue.main.async {
+                        for delegate in self.eventDelegates.allObjects {
+                            delegate.onPKUserMicrophoneOpen?(userID: pkUser.userID, isMicOpen: isMicOpen)
+                        }
                     }
                 }
                 if camChanged {
                     pkUser.camera = isCameraOpen
-                    for delegate in eventDelegates.allObjects {
-                        delegate.onPKUserCameraOpen?(userID: pkUser.userID, isCameraOpen: isCameraOpen)
+                    DispatchQueue.main.async {
+                        for delegate in self.eventDelegates.allObjects {
+                            delegate.onPKUserCameraOpen?(userID: pkUser.userID, isCameraOpen: isCameraOpen)
+                        }
                     }
                 }
             }

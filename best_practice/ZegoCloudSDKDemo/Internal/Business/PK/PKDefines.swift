@@ -49,8 +49,8 @@ class PKInfo: NSObject {
     
 }
 
-class PKUser: NSObject {
-    
+class PKUser: NSObject{
+     
     var userID: String
     var userName: String = ""
     var roomID: String = ""
@@ -60,7 +60,7 @@ class PKUser: NSObject {
     
     var callUserState: ZIMCallUserState = .unknown
     var isMute: Bool = false
-    var extendedData: String
+    var extendedData: String = ""
     
     var edgeInsets: UIEdgeInsets = .zero
     

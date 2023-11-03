@@ -15,7 +15,6 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
 
 @objc protocol PKServiceDelegate: AnyObject {
     
-//    @objc optional func onIncomingPKRequestReceived(requestID: String)
     @objc optional func onReceivePKBattleRequest(requestID: String, inviter: String, userName: String, roomID: String)
     @objc optional func onIncomingResumePKRequestReceived(requestID: String)
     @objc optional func onIncomingPKRequestCancelled()
@@ -23,14 +22,7 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
     @objc optional func onOutgoingPKRequestRejected()
     @objc optional func onIncomingPKRequestTimeout()
     @objc optional func onOutgoingPKRequestTimeout()
-    
-    @objc optional func onLocalHostCameraStatus(isOn: Bool)
-    @objc optional func onAnotherHostCameraStatus(isOn: Bool)
-    
-    @objc optional func onAnotherHostIsReconnecting()
-    @objc optional func onAnotherHostIsConnected()
-    @objc optional func onHostIsReconnecting()
-    @objc optional func onHostIsConnected()
+
     
     @objc optional func onMixerStreamTaskFail(errorCode: Int)
     @objc optional func onStartPlayMixerStream()
@@ -56,7 +48,7 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
 class PKService: NSObject {
     
     var pkInfo: PKInfo?
-    var roomPKState: RoomPKState = .isNoPK
+    var isPKStarted: Bool = false
     var pkRoomAttribute: [String: String] = [:]
     
     var seiTimer: Timer?
@@ -179,7 +171,7 @@ class PKService: NSObject {
             currentMixerTask!.setVideoConfig(videoConfig)
             currentMixerTask!.setInputList(mixInputList)
 
-            let mixerOutput: ZegoMixerOutput = ZegoMixerOutput()
+            let mixerOutput: ZegoMixerOutput = ZegoMixerOutput(target: mixStreamID)
             var mixerOutputList: [ZegoMixerOutput] = []
             mixerOutputList.append(mixerOutput)
             currentMixerTask!.setOutputList(mixerOutputList)
@@ -212,7 +204,7 @@ class PKService: NSObject {
                 inputList.append(input)
             }
         } else {
-            let row = 2;
+            let row = 2
             let maxCellCount = streamList.count % 2 == 0 ? streamList.count : (streamList.count + 1)
             let column = maxCellCount / row
             let cellWidth = Int(MixVideoSize.width) / column
@@ -252,7 +244,7 @@ class PKService: NSObject {
                     }
                 }
                 if moreThanOneAcceptedExceptMe {
-                    if roomPKState == .isStartPK {
+                    if isPKStarted {
                         updatePKMixTask { errorCode, info in
                             for delegate in self.eventDelegates.allObjects {
                                 delegate.onPKUserQuit?(userID: userInfo.userID, extendedData: userInfo.extendedData)
@@ -473,16 +465,26 @@ class PKService: NSObject {
         if liveManager.isLocalUserHost() {
             delectPKAttributes()
             stopMixTask()
-            destoryTimer()
+            stopPlayAnotherHostStream()
         } else {
-            
+            muteHostAudioVideo(mute: false)
         }
+        destoryTimer()
         pkInfo = nil
         seiTimeDict.removeAll()
-        if roomPKState == .isStartPK {
-            roomPKState = .isNoPK
+        if isPKStarted {
+            isPKStarted = false
             for delegate in eventDelegates.allObjects {
                 delegate.onPKEnded?()
+            }
+        }
+    }
+    
+    func stopPlayAnotherHostStream() {
+        guard let pkInfo = pkInfo else { return }
+        for pkUser in pkInfo.pkUserList {
+            if pkUser.userID != liveManager.hostUser?.id {
+                ZegoSDKManager.shared.expressService.stopPlayingStream(pkUser.pkUserStream)
             }
         }
     }
@@ -517,7 +519,11 @@ class PKService: NSObject {
                 }
             }
         }
-        pkDict["pk_users"] = pkAcceptedUserList.toJsonString()
+        let pkUsers = pkAcceptedUserList.compactMap({ user in
+            let userJson = user.toString()
+            return userJson
+        })
+        pkDict["pk_users"] = pkUsers.toJsonString()
         let config = ZIMRoomAttributesSetConfig()
         config.isDeleteAfterOwnerLeft = false
         ZegoSDKManager.shared.zimService.setRoomAttributes(pkDict) { roomID, errorKeys, error in
@@ -626,7 +632,7 @@ class PKService: NSObject {
         seiTimeDict.removeAll()
         pkRoomAttribute.removeAll()
         pkInfo = nil
-        roomPKState = .isNoPK
+        isPKStarted = false
         currentPkInvitation = nil
         isMuteAnotherHostAudio = false
     }

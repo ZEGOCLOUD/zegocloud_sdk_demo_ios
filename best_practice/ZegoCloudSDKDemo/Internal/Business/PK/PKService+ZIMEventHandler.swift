@@ -29,7 +29,7 @@ extension PKService: ZIMServiceDelegate {
         }
         for deleteProperty in deleteProperties {
             if deleteProperty.keys.contains("pk_users") {
-                if let pkInfo = pkInfo {
+                if let _ = pkInfo {
                     stopPKBattles()
                 } else {
                     continue
@@ -37,54 +37,6 @@ extension PKService: ZIMServiceDelegate {
             }
         }
     }
-    
-//    func zim(_ zim: ZIM, roomAttributesUpdated updateInfo: ZIMRoomAttributesUpdateInfo, roomID: String) {
-//        if updateInfo.action == .set {
-//            
-//            let tempAnotherHost: String = pkInfo?.pkUser.id ?? ""
-//            let tempAnotherHostRoomID : String = pkInfo?.pkRoom ?? ""
-//            
-//            pkInfo = PKInfo(user: ZegoSDKUser(id: updateInfo.roomAttributes["pk_user_id"] ?? "", name: updateInfo.roomAttributes["pk_user_name"] ?? ""), pkRoom: updateInfo.roomAttributes["pk_room"] ?? "")
-//            pkInfo?.seq = Int(updateInfo.roomAttributes["pk_seq"] ?? "0") ?? 0
-//            pkInfo?.hostUserID = updateInfo.roomAttributes["host"] ?? ""
-//            
-//            if pkInfo!.pkUser.id.count > 0 && pkInfo!.pkRoom.count > 0 {
-//                if liveManager.isLocalUserHost() {
-//                    //resume pk
-//                    if pkRoomAttribute.isEmpty {
-//                        sendPKBattleResumeRequest(userID: pkInfo?.pkUser.id ?? "")
-//                    }
-//                    pkRoomAttribute["host"] = pkInfo?.hostUserID ?? ""
-//                    pkRoomAttribute["pk_room"] = pkInfo?.pkRoom ?? ""
-//                    pkRoomAttribute["pk_user_id"] = pkInfo?.pkUser.id ?? ""
-//                    pkRoomAttribute["pk_user_name"] = pkInfo?.pkUser.name ?? ""
-//                    pkRoomAttribute["pk_seq"] =  "\(pkInfo?.seq ?? 0)"
-//                    
-//                } else {
-//                    //play mixer
-//                    roomPKState = .isStartPK
-//                    for delegate in eventDelegates.allObjects {
-//                        delegate.onPKStarted?(roomID: pkInfo?.pkRoom ?? "", userID: pkInfo?.pkUser.id ?? "")
-//                        delegate.onStartPlayMixerStream?()
-//                    }
-//                    createCheckSERTimer()
-//                }
-//            } else {
-//                for delegate in eventDelegates.allObjects {
-//                    delegate.onPKEnded?(roomID: tempAnotherHostRoomID, userID: tempAnotherHost)
-//                    delegate.onStopPlayMixerStream?()
-//                }
-//                clearData()
-//            }
-//            
-//        } else {
-//            for delegate in eventDelegates.allObjects {
-//                delegate.onPKEnded?(roomID: pkInfo?.pkRoom ?? "", userID: pkInfo?.pkUser.id ?? "")
-//                delegate.onStopPlayMixerStream?()
-//            }
-//            clearData()
-//        }
-//    }
     
     // pk invitation
     func onInComingUserRequestReceived(requestID: String, info: ZIMCallInvitationReceivedInfo) {
@@ -133,69 +85,6 @@ extension PKService: ZIMServiceDelegate {
                 delegate.onReceivePKBattleRequest?(requestID: requestID, inviter: info.inviter, userName: inviterExtendedData.userName ?? "", roomID: inviterExtendedData.roomID ?? "")
             }
         }
-////        guard let invitationData = extendedData.toDict else { return }
-//        let pkInvitation = PKInvitation()
-//        let type: Int = invitationData["type"] as! Int
-//        let pkType: PKProtocolType? = PKProtocolType(rawValue: UInt(type))
-//        if let pkType = pkType,
-//           !isPKBusiness(type: Int(pkType.rawValue))
-//        {
-//            return
-//        }
-//        if pkType == .startPK {
-//            if !isLiveStart || roomPKState == .isStartPK || roomPKState == .isRequestPK || currentPkInvitation != nil{
-//                rejectPKBattle(requestID: requestID)
-////                rejectPKStartRequest(requestID: requestID)
-//                return
-//            }
-//            pkInvitation.requestID = requestID
-//            pkInvitation.roomID = invitationData["room_id"] as? String
-//            pkInvitation.inviterName = invitationData["user_name"] as? String
-//            pkInvitation.inviterID = inviter
-//            currentPkInvitation = pkInvitation
-//            for delegate in eventDelegates.allObjects {
-//                delegate.onIncomingPKRequestReceived?(requestID: requestID)
-//            }
-//        } else if pkType == .endPK {
-//            acceptPKStopRequest(requestID: requestID)
-//            stopPKBattles()
-//        } else if pkType == .resume {
-//            if roomPKState != .isStartPK || !liveManager.isLocalUserHost() || !isLiveStart {
-//                rejectPKResumeRequest(requestID: requestID)
-//            } else {
-//                acceptPKResumeRequest(requestID: requestID)
-//            }
-//        }
-    }
-    
-    func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String) {
-        guard let invitationData = extendedData.toDict else { return }
-        let roomID = (invitationData["room_id"] ?? "") as! String
-        let userName = (invitationData["user_name"] ?? "") as! String
-        let type: Int = invitationData["type"] as! Int
-        let pkType: PKProtocolType? = PKProtocolType(rawValue: UInt(type))
-        if requestID == currentPkInvitation?.requestID {
-            if pkType == .startPK || pkType == .resume {
-                startPKBatlteWith(roomID: roomID, userID: currentPkInvitation?.invitee.first ?? "", userName: userName)
-                for delegate in eventDelegates.allObjects {
-                    delegate.onOutgoingPKRequestAccepted?()
-                }
-            }
-        }
-    }
-    
-    
-    func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String) {
-        if let pkInfo = pkInfo,
-           pkInfo.requestID == requestID
-        {
-            self.pkInfo = nil
-            roomPKState = .isNoPK
-            delectPKAttributes()
-            for delegate in eventDelegates.allObjects {
-                delegate.onOutgoingPKRequestRejected?()
-            }
-        }
     }
     
     func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String) {
@@ -225,7 +114,7 @@ extension PKService: ZIMServiceDelegate {
            pkInfo.requestID == requestID
         {
             self.pkInfo = nil
-            roomPKState = .isNoPK
+            isPKStarted = false
             for delegate in eventDelegates.allObjects {
                 delegate.onOutgoingPKRequestTimeout?()
             }
@@ -333,8 +222,8 @@ extension PKService: ZIMServiceDelegate {
                     }
 
                 }
-            if (meHasAccepted && moreThanOneAcceptedExceptMe && roomPKState != .isStartPK) {
-                roomPKState = .isStartPK
+            if (meHasAccepted && moreThanOneAcceptedExceptMe && !isPKStarted) {
+                isPKStarted = true
                 updatePKMixTask { errorCode, info in
                     if errorCode == 0 {
                         self.createSEITimer()
@@ -350,7 +239,7 @@ extension PKService: ZIMServiceDelegate {
                             }
                         }
                     } else {
-                        self.roomPKState = .isNoPK
+                        self.isPKStarted = false
                         self.quitPKBattle(requestID: pkInfo.requestID, callback: nil)
                     }
                 }
@@ -387,12 +276,12 @@ extension PKService: ZIMServiceDelegate {
                 seiTimeDict.updateValue(Int(Date().timeIntervalSince1970 * 1000), forKey: pkUser.userID)
             }
             if pkInfo == nil {
-                if let hostUser = liveManager.hostUser {
+                if let _ = liveManager.hostUser {
                     pkInfo = PKInfo()
                     pkInfo?.requestID = request_id ?? ""
                     pkInfo?.pkUserList = pkUserList
                     createCheckSERTimer()
-                    roomPKState = .isStartPK
+                    isPKStarted = true
                     
                     for delegate in eventDelegates.allObjects {
                         delegate.onPKStarted?()

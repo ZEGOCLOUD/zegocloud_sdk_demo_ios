@@ -27,7 +27,7 @@ class PKButton: UIButton, PKServiceDelegate {
 
     @objc func pkClick() {
         let liveManger = ZegoLiveStreamingManager.shared
-        if let pkInfo = liveManger.pkInfo {
+        if let _ = liveManger.pkInfo {
             self.setTitle("Start pk", for: .normal)
             if liveManger.isPKStarted {
                 liveManger.quitPKBattle()
@@ -112,9 +112,9 @@ class PKButton: UIButton, PKServiceDelegate {
         self.setTitle("Start pk", for: .normal)
     }
     
-    func onMixerStreamTaskFail(errorCode: Int) {
-        if ZegoLiveStreamingManager.shared.isPKStarted {
-            pkClick()
-        }
-    }
+//    func onMixerStreamTaskFail(errorCode: Int) {
+//        if ZegoLiveStreamingManager.shared.isPKStarted {
+//            pkClick()
+//        }
+//    }
 }

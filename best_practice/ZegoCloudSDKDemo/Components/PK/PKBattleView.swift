@@ -29,6 +29,7 @@ class PKBattleView: UIView {
         super.init(frame: frame)
         
         self.backgroundColor = UIColor.black
+        ZegoLiveStreamingManager.shared.addDelegate(self)
         ZegoLiveStreamingManager.shared.addPKDelegate(self)
         
         backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
@@ -80,12 +81,14 @@ class PKBattleView: UIView {
     }
     
     func mutePlayAudio(mute: Bool) {
-        
+        if let streamID = pkUser?.pkUserStream {
+            ZegoSDKManager.shared.expressService.mutePlayStreamAudio(streamID: streamID, mute: mute)
+        }
     }
     
 }
 
-extension PKBattleView: PKServiceDelegate {
+extension PKBattleView: PKServiceDelegate, ZegoLiveStreamingManagerDelegate {
     
     func onPKUserCameraOpen(userID: String, isCameraOpen: Bool) {
         if userID == pkUser?.userID {
@@ -100,7 +103,7 @@ extension PKBattleView: PKServiceDelegate {
             let pkUserMuted = ZegoLiveStreamingManager.shared.isPKUserMuted(userID: userID)
             if timeout {
                 if !pkUserMuted {
-                    ZegoLiveStreamingManager.shared.mutePKUser(mute: true) { errorCode, info in
+                    ZegoLiveStreamingManager.shared.mutePKUser(muteUserList: [], mute: true) { errorCode, info in
                         if errorCode == 0 {
                             self.mutePlayAudio(mute: true)
                         }
@@ -108,7 +111,7 @@ extension PKBattleView: PKServiceDelegate {
                 }
             } else {
                 if pkUserMuted {
-                    ZegoLiveStreamingManager.shared.mutePKUser(mute: false) { errorCode, info in
+                    ZegoLiveStreamingManager.shared.mutePKUser(muteUserList: [], mute: false) { errorCode, info in
                         if errorCode == 0 {
                             self.mutePlayAudio(mute: false)
                         }
@@ -117,7 +120,15 @@ extension PKBattleView: PKServiceDelegate {
             }
             connectingTipView.isHidden = duration > 5000 ? false : true
         }
-    }    
+    }   
+    
+    //MARK: -ZegoLiveStreamingManagerDelegate
+    func onCameraOpen(_ userID: String, isCameraOpen: Bool) {
+        if userID == pkUser?.userID {
+            backgroundView.isHidden = isCameraOpen
+            videoView.enableCamera(isCameraOpen)
+        }
+    }
 }
 
 

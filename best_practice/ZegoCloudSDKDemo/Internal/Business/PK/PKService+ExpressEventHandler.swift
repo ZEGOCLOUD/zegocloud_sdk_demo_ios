@@ -16,7 +16,6 @@ extension PKService: ExpressServiceDelegate {
                 isPKStarted = false
                 for delegate in eventDelegates.allObjects {
                     delegate.onPKEnded?()
-                    delegate.onStopPlayMixerStream?()
                 }
                 destoryTimer()
             }

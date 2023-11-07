@@ -16,17 +16,11 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
 @objc protocol PKServiceDelegate: AnyObject {
     
     @objc optional func onReceivePKBattleRequest(requestID: String, inviter: String, userName: String, roomID: String)
-    @objc optional func onIncomingResumePKRequestReceived(requestID: String)
     @objc optional func onIncomingPKRequestCancelled()
     @objc optional func onOutgoingPKRequestAccepted()
     @objc optional func onOutgoingPKRequestRejected()
     @objc optional func onIncomingPKRequestTimeout()
     @objc optional func onOutgoingPKRequestTimeout()
-
-    
-    @objc optional func onMixerStreamTaskFail(errorCode: Int)
-    @objc optional func onStartPlayMixerStream()
-    @objc optional func onStopPlayMixerStream()
     
     @objc optional func onPKStarted()
     @objc optional func onPKEnded()
@@ -59,9 +53,7 @@ class PKService: NSObject {
             return ZegoLiveStreamingManager.shared.isLiveStart
         }
     }
-    var isMuteAnotherHostAudio = false
     
-    var currentPkInvitation: PKInvitation?
     let eventDelegates: NSHashTable<PKServiceDelegate> = NSHashTable(options: .weakMemory)
     let liveManager = ZegoLiveStreamingManager.shared
     
@@ -77,7 +69,7 @@ class PKService: NSObject {
             }
         }
     }
-    private var currentInputList: [ZegoMixerInput] = []
+    var currentInputList: [ZegoMixerInput] = []
     
     override init() {
         super.init()
@@ -424,18 +416,6 @@ class PKService: NSObject {
         ZegoSDKManager.shared.zimService.acceptUserRequest(requestID: requestID, config: config, callback: nil)
     }
     
-    func acceptPKStopRequest(requestID: String) {
-        currentPkInvitation = nil
-        let requestData: [String: AnyObject] = [
-            "room_id": ZegoSDKManager.shared.expressService.currentRoomID as AnyObject,
-            "user_name": ZegoSDKManager.shared.currentUser?.name as AnyObject,
-            "type": PKProtocolType.endPK.rawValue as AnyObject
-        ]
-        let config = ZIMCallAcceptConfig()
-        config.extendedData = requestData.jsonString
-        ZegoSDKManager.shared.zimService.acceptUserRequest(requestID: requestID, config: config, callback: nil)
-    }
-    
     public func rejectPKBattle(requestID: String) {
         let extendedData = getPKExtendedData(type: PKExtendedData.STARK_PK) ?? ""
         rejectUserRequest(requestID: requestID, extendedData: extendedData, callback: nil)
@@ -445,21 +425,7 @@ class PKService: NSObject {
             self.pkInfo = nil
         }
     }
-    
-    func rejectPKResumeRequest(requestID: String) {
-        let requestData: [String: AnyObject] = [
-            "type": PKProtocolType.resume.rawValue as AnyObject
-        ]
-        let config = ZIMCallRejectConfig()
-        config.extendedData = requestData.jsonString
-        ZegoSDKManager.shared.zimService.refuseUserRequest(requestID: requestID, config: config) { requestID, error in
-            if error.code == .success {
-                if requestID == self.currentPkInvitation?.requestID {
-                    self.currentPkInvitation = nil
-                }
-            }
-        }
-    }
+
     
     func stopPKBattles() {
         if liveManager.isLocalUserHost() {
@@ -472,11 +438,9 @@ class PKService: NSObject {
         destoryTimer()
         pkInfo = nil
         seiTimeDict.removeAll()
-        if isPKStarted {
-            isPKStarted = false
-            for delegate in eventDelegates.allObjects {
-                delegate.onPKEnded?()
-            }
+        isPKStarted = false
+        for delegate in eventDelegates.allObjects {
+            delegate.onPKEnded?()
         }
     }
     
@@ -548,20 +512,11 @@ class PKService: NSObject {
     }
     
     func muteHostAudioVideo(mute: Bool) {
-        guard let hostUser = liveManager.hostUser else { return }
+        guard let _ = liveManager.hostUser else { return }
         let hostMainStreamID: String = liveManager.getHostMainStreamID()
         ZegoSDKManager.shared.expressService.mutePlayStreamAudio(streamID: hostMainStreamID, mute: mute)
         ZegoSDKManager.shared.expressService.mutePlayStreamVideo(streamID: hostMainStreamID, mute: mute)
     }
-    
-//    func muteAnotherHostAudio(mute: Bool) {
-////        if (isMuteAnotherHostAudio != mute) {
-////            guard let pkInfo = pkInfo else { return }
-////            startMixStreamTask(leftContentType: .video, rightContentType: mute ? .videoOnly : .video,callback: nil)
-////            ZegoSDKManager.shared.expressService.mutePlayStreamAudio(streamID: pkInfo.getPKStreamID(), mute: mute)
-////            isMuteAnotherHostAudio = mute
-////        }
-//    }
     
     public func mutePKUser(muteIndexList: [Int], mute: Bool, callback: ZegoMixerStartCallback?) {
         guard let currentMixerTask = currentMixerTask,
@@ -633,7 +588,5 @@ class PKService: NSObject {
         pkRoomAttribute.removeAll()
         pkInfo = nil
         isPKStarted = false
-        currentPkInvitation = nil
-        isMuteAnotherHostAudio = false
     }
 }

@@ -20,11 +20,6 @@ import ZegoExpressEngine
     
     @objc optional func onReceiveRoomMessage(messageList: [ZIMMessage])
     
-    @objc optional func onLocalHostCameraStatus(isOn: Bool)
-    @objc optional func onAnotherHostCameraStatus(isOn: Bool)
-    
-    @objc optional func onMixerStreamTaskFail(errorCode: Int)
-    
     @objc optional func getMixLayoutConfig(streamList: [String], videoConfig: ZegoMixerVideoConfig) -> [ZegoMixerInput]
     
 }
@@ -50,13 +45,6 @@ class ZegoLiveStreamingManager: NSObject {
         }
     }
     
-//    var pkState: RoomPKState {
-//        get {
-//            
-//            return pkService?.roomPKState ?? .isNoPK
-//        }
-//    }
-    
     var hostUser: ZegoSDKUser? {
         get {
             return coHostService?.hostUser
@@ -78,6 +66,10 @@ class ZegoLiveStreamingManager: NSObject {
     
     func addPKDelegate(_ delegate: PKServiceDelegate) {
         pkService?.addPKDelegate(delegate)
+    }
+    
+    func addDelegate(_ delegate: ZegoLiveStreamingManagerDelegate) {
+        eventDelegates.add(delegate)
     }
     
     func leaveRoom() {
@@ -123,18 +115,6 @@ extension ZegoLiveStreamingManager {
         pkService?.invitePKbattle(targetUserIDList: targetUserIDList, callback: callback)
     }
     
-//    func sendPKBattlesStartRequest(userID: String, callback: CommonCallback?) {
-//        pkService?.sendPKBattlesStartRequest(userID: userID, callback: callback)
-//    }
-//    
-//    func sendPKBattleResumeRequest(userID: String) {
-//        pkService?.sendPKBattleResumeRequest(userID: userID)
-//    }
-//    
-//    func sendPKBattlesStopRequest() {
-//        pkService?.sendPKBattlesStopRequest()
-//    }
-    
     func cancelPKBattleRequest(requestID: String, targetUserID: String) {
         pkService?.cancelPKBattle(requestID: requestID, userID: targetUserID)
     }
@@ -164,10 +144,6 @@ extension ZegoLiveStreamingManager {
             pkService?.stopPKBattles()
         }
     }
-    
-//    func muteAnotherHostAudio(mute: Bool) {
-//        pkService?.muteAnotherHostAudio(mute: mute)
-//    }
     
     func isLocalUserHost() -> Bool {
         return coHostService?.isLocalUserHost() ?? false
@@ -201,8 +177,23 @@ extension ZegoLiveStreamingManager {
         return pkService?.isPKUserMuted(userID: userID) ?? false
     }
     
-    func mutePKUser(mute: Bool, callback: ZegoMixerStartCallback?) {
-        pkService?.mutePKUser(muteIndexList: [1], mute: mute, callback: callback)
+    func mutePKUser(muteUserList: [String], mute: Bool, callback: ZegoMixerStartCallback?) {
+        if let pkInfo = pkInfo,
+           let pkService = pkService
+        {
+            var muteIndexs: [Int] = []
+            for muteUserID in muteUserList {
+                let pkUser = pkService.getPKUser(pkBattleInfo: pkInfo, userID: muteUserID)
+                var i = 0
+                for input in pkService.currentInputList {
+                    if input.streamID == pkUser?.pkUserStream {
+                        muteIndexs.append(i)
+                    }
+                    i = i + 1
+                }
+            }
+            pkService.mutePKUser(muteIndexList: muteIndexs, mute: mute, callback: callback)
+        }
     }
 }
 

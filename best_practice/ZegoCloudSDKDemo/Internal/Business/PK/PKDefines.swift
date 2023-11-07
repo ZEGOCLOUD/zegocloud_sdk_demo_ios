@@ -32,21 +32,6 @@ class PKInfo: NSObject {
     var requestID: String = ""
     var pkUserList: [PKUser] = []
     
-////    var pkUser: ZegoSDKUser
-////    var pkRoom: String
-//    
-//    var seq: Int = 0
-//    var hostUserID: String = ""
-    
-//    init(user: ZegoSDKUser, pkRoom: String) {
-//        self.pkUser = user
-//        self.pkRoom = pkRoom
-//    }
-    
-//    func getPKStreamID() -> String {
-//        return "\(pkRoom)_\(pkUser.id)_main_host"
-//    }
-    
 }
 
 class PKUser: NSObject{
@@ -105,7 +90,7 @@ class PKUser: NSObject{
         let uid: String = jsonMap["uid"] as? String ?? ""
         let rid: String = jsonMap["rid"] as? String ?? ""
         let u_name: String = jsonMap["u_name"] as? String ?? ""
-        let rectJsonMap: [String: Any]? = (jsonMap["rect"] as? String ?? "").toDict
+        let rectJsonMap: [String: Any]? = jsonMap["rect"] as? Dictionary
         var userEdgeInset: UIEdgeInsets = .zero
         if let rectJsonMap = rectJsonMap {
             let top: CGFloat = rectJsonMap["top"] as! CGFloat

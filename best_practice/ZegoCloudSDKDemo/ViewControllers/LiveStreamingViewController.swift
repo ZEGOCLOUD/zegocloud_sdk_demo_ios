@@ -325,19 +325,15 @@ extension LiveStreamingViewController: ZegoLiveStreamingManagerDelegate {
     }
     
     func startPKUpdateUI() {
-        if isMySelfHost {
-            pkButton.setTitle("End PK Battle", for: .normal)
-        }
         mainVideoView.isHidden = true
         pkBattleContainer.isHidden = false
+        coHostButton.isHidden = true
     }
     
     func endPKUpdateUI() {
-        if isMySelfHost {
-            pkButton.setTitle("Start PK Battle", for: .normal)
-        }
         mainVideoView.isHidden = false
         pkBattleContainer.isHidden = true
+        coHostButton.isHidden = isMySelfHost
     }
     
     func headName(_ userName: String) -> String {
@@ -489,7 +485,6 @@ extension LiveStreamingViewController: PKServiceDelegate {
     
     
     func onStartPlayMixerStream() {
-//        ZegoSDKManager.shared.expressService.startPlayingStream(mixerStreamView, streamID: ZegoSDKManager.shared.expressService.generateMixerStreamID())
         coHostButton.isSelected = false
         coHostWidthConstraint.constant = 0
     }
@@ -500,12 +495,7 @@ extension LiveStreamingViewController: PKServiceDelegate {
         }
         ZegoSDKManager.shared.expressService.stopPlayingStream(String(format: "%@_mix", roomID))
         coHostButton.isSelected = false
-//        mixerStreamView.isHidden = true
         coHostWidthConstraint.constant = 165
-    }
-    
-    func onMixerStreamTaskFail(errorCode: Int) {
-        self.view.makeToast("mixer stream fail:\(errorCode)", position: .center)
     }
     
     func onPKStarted() {
@@ -526,7 +516,7 @@ extension LiveStreamingViewController: PKServiceDelegate {
         endPKUpdateUI()
         alterView?.dismiss(animated: false)
         if liveManager.isLocalUserHost() {
-            ZegoSDKManager.shared.expressService.startPreview(mainVideoView)
+            ZegoSDKManager.shared.expressService.startPreview(mainVideoView.renderView)
         } else {
             ZegoSDKManager.shared.expressService.startPlayingStream(mainVideoView, streamID: liveManager.getHostMainStreamID())
         }

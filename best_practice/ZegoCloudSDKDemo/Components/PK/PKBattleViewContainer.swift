@@ -70,6 +70,10 @@ class PKBattleViewContainer: UIView {
 
 extension PKBattleViewContainer: PKServiceDelegate {
     
+    func onPKUserConnecting(userID: String, duration: Int) {
+        
+    }
+    
     func onPKUserJoin(userID: String, extendedData: String) {
         onRoomPKUserJoin()
     }

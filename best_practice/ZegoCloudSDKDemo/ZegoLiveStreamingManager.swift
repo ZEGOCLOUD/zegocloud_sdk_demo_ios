@@ -19,7 +19,6 @@ import ZegoExpressEngine
     @objc optional func onMicrophoneOpen(_ userID: String, isMicOpen: Bool)
     
     @objc optional func onReceiveRoomMessage(messageList: [ZIMMessage])
-    
     @objc optional func getMixLayoutConfig(streamList: [String], videoConfig: ZegoMixerVideoConfig) -> [ZegoMixerInput]
     
 }
@@ -100,19 +99,19 @@ class ZegoLiveStreamingManager: NSObject {
 extension ZegoLiveStreamingManager {
     
     func startPKBattle(anotherHostID: String, callback: UserRequestCallback?) {
-        pkService?.startPKBattle(targetUserIDList: [anotherHostID], callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: [anotherHostID], isServiceMatch: true, callback: callback)
     }
 
     func startPKBattle(anotherHostIDList: [String], callback: UserRequestCallback?) {
-        pkService?.startPKBattle(targetUserIDList: anotherHostIDList, callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: anotherHostIDList, isServiceMatch: true, callback: callback)
     }
     
     func invitePKBattle(targetUserID: String, callback: UserRequestCallback?) {
-        pkService?.invitePKbattle(targetUserIDList: [targetUserID], callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: [targetUserID], isServiceMatch: false, callback: callback)
     }
     
     func invitePKbattle(targetUserIDList: [String], callback: UserRequestCallback?) {
-        pkService?.invitePKbattle(targetUserIDList: targetUserIDList, callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: targetUserIDList, isServiceMatch: false, callback: callback)
     }
     
     func cancelPKBattleRequest(requestID: String, targetUserID: String) {

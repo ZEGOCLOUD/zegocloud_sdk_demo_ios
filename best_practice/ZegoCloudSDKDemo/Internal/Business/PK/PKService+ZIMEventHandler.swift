@@ -82,7 +82,7 @@ extension PKService: ZIMServiceDelegate {
             }
             pkInfo = newPKInfo
             for delegate in eventDelegates.allObjects {
-                delegate.onReceivePKBattleRequest?(requestID: requestID, inviter: info.inviter, userName: inviterExtendedData.userName ?? "", roomID: inviterExtendedData.roomID ?? "")
+                delegate.onPKBattleReceived?(requestID: requestID, info: info)
             }
         }
     }

@@ -447,21 +447,27 @@ extension LiveStreamingViewController: ZIMServiceDelegate {
 
 extension LiveStreamingViewController: PKServiceDelegate {
     
-    func onReceivePKBattleRequest(requestID: String, inviter: String, userName: String, roomID: String) {
+    func onPKBattleReceived(requestID: String, info: ZIMCallInvitationReceivedInfo) {
         coHostRequestAlterView?.dismiss(animated: false)
-        
-        alterView = UIAlertController(title: "receive pk request", message: "", preferredStyle: .alert)
-        let acceptButton: UIAlertAction = UIAlertAction(title: "accept", style: .default) { [weak self] action in
-            self?.liveManager.acceptPKStartRequest(requestID: requestID)
+        let inviterExtendedData = PKExtendedData.parse(extendedData: info.extendedData)
+        if let inviterExtendedData = inviterExtendedData,
+           inviterExtendedData.autoAccept
+        {
+            liveManager.acceptPKStartRequest(requestID: requestID)
+        } else {
+            alterView = UIAlertController(title: "receive pk request", message: "", preferredStyle: .alert)
+            let acceptButton: UIAlertAction = UIAlertAction(title: "accept", style: .default) { [weak self] action in
+                self?.liveManager.acceptPKStartRequest(requestID: requestID)
+            }
+            let rejectButton: UIAlertAction = UIAlertAction(title: "reject", style: .cancel) { [weak self] action in
+                self?.liveManager.rejectPKStartRequest(requestID: requestID)
+            }
+            alterView!.addAction(acceptButton)
+            alterView!.addAction(rejectButton)
+            self.present(alterView!, animated: true)
         }
-        let rejectButton: UIAlertAction = UIAlertAction(title: "reject", style: .cancel) { [weak self] action in
-            self?.liveManager.rejectPKStartRequest(requestID: requestID)
-        }
-        alterView!.addAction(acceptButton)
-        alterView!.addAction(rejectButton)
-        self.present(alterView!, animated: true)
     }
-    
+
     
     func onIncomingPKRequestCancelled() {
         alterView?.dismiss(animated: true)

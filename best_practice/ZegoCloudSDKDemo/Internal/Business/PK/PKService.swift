@@ -15,7 +15,7 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
 
 @objc protocol PKServiceDelegate: AnyObject {
     
-    @objc optional func onReceivePKBattleRequest(requestID: String, inviter: String, userName: String, roomID: String)
+    @objc optional func onPKBattleReceived(requestID: String, info: ZIMCallInvitationReceivedInfo)
     @objc optional func onIncomingPKRequestCancelled()
     @objc optional func onOutgoingPKRequestAccepted()
     @objc optional func onOutgoingPKRequestRejected()
@@ -306,15 +306,7 @@ class PKService: NSObject {
         seiTimeDict.removeValue(forKey: userID)
     }
     
-    public func startPKBattle(targetUserIDList: [String], callback: UserRequestCallback?) {
-        createPKBattle(targetUserIDList: targetUserIDList, isServiceMatch: true, callback: callback)
-    }
-    
-    public func invitePKbattle(targetUserIDList: [String], callback: UserRequestCallback?) {
-        createPKBattle(targetUserIDList: targetUserIDList, isServiceMatch: false, callback: callback)
-    }
-    
-    private func createPKBattle(targetUserIDList: [String], isServiceMatch: Bool,callback: UserRequestCallback?) {
+    public func invitePKbattle(targetUserIDList: [String], isServiceMatch: Bool,callback: UserRequestCallback?) {
         if let pkInfo = pkInfo {
             addUserToRequest(invitees: targetUserIDList, requestID: pkInfo.requestID) { requestID, info, error in
                 guard let callback = callback else { return }

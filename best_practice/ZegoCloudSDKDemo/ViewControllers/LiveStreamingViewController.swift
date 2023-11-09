@@ -201,7 +201,7 @@ class LiveStreamingViewController: UIViewController {
         coHostVideoContainerView.coHostModels = coHostVideoViews
         updateCoHostContainerFrame()
 //        updateCoHostConstraints()
-        coHostButton.isHidden = false
+        coHostButton.isHidden = liveManager.isPKStarted
         endCoHostButton.isHidden = true
         
         flipButton.isHidden = true
@@ -264,10 +264,10 @@ class LiveStreamingViewController: UIViewController {
         }
     }
     
-    @IBAction func muteAnotherAudioClick(_ sender: UIButton) {
-        sender.isSelected = !sender.isSelected
-        liveManager.mutePKUser(mute: sender.isSelected, callback: nil)
-    }
+//    @IBAction func muteAnotherAudioClick(_ sender: UIButton) {
+//        sender.isSelected = !sender.isSelected
+//        liveManager.mutePKUser(mute: sender.isSelected, callback: nil)
+//    }
     
     @IBAction func memberButtonClick(_ sender: Any) {
         if !isMySelfHost {
@@ -319,21 +319,18 @@ extension LiveStreamingViewController: ZegoLiveStreamingManagerDelegate {
         }
     }
     
-    
-    func showMixView() {
-        
-    }
-    
     func startPKUpdateUI() {
         mainVideoView.isHidden = true
         pkBattleContainer.isHidden = false
         coHostButton.isHidden = true
+        coHostWidthConstraint.constant = 0
     }
     
     func endPKUpdateUI() {
         mainVideoView.isHidden = false
         pkBattleContainer.isHidden = true
         coHostButton.isHidden = isMySelfHost
+        coHostWidthConstraint.constant = 165
     }
     
     func headName(_ userName: String) -> String {
@@ -483,21 +480,6 @@ extension LiveStreamingViewController: PKServiceDelegate {
         pkButton.setTitle("Start PK Battle", for: .normal)
     }
     
-    
-    func onStartPlayMixerStream() {
-        coHostButton.isSelected = false
-        coHostWidthConstraint.constant = 0
-    }
-    
-    func onStopPlayMixerStream() {
-        guard let roomID = ZegoSDKManager.shared.expressService.currentRoomID else {
-            return
-        }
-        ZegoSDKManager.shared.expressService.stopPlayingStream(String(format: "%@_mix", roomID))
-        coHostButton.isSelected = false
-        coHostWidthConstraint.constant = 165
-    }
-    
     func onPKStarted() {
         startPKUpdateUI()
         if !isMySelfHost {
@@ -522,10 +504,13 @@ extension LiveStreamingViewController: PKServiceDelegate {
         }
     }
     
-    
-    func onPKViewAvaliable() {
-        if (!isMySelfHost) {
-            showMixView()
+    func onPKUserConnecting(userID: String, duration: Int) {
+        if duration > 30000 && liveManager.isLocalUserHost() {
+            if userID != ZegoSDKManager.shared.currentUser?.id {
+                liveManager.removePKBattle(userID: userID)
+            } else {
+                liveManager.quitPKBattle()
+            }
         }
     }
     

@@ -85,6 +85,20 @@ class PKUser: NSObject{
         return dict.jsonString
     }
     
+    func toDict() -> [String: Any] {
+        var dict: [String: Any] = [:]
+        dict["uid"] = userID
+        dict["rid"] = roomID
+        dict["u_name"] = userName
+        var edgeInsetsDict: [String: Any] = [:]
+        edgeInsetsDict["top"] = edgeInsets.top
+        edgeInsetsDict["left"] = edgeInsets.left
+        edgeInsetsDict["right"] = edgeInsets.right
+        edgeInsetsDict["bottom"] = edgeInsets.bottom
+        dict["rect"] = edgeInsetsDict
+        return dict
+    }
+    
     static func parse(string: String) -> PKUser {
         let jsonMap: [String : Any] = string.toDict ?? [:]
         let uid: String = jsonMap["uid"] as? String ?? ""

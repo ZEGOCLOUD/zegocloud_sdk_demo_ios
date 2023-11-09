@@ -31,6 +31,7 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
     @objc optional func onPKBattleRejected(userID: String, extendedData: String)
     @objc optional func onPKBattleTimeout(userID: String, extendedData: String)
     @objc optional func onPKUserJoin(userID: String, extendedData: String)
+    @objc optional func onPKUserUpdate(userList: [String])
     
     @objc optional func onPKUserConnecting(userID: String, duration: Int)
     @objc optional func onPKUserMicrophoneOpen(userID: String, isMicOpen: Bool)
@@ -73,7 +74,6 @@ class PKService: NSObject {
     
     override init() {
         super.init()
-        ZegoSDKManager.shared.expressService.addEventHandler(self)
         ZegoSDKManager.shared.zimService.addEventHandler(self)
     }
     
@@ -158,7 +158,7 @@ class PKService: NSObject {
         if let currentMixerTask = currentMixerTask {
             currentMixerTask.setInputList(mixInputList)
         } else {
-            let mixStreamID = ZegoSDKManager.shared.expressService.currentRoomID ?? "" + "_mix"
+            let mixStreamID = "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_mix"
             currentMixerTask = ZegoMixerTask(taskID: mixStreamID)
             currentMixerTask!.setVideoConfig(videoConfig)
             currentMixerTask!.setInputList(mixInputList)
@@ -431,12 +431,11 @@ class PKService: NSObject {
         if liveManager.isLocalUserHost() {
             delectPKAttributes()
             stopMixTask()
-            stopPlayAnotherHostStream()
         } else {
             muteHostAudioVideo(mute: false)
         }
-        destoryTimer()
         pkInfo = nil
+        destoryTimer()
         seiTimeDict.removeAll()
         isPKStarted = false
         for delegate in eventDelegates.allObjects {
@@ -484,7 +483,7 @@ class PKService: NSObject {
             }
         }
         let pkUsers = pkAcceptedUserList.compactMap({ user in
-            let userJson = user.toString()
+            let userJson = user.toDict()
             return userJson
         })
         pkDict["pk_users"] = pkUsers.toJsonString()

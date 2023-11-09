@@ -78,6 +78,10 @@ extension PKBattleViewContainer: PKServiceDelegate {
         onRoomPKUserJoin()
     }
     
+    func onPKUserUpdate(userList: [String]) {
+        onRoomPKUserJoin()
+    }
+    
     func onPKUserQuit(userID: String, extendedData: String) {
         guard let pkInfo = ZegoLiveStreamingManager.shared.pkInfo else { return }
         let isCurrentUserHost: Bool = ZegoLiveStreamingManager.shared.isLocalUserHost()
@@ -123,7 +127,7 @@ extension PKBattleViewContainer: PKServiceDelegate {
             mixVideoView.pkAcceptUsers = pkInfo.pkUserList.filter({ user in
                 return user.hasAccepted
             })
-            mixVideoView.mixStreamID = ZegoSDKManager.shared.expressService.currentRoomID ?? "" + "_mix"
+            mixVideoView.mixStreamID = "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_mix"
         }
     }
 }

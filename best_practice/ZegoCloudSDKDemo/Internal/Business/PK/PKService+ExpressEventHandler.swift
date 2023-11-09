@@ -8,7 +8,25 @@
 import Foundation
 import ZegoExpressEngine
 
-extension PKService: ExpressServiceDelegate {
+extension PKService {
+    
+    func onReceiveStreamAdd(userList: [ZegoSDKUser]) {
+        for user in userList {
+            let mainStreamID = user.streamID
+            if let mainStreamID = mainStreamID,
+               mainStreamID.hasSuffix("_host")
+            {
+                if !pkRoomAttribute.isEmpty {
+                    if let pkUsers = pkRoomAttribute["pk_users"],
+                       !pkUsers.isEmpty
+                    {
+                        onReceivePKRoomAttribute(roomProperties: pkRoomAttribute)
+                    }
+                }
+            }
+
+        }
+    }
     
     func onRoomUserUpdate(_ updateType: ZegoUpdateType, userList: [ZegoUser], roomID: String) {
         if updateType == .delete {

@@ -32,7 +32,7 @@ extension PKService: ZIMServiceDelegate {
                 if let _ = pkInfo {
                     stopPKBattles()
                 } else {
-                    continue
+                    return
                 }
             }
         }
@@ -255,12 +255,13 @@ extension PKService: ZIMServiceDelegate {
         }
     }
     
-    private func onReceivePKRoomAttribute(roomProperties: [String: String]) {
+    func onReceivePKRoomAttribute(roomProperties: [String: String]) {
         let request_id = roomProperties["request_id"]
         var pkUserList: [PKUser] = []
         let pkUsers: [Any] = roomProperties["pk_users"]?.jsonArray() ?? []
-        for userString in pkUsers {
-            let pkUser = PKUser.parse(string: userString as! String)
+        for userDict in pkUsers {
+            let userString: String = (userDict as! [String: Any]).jsonString
+            let pkUser = PKUser.parse(string: userString)
             if !liveManager.isLocalUserHost() {
                 pkUser.callUserState = .accepted
             }
@@ -295,7 +296,12 @@ extension PKService: ZIMServiceDelegate {
                     }
                 }
             } else {
-                
+                pkInfo?.pkUserList = pkUserList
+                for delegate in eventDelegates.allObjects {
+                    delegate.onPKUserUpdate?(userList: pkUserList.map({ user in
+                        return user.userID
+                    }))
+                }
             }
         }
     }

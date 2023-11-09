@@ -634,6 +634,7 @@
                         <viewLayoutGuide key="safeArea" id="s85-Be-OXi"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="YIG-Vo-AtC" secondAttribute="bottom" id="0Ig-3I-jKV"/>
                             <constraint firstItem="nNq-mx-5QD" firstAttribute="top" secondItem="s85-Be-OXi" secondAttribute="top" constant="10" id="1fn-NE-MuU"/>
                             <constraint firstItem="1OS-Bv-SOj" firstAttribute="top" secondItem="s85-Be-OXi" secondAttribute="top" constant="10" id="4pz-6e-aBr"/>
                             <constraint firstItem="P0M-wt-Ggz" firstAttribute="top" secondItem="s85-Be-OXi" secondAttribute="top" constant="50" id="6Qt-9r-x0V"/>
@@ -642,22 +643,21 @@
                             <constraint firstItem="s85-Be-OXi" firstAttribute="trailing" secondItem="nNq-mx-5QD" secondAttribute="trailing" constant="10" id="BX4-Ku-25U"/>
                             <constraint firstAttribute="bottom" secondItem="PdE-Ir-D2I" secondAttribute="bottom" id="Cp0-oN-LeO"/>
                             <constraint firstAttribute="trailing" secondItem="V3d-Bj-QLI" secondAttribute="trailing" id="Ebq-gx-Y5B"/>
-                            <constraint firstItem="YIG-Vo-AtC" firstAttribute="leading" secondItem="s85-Be-OXi" secondAttribute="leading" id="G3x-lQ-dPT"/>
                             <constraint firstItem="PdE-Ir-D2I" firstAttribute="centerX" secondItem="exU-WR-0nn" secondAttribute="centerX" id="G6h-ln-ix1"/>
                             <constraint firstItem="bIO-wF-BG1" firstAttribute="top" secondItem="s85-Be-OXi" secondAttribute="top" constant="10" id="HDN-s4-6JH"/>
                             <constraint firstAttribute="bottom" secondItem="V3d-Bj-QLI" secondAttribute="bottom" id="Liq-Cl-ad0"/>
                             <constraint firstItem="V3d-Bj-QLI" firstAttribute="leading" secondItem="exU-WR-0nn" secondAttribute="leading" id="Srg-9x-7i5"/>
+                            <constraint firstItem="YIG-Vo-AtC" firstAttribute="top" secondItem="exU-WR-0nn" secondAttribute="top" id="aSc-ZO-UUb"/>
                             <constraint firstItem="PdE-Ir-D2I" firstAttribute="top" secondItem="exU-WR-0nn" secondAttribute="top" id="fTW-Eo-epx"/>
+                            <constraint firstAttribute="trailing" secondItem="YIG-Vo-AtC" secondAttribute="trailing" id="k06-TI-XCf"/>
                             <constraint firstItem="RDn-C3-Szp" firstAttribute="top" secondItem="s85-Be-OXi" secondAttribute="top" constant="10" id="kf6-7I-qPP"/>
                             <constraint firstItem="s85-Be-OXi" firstAttribute="trailing" secondItem="P0M-wt-Ggz" secondAttribute="trailing" id="lWn-bh-zRj"/>
-                            <constraint firstItem="s85-Be-OXi" firstAttribute="bottom" secondItem="YIG-Vo-AtC" secondAttribute="bottom" id="lpD-PF-DNt"/>
                             <constraint firstItem="PdE-Ir-D2I" firstAttribute="trailing" secondItem="s85-Be-OXi" secondAttribute="trailing" id="pEh-pD-4bg"/>
                             <constraint firstItem="P0M-wt-Ggz" firstAttribute="leading" secondItem="s85-Be-OXi" secondAttribute="leading" id="rqO-YE-oVP"/>
                             <constraint firstItem="V3d-Bj-QLI" firstAttribute="top" secondItem="exU-WR-0nn" secondAttribute="top" id="sTm-h1-7pz"/>
                             <constraint firstItem="RDn-C3-Szp" firstAttribute="leading" secondItem="s85-Be-OXi" secondAttribute="leading" constant="10" id="wUh-d9-gxn"/>
-                            <constraint firstItem="s85-Be-OXi" firstAttribute="trailing" secondItem="YIG-Vo-AtC" secondAttribute="trailing" id="yXx-qd-WDa"/>
-                            <constraint firstItem="YIG-Vo-AtC" firstAttribute="top" secondItem="s85-Be-OXi" secondAttribute="top" id="zde-GG-qzH"/>
                             <constraint firstItem="s85-Be-OXi" firstAttribute="bottom" secondItem="5sg-9j-Qfc" secondAttribute="bottom" constant="20" id="zhT-qW-Azv"/>
+                            <constraint firstItem="YIG-Vo-AtC" firstAttribute="leading" secondItem="exU-WR-0nn" secondAttribute="leading" id="zsS-c9-zuP"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="bir-Rc-GWv"/>
@@ -958,16 +958,16 @@
             <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="linkColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemMintColor">
-            <color red="0.0" green="0.7803921568627451" blue="0.74509803921568629" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.78039215689999997" blue="0.74509803919999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

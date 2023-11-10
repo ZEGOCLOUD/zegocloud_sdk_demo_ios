@@ -103,7 +103,7 @@ extension PKBattleView: PKServiceDelegate, ZegoLiveStreamingManagerDelegate {
             let pkUserMuted = ZegoLiveStreamingManager.shared.isPKUserMuted(userID: userID)
             if timeout {
                 if !pkUserMuted {
-                    ZegoLiveStreamingManager.shared.mutePKUser(muteUserList: [], mute: true) { errorCode, info in
+                    ZegoLiveStreamingManager.shared.mutePKUser(muteUserList: [userID], mute: true) { errorCode, info in
                         if errorCode == 0 {
                             self.mutePlayAudio(mute: true)
                         }
@@ -111,7 +111,7 @@ extension PKBattleView: PKServiceDelegate, ZegoLiveStreamingManagerDelegate {
                 }
             } else {
                 if pkUserMuted {
-                    ZegoLiveStreamingManager.shared.mutePKUser(muteUserList: [], mute: false) { errorCode, info in
+                    ZegoLiveStreamingManager.shared.mutePKUser(muteUserList: [userID], mute: false) { errorCode, info in
                         if errorCode == 0 {
                             self.mutePlayAudio(mute: false)
                         }

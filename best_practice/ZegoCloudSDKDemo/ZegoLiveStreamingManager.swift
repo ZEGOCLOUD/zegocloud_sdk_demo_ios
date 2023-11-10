@@ -99,19 +99,19 @@ class ZegoLiveStreamingManager: NSObject {
 extension ZegoLiveStreamingManager {
     
     func startPKBattle(anotherHostID: String, callback: UserRequestCallback?) {
-        pkService?.invitePKbattle(targetUserIDList: [anotherHostID], isServiceMatch: true, callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: [anotherHostID], autoAccept: true, callback: callback)
     }
 
     func startPKBattle(anotherHostIDList: [String], callback: UserRequestCallback?) {
-        pkService?.invitePKbattle(targetUserIDList: anotherHostIDList, isServiceMatch: true, callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: anotherHostIDList, autoAccept: true, callback: callback)
     }
     
     func invitePKBattle(targetUserID: String, callback: UserRequestCallback?) {
-        pkService?.invitePKbattle(targetUserIDList: [targetUserID], isServiceMatch: false, callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: [targetUserID], autoAccept: false, callback: callback)
     }
     
     func invitePKbattle(targetUserIDList: [String], callback: UserRequestCallback?) {
-        pkService?.invitePKbattle(targetUserIDList: targetUserIDList, isServiceMatch: false, callback: callback)
+        pkService?.invitePKbattle(targetUserIDList: targetUserIDList, autoAccept: false, callback: callback)
     }
     
     func cancelPKBattleRequest(requestID: String, targetUserID: String) {

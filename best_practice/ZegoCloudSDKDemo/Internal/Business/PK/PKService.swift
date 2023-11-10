@@ -306,7 +306,7 @@ class PKService: NSObject {
         seiTimeDict.removeValue(forKey: userID)
     }
     
-    public func invitePKbattle(targetUserIDList: [String], isServiceMatch: Bool,callback: UserRequestCallback?) {
+    public func invitePKbattle(targetUserIDList: [String], autoAccept: Bool,callback: UserRequestCallback?) {
         if let pkInfo = pkInfo {
             addUserToRequest(invitees: targetUserIDList, requestID: pkInfo.requestID) { requestID, info, error in
                 guard let callback = callback else { return }
@@ -317,7 +317,7 @@ class PKService: NSObject {
             let pkExtendedData: String? = getPKExtendedData(type: PKExtendedData.STARK_PK)
             var dataDict: [String: Any] = pkExtendedData?.toDict ?? [:]
             dataDict["user_id"] = localUser?.id
-            dataDict["auto_accept"] = isServiceMatch
+            dataDict["auto_accept"] = autoAccept
             sendUserRequest(userIDList: targetUserIDList, extendedData: dataDict.jsonString, advanced: true) { requestID, info, error in
                 if error.code == .success {
                     self.pkInfo?.requestID = requestID

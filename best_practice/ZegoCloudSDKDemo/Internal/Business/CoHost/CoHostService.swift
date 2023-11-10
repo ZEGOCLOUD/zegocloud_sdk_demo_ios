@@ -34,7 +34,6 @@ class CoHostService: NSObject {
     
     override init() {
         super.init()
-        ZegoSDKManager.shared.expressService.addEventHandler(self)
     }
     
     func addCoHostDelegate(_ delegate: CoHostServiceDelegate) {
@@ -103,7 +102,7 @@ class CoHostService: NSObject {
 
 }
 
-extension CoHostService: ExpressServiceDelegate {
+extension CoHostService {
     
     func onReceiveStreamAdd(userList: [ZegoSDKUser]) {
         for user in userList {

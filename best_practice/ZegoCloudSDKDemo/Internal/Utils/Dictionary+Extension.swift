@@ -33,13 +33,6 @@ extension Dictionary where Key: ExpressibleByStringLiteral, Value: Any {
     }
 }
 
-extension String {
-    var toDict: [String: Any]? {
-        let dict = try? JSONSerialization.jsonObject(with: data(using: .utf8)!) as? [String: Any]
-        return dict
-    }
-}
-
 extension Data {
     var toDict: [String: Any]? {
         let dict = try? JSONSerialization.jsonObject(with: self) as? [String: Any]

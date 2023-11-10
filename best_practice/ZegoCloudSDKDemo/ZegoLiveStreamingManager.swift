@@ -19,11 +19,7 @@ import ZegoExpressEngine
     @objc optional func onMicrophoneOpen(_ userID: String, isMicOpen: Bool)
     
     @objc optional func onReceiveRoomMessage(messageList: [ZIMMessage])
-    
-    @objc optional func onLocalHostCameraStatus(isOn: Bool)
-    @objc optional func onAnotherHostCameraStatus(isOn: Bool)
-    
-    @objc optional func onMixerStreamTaskFail(errorCode: Int)
+    @objc optional func getMixLayoutConfig(streamList: [String], videoConfig: ZegoMixerVideoConfig) -> [ZegoMixerInput]
     
 }
 
@@ -41,9 +37,10 @@ class ZegoLiveStreamingManager: NSObject {
             return pkService?.pkInfo
         }
     }
-    var pkState: RoomPKState {
+    
+    var isPKStarted: Bool {
         get {
-            return pkService?.roomPKState ?? .isNoPK
+            return pkService?.isPKStarted ?? false
         }
     }
     
@@ -70,9 +67,13 @@ class ZegoLiveStreamingManager: NSObject {
         pkService?.addPKDelegate(delegate)
     }
     
+    func addDelegate(_ delegate: ZegoLiveStreamingManagerDelegate) {
+        eventDelegates.add(delegate)
+    }
+    
     func leaveRoom() {
         if isLocalUserHost() {
-            pkService?.sendPKBattlesStopRequest()
+            quitPKBattle()
         }
         ZegoSDKManager.shared.logoutRoom()
         clearData()
@@ -82,38 +83,66 @@ class ZegoLiveStreamingManager: NSObject {
         coHostService?.clearData()
         pkService?.clearData()
     }
+    
+    func getMixLayoutConfig(streamList: [String], videoConfig: ZegoMixerVideoConfig) -> [ZegoMixerInput]? {
+        var inputList: [ZegoMixerInput]?
+        for delegate in eventDelegates.allObjects {
+            inputList = delegate.getMixLayoutConfig?(streamList: streamList, videoConfig: videoConfig)
+        }
+        return inputList
+    }
+    
 }
     
 
 
 extension ZegoLiveStreamingManager {
     
-    func sendPKBattlesStartRequest(userID: String, callback: CommonCallback?) {
-        pkService?.sendPKBattlesStartRequest(userID: userID, callback: callback)
+    func startPKBattle(anotherHostID: String, callback: UserRequestCallback?) {
+        pkService?.invitePKbattle(targetUserIDList: [anotherHostID], isServiceMatch: true, callback: callback)
+    }
+
+    func startPKBattle(anotherHostIDList: [String], callback: UserRequestCallback?) {
+        pkService?.invitePKbattle(targetUserIDList: anotherHostIDList, isServiceMatch: true, callback: callback)
     }
     
-    func sendPKBattleResumeRequest(userID: String) {
-        pkService?.sendPKBattleResumeRequest(userID: userID)
+    func invitePKBattle(targetUserID: String, callback: UserRequestCallback?) {
+        pkService?.invitePKbattle(targetUserIDList: [targetUserID], isServiceMatch: false, callback: callback)
     }
     
-    func sendPKBattlesStopRequest() {
-        pkService?.sendPKBattlesStopRequest()
+    func invitePKbattle(targetUserIDList: [String], callback: UserRequestCallback?) {
+        pkService?.invitePKbattle(targetUserIDList: targetUserIDList, isServiceMatch: false, callback: callback)
     }
     
-    func cancelPKBattleRequest() {
-        pkService?.cancelPKBattleRequest()
+    func cancelPKBattleRequest(requestID: String, targetUserID: String) {
+        pkService?.cancelPKBattle(requestID: requestID, userID: targetUserID)
     }
     
     func acceptPKStartRequest(requestID: String) {
-        pkService?.acceptPKStartRequest(requestID: requestID)
+        pkService?.acceptPKBattle(requestID: requestID)
     }
     
     func rejectPKStartRequest(requestID: String) {
-        pkService?.rejectPKStartRequest(requestID: requestID)
+        pkService?.rejectPKBattle(requestID: requestID)
     }
     
-    func muteAnotherHostAudio(mute: Bool) {
-        pkService?.muteAnotherHostAudio(mute: mute)
+    func removeUserFromPKBattle(userID: String) {
+        pkService?.removeUserFromPKBattle(userID: userID)
+    }
+    
+    func endPKBattle() {
+        if let pkInfo = pkService?.pkInfo {
+            pkService?.endPKBattle(requestID: pkInfo.requestID, callback: nil)
+            pkService?.stopPKBattle()
+        }
+    }
+    
+    func quitPKBattle() {
+        if let pkInfo = pkService?.pkInfo {
+            pkService?.stopPlayAnotherHostStream()
+            pkService?.quitPKBattle(requestID: pkInfo.requestID, callback: nil)
+            pkService?.stopPKBattle()
+        }
     }
     
     func isLocalUserHost() -> Bool {
@@ -140,71 +169,30 @@ extension ZegoLiveStreamingManager {
         return "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_\(ZegoSDKManager.shared.currentUser?.id ?? "")_main_cohost"
     }
     
-    func removeRoomData() {
-//        coHostService?.removeRoomData();
-//        pkService?.removeRoomData();
+    func isPKUser(userID: String) -> Bool {
+        return pkService?.isPKUser(userID: userID) ?? false
     }
     
-    func removeUserData() {
-//        coHostService?.removeUserData();
-//        pkService?.removeUserData();
+    func isPKUserMuted(userID: String) -> Bool {
+        return pkService?.isPKUserMuted(userID: userID) ?? false
     }
     
-}
-
-extension ZegoLiveStreamingManager: ExpressServiceDelegate {
-    func onRoomStreamUpdate(_ updateType: ZegoUpdateType, streamList: [ZegoStream], extendedData: [AnyHashable : Any]?, roomID: String) {
-        if updateType == .add {
-            for delegate in eventDelegates.allObjects {
-                delegate.onRoomStreamAdd?(streamList: streamList)
-            }
-            for stream in streamList {
-                let extraInfoDict = stream.extraInfo.toDict
-                let isCameraOpen: Bool = extraInfoDict?["cam"] as! Bool
-                let isMicOpen: Bool = extraInfoDict?["mic"] as! Bool
-                for delegate in eventDelegates.allObjects {
-                    delegate.onCameraOpen?(stream.user.userID, isCameraOpen: isCameraOpen)
-                    delegate.onMicrophoneOpen?(stream.user.userID, isMicOpen: isMicOpen)
+    func mutePKUser(muteUserList: [String], mute: Bool, callback: ZegoMixerStartCallback?) {
+        if let pkInfo = pkInfo,
+           let pkService = pkService
+        {
+            var muteIndexs: [Int] = []
+            for muteUserID in muteUserList {
+                let pkUser = pkService.getPKUser(pkBattleInfo: pkInfo, userID: muteUserID)
+                var i = 0
+                for input in pkService.currentInputList {
+                    if input.streamID == pkUser?.pkUserStream {
+                        muteIndexs.append(i)
+                    }
+                    i = i + 1
                 }
             }
-        } else {
-            for delegate in eventDelegates.allObjects {
-                delegate.onRoomStreamDelete?(streamList: streamList)
-            }
+            pkService.mutePKUser(muteIndexList: muteIndexs, mute: mute, callback: callback)
         }
     }
-    
-    func onRoomUserUpdate(_ updateType: ZegoUpdateType, userList: [ZegoUser], roomID: String) {
-        if updateType == .add {
-            for delegate in eventDelegates.allObjects {
-                delegate.onRoomUserAdd?(userList: userList)
-            }
-        } else {
-            for delegate in eventDelegates.allObjects {
-                delegate.onRoomUserDelete?(userList: userList)
-            }
-        }
-    }
-    
-    func onCameraOpen(_ userID: String, isCameraOpen: Bool) {
-        for delegate in eventDelegates.allObjects {
-            delegate.onCameraOpen?(userID, isCameraOpen: isCameraOpen)
-        }
-    }
-    
-    func onMicrophoneOpen(_ userID: String, isMicOpen: Bool) {
-        print("onMicrophoneOpen, userID: \(userID), isMicOpen: \(isMicOpen)")
-        for delegate in eventDelegates.allObjects {
-            delegate.onMicrophoneOpen?(userID, isMicOpen: isMicOpen)
-        }
-    }
-    
-    func onCapturedSoundLevelUpdate(_ soundLevel: NSNumber) {
-        
-    }
-    
-    func onRemoteSoundLevelUpdate(_ soundLevels: [String : NSNumber]) {
-        
-    }
-    
 }

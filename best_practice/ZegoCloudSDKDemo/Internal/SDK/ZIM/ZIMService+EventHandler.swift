@@ -100,7 +100,7 @@ extension ZIMService: ZIMEventHandler {
     // MARK: - Invitation
     public func zim(_ zim: ZIM, callInvitationReceived info: ZIMCallInvitationReceivedInfo, callID: String) {
         for handler in eventHandlers.allObjects {
-            handler.onInComingUserRequestReceived?(requestID: callID, inviter: info.inviter, extendedData: info.extendedData)
+            handler.onInComingUserRequestReceived?(requestID: callID, info: info)
             handler.zim?(zim, callInvitationReceived: info, callID: callID)
         }
     }
@@ -128,7 +128,7 @@ extension ZIMService: ZIMEventHandler {
     
     public func zim(_ zim: ZIM, callInvitationTimeout callID: String) {
         for handler in eventHandlers.allObjects {
-            handler.onInComingUserRequestTimeout?(requestID: callID)
+            handler.onInComingUserRequestTimeout?(requestID: callID, info: nil)
             handler.zim?(zim, callInvitationTimeout: callID)
         }
     }
@@ -140,8 +140,39 @@ extension ZIMService: ZIMEventHandler {
         }
     }
     
+    //MARK: - New Invitation
+    public func zim(_ zim: ZIM, callUserStateChanged info: ZIMCallUserStateChangeInfo, callID: String) {
+        // accept、reject、answerTimeout
+        for handler in eventHandlers.allObjects {
+            handler.onUserRequestStateChanged?(info: info, requestID: callID)
+            handler.zim?(zim, callUserStateChanged: info, callID: callID)
+        }
+    }
+    
+    public func zim(_ zim: ZIM, callInvitationTimeout info: ZIMCallInvitationTimeoutInfo, callID: String) {
+        for handler in eventHandlers.allObjects {
+            handler.onInComingUserRequestTimeout?(requestID: callID, info: info)
+            handler.zim?(zim, callInvitationTimeout: info, callID: callID)
+        }
+    }
+    
+    public func zim(_ zim: ZIM, callInvitationEnded info: ZIMCallInvitationEndedInfo, callID: String) {
+        for handler in eventHandlers.allObjects {
+            handler.onUserRequestEnded?(info: info, requestID: callID)
+            handler.zim?(zim, callInvitationEnded: info, callID: callID)
+        }
+    }
+    
     // MARK: - RoomAttributes
     public func zim(_ zim: ZIM, roomAttributesUpdated updateInfo: ZIMRoomAttributesUpdateInfo, roomID: String) {
+        var setProperties: [[String: String]] = []
+        var deleteProperties: [[String: String]] = []
+        if updateInfo.action == .set {
+            setProperties.append(updateInfo.roomAttributes)
+        } else {
+            deleteProperties.append(updateInfo.roomAttributes)
+        }
+        
         for (key, value) in updateInfo.roomAttributes {
             if updateInfo.action == .set {
                 inRoomAttributsDict.updateValue(value, forKey: key)
@@ -149,22 +180,31 @@ extension ZIMService: ZIMEventHandler {
                 inRoomAttributsDict.removeValue(forKey: key)
             }
         }
+        
         for delegte in eventHandlers.allObjects {
+            delegte.onRoomAttributesUpdated2?(setProperties: setProperties, deleteProperties: deleteProperties)
             delegte.zim?(zim, roomAttributesUpdated: updateInfo, roomID: roomID)
         }
     }
     
     public func zim(_ zim: ZIM, roomAttributesBatchUpdated updateInfo: [ZIMRoomAttributesUpdateInfo], roomID: String) {
+        var setProperties: [[String: String]] = []
+        var deleteProperties: [[String: String]] = []
         for info in updateInfo {
-            for (key,value) in info.roomAttributes {
-                if info.action == .set {
+            if info.action == .set {
+                setProperties.append(info.roomAttributes)
+                for (key,value) in info.roomAttributes {
                     inRoomAttributsDict.updateValue(value, forKey: key)
-                } else {
+                }
+            } else {
+                deleteProperties.append(info.roomAttributes)
+                for (key,_) in info.roomAttributes {
                     inRoomAttributsDict.removeValue(forKey: key)
                 }
             }
         }
         for delegte in eventHandlers.allObjects {
+            delegte.onRoomAttributesUpdated2?(setProperties: setProperties, deleteProperties: deleteProperties)
             delegte.zim?(zim, roomAttributesBatchUpdated: updateInfo, roomID: roomID)
         }
     }

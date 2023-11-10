@@ -133,7 +133,7 @@ extension ZegoLiveStreamingManager {
     func endPKBattle() {
         if let pkInfo = pkService?.pkInfo {
             pkService?.endPKBattle(requestID: pkInfo.requestID, callback: nil)
-            pkService?.stopPKBattles()
+            pkService?.stopPKBattle()
         }
     }
     
@@ -141,7 +141,7 @@ extension ZegoLiveStreamingManager {
         if let pkInfo = pkService?.pkInfo {
             pkService?.stopPlayAnotherHostStream()
             pkService?.quitPKBattle(requestID: pkInfo.requestID, callback: nil)
-            pkService?.stopPKBattles()
+            pkService?.stopPKBattle()
         }
     }
     

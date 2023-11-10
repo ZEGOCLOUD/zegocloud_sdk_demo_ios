@@ -246,7 +246,7 @@ class PKService: NSObject {
                 }
                 if (!hasWaitingUser) {
                     quitPKBattle(requestID: requestID, callback: nil)
-                    stopPKBattles()
+                    stopPKBattle()
                 }
             }
         }
@@ -277,7 +277,7 @@ class PKService: NSObject {
                 }
                 if (!hasWaitingUser) {
                     quitPKBattle(requestID: requestID, callback: nil)
-                    stopPKBattles()
+                    stopPKBattle()
                 }
             }
         }
@@ -419,7 +419,7 @@ class PKService: NSObject {
     }
 
     
-    func stopPKBattles() {
+    func stopPKBattle() {
         if liveManager.isLocalUserHost() {
             delectPKAttributes()
             stopMixTask()

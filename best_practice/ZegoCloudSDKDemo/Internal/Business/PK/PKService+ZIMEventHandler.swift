@@ -30,7 +30,7 @@ extension PKService: ZIMServiceDelegate {
         for deleteProperty in deleteProperties {
             if deleteProperty.keys.contains("pk_users") {
                 if let _ = pkInfo {
-                    stopPKBattles()
+                    stopPKBattle()
                 } else {
                     return
                 }
@@ -125,7 +125,7 @@ extension PKService: ZIMServiceDelegate {
         if let pkInfo = pkInfo,
            pkInfo.requestID == requestID
         {
-            stopPKBattles()
+            stopPKBattle()
         }
     }
     

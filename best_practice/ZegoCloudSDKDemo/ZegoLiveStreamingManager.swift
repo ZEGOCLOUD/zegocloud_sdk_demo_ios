@@ -126,8 +126,8 @@ extension ZegoLiveStreamingManager {
         pkService?.rejectPKBattle(requestID: requestID)
     }
     
-    func removePKBattle(userID: String) {
-        pkService?.removePKBattle(userID: userID)
+    func removeUserFromPKBattle(userID: String) {
+        pkService?.removeUserFromPKBattle(userID: userID)
     }
     
     func endPKBattle() {

@@ -196,11 +196,9 @@ class LiveStreamingViewController: UIViewController {
         let localUserID = ZegoSDKManager.shared.expressService.currentUser!.id
         ZegoSDKManager.shared.expressService.stopPublishingStream()
         ZegoSDKManager.shared.expressService.stopPreview()
-//        coHostVideoViews.forEach( { $0.removeFromSuperview() } )
         coHostVideoViews = coHostVideoViews.filter({ $0.user?.id != localUserID })
         coHostVideoContainerView.coHostModels = coHostVideoViews
         updateCoHostContainerFrame()
-//        updateCoHostConstraints()
         coHostButton.isHidden = liveManager.isPKStarted
         endCoHostButton.isHidden = true
         
@@ -511,9 +509,9 @@ extension LiveStreamingViewController: PKServiceDelegate {
     }
     
     func onPKUserConnecting(userID: String, duration: Int) {
-        if duration > 30000 && liveManager.isLocalUserHost() {
+        if duration > 60000 {
             if userID != ZegoSDKManager.shared.currentUser?.id {
-                liveManager.removePKBattle(userID: userID)
+                liveManager.removeUserFromPKBattle(userID: userID)
             } else {
                 liveManager.quitPKBattle()
             }

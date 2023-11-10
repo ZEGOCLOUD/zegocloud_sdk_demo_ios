@@ -284,7 +284,7 @@ class PKService: NSObject {
         
     }
     
-    public func removePKBattle(userID: String) {
+    public func removeUserFromPKBattle(userID: String) {
         if let pkInfo = pkInfo {
             var timeoutQuitUsers: [PKUser] = []
             for pkUser in pkInfo.pkUserList {

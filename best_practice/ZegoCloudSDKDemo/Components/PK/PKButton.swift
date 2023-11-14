@@ -90,7 +90,7 @@ class PKButton: UIButton, PKServiceDelegate {
                 liveManger.invitePKbattle(targetUserIDList: invitePKList) { [weak self] code, requestID in
                     if code != 0 {
                         self?.setTitle("Start pk", for: .normal)
-                        self?.viewController?.view.makeToast("invite pkbattle fail", position: .center)
+                        self?.viewController?.view.makeToast("invite pkbattle fail:\(code)", position: .center)
                     }
                 }
             }

@@ -25,6 +25,7 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
     @objc optional func onPKStarted()
     @objc optional func onPKEnded()
     @objc optional func onPKViewAvaliable()
+    @objc optional func onPKMixTaskFail(code: Int32)
     
     @objc optional func onPKUserQuit(userID: String, extendedData: String)
     @objc optional func onPKBattleAccepted(userID: String, extendedData: String)
@@ -36,6 +37,7 @@ let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
     @objc optional func onPKUserConnecting(userID: String, duration: Int)
     @objc optional func onPKUserMicrophoneOpen(userID: String, isMicOpen: Bool)
     @objc optional func onPKUserCameraOpen(userID: String, isCameraOpen: Bool)
+    
 }
 
 
@@ -173,6 +175,10 @@ class PKService: NSObject {
         ZegoSDKManager.shared.expressService.startMixerTask(currentMixerTask!) { errorCode, info in
             if errorCode == 0 {
                 self.updatePKRoomAttributes()
+            } else {
+                for delegate in self.eventDelegates.allObjects {
+                    delegate.onPKMixTaskFail?(code: errorCode)
+                }
             }
             guard let callback = callback else { return }
             callback(errorCode, info)

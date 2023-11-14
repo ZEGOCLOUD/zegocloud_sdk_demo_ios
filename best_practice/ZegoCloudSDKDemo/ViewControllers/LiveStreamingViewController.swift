@@ -477,6 +477,7 @@ extension LiveStreamingViewController: PKServiceDelegate {
     }
     
     func onIncomingPKRequestTimeout() {
+        self.view.makeToast("pk request timeout", position: .center)
         alterView?.dismiss(animated: true)
     }
     
@@ -516,6 +517,10 @@ extension LiveStreamingViewController: PKServiceDelegate {
                 liveManager.quitPKBattle()
             }
         }
+    }
+    
+    func onPKMixTaskFail(code: Int32) {
+        self.view.makeToast("pk mix task fail:\(code)", position: .center)
     }
     
 }

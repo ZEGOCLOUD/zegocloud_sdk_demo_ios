@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		860624732AF341A4006B04A8 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624722AF341A4006B04A8 /* KeyCenter.swift */; };
 		860624662AEF820C006B04A8 /* PKService+ZIMEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624652AEF820C006B04A8 /* PKService+ZIMEventHandler.swift */; };
 		860624682AEF8260006B04A8 /* PKService+ExpressEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624672AEF8260006B04A8 /* PKService+ExpressEventHandler.swift */; };
 		8606246A2AF0DE32006B04A8 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624692AF0DE32006B04A8 /* Array+Extension.swift */; };
 		8606246C2AF1FA5B006B04A8 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8606246B2AF1FA5B006B04A8 /* String+Extension.swift */; };
 		8606246F2AF25695006B04A8 /* PKBattleViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8606246E2AF25695006B04A8 /* PKBattleViewContainer.swift */; };
 		860624712AF25D06006B04A8 /* PKBattleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624702AF25D06006B04A8 /* PKBattleView.swift */; };
-		860624792AF344F4006B04A8 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624782AF344F4006B04A8 /* KeyCenter.swift */; };
+		860624732AF341A4006B04A8 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860624722AF341A4006B04A8 /* KeyCenter.swift */; };
 		8606247B2AF3839C006B04A8 /* PKBattleMixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8606247A2AF3839C006B04A8 /* PKBattleMixView.swift */; };
 		8606247D2AF4C9E8006B04A8 /* PKConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8606247C2AF4C9E8006B04A8 /* PKConnectingView.swift */; };
 		8606247F2AF4CB48006B04A8 /* PKForegroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8606247E2AF4CB48006B04A8 /* PKForegroundView.swift */; };
@@ -86,14 +85,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		860624722AF341A4006B04A8 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		860624652AEF820C006B04A8 /* PKService+ZIMEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PKService+ZIMEventHandler.swift"; sourceTree = "<group>"; };
 		860624672AEF8260006B04A8 /* PKService+ExpressEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PKService+ExpressEventHandler.swift"; sourceTree = "<group>"; };
 		860624692AF0DE32006B04A8 /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
 		8606246B2AF1FA5B006B04A8 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		8606246E2AF25695006B04A8 /* PKBattleViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKBattleViewContainer.swift; sourceTree = "<group>"; };
 		860624702AF25D06006B04A8 /* PKBattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKBattleView.swift; sourceTree = "<group>"; };
-		860624782AF344F4006B04A8 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
+		860624722AF341A4006B04A8 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		8606247A2AF3839C006B04A8 /* PKBattleMixView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKBattleMixView.swift; sourceTree = "<group>"; };
 		8606247C2AF4C9E8006B04A8 /* PKConnectingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKConnectingView.swift; sourceTree = "<group>"; };
 		8606247E2AF4CB48006B04A8 /* PKForegroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKForegroundView.swift; sourceTree = "<group>"; };
@@ -548,7 +546,6 @@
 				860624732AF341A4006B04A8 /* KeyCenter.swift in Sources */,
 				86AEB25629FBA55200DA4BF3 /* ZIMService+RoomRequest.swift in Sources */,
 				86325CB32A25DB24004185B1 /* ZIMService+UserRequest.swift in Sources */,
-				860624792AF344F4006B04A8 /* KeyCenter.swift in Sources */,
 				8E1B926B29DBD1260097C9ED /* VideoView.swift in Sources */,
 				863B28612A56AC2500613C8F /* PKService.swift in Sources */,
 				860624712AF25D06006B04A8 /* PKBattleView.swift in Sources */,

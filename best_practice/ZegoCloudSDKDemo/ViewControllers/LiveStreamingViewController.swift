@@ -53,6 +53,9 @@ class LiveStreamingViewController: UIViewController {
         return redDotView
     }()
     
+    
+    
+    
     lazy var coHostVideoContainerView: CoHostContainerView = {
         let view = CoHostContainerView(frame: .zero)
         return view

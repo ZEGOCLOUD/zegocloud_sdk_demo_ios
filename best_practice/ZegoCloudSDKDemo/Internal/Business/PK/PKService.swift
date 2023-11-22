@@ -485,9 +485,7 @@ class PKService: NSObject {
             return userJson
         })
         pkDict["pk_users"] = pkUsers.toJsonString()
-        let config = ZIMRoomAttributesSetConfig()
-        config.isDeleteAfterOwnerLeft = false
-        ZegoSDKManager.shared.zimService.setRoomAttributes(pkDict) { roomID, errorKeys, error in
+        ZegoSDKManager.shared.zimService.setRoomAttributes(pkDict, isDeleteAfterOwnerLeft: false) { roomID, errorKeys, error in
             
         }
     }

@@ -11,7 +11,7 @@ import ZegoExpressEngine
 
 typealias UserRequestCallback = (_ code: UInt, _ requestID: String) -> ()
 
-let MixVideoSize: CGSize = CGSize(width: 540 * 2, height: 960)
+let MixVideoSize: CGSize = CGSize(width: 486 * 2, height: 864)
 
 @objc protocol PKServiceDelegate: AnyObject {
     
@@ -148,7 +148,8 @@ class PKService: NSObject {
         }
         let videoConfig = ZegoMixerVideoConfig()
         videoConfig.resolution = MixVideoSize
-        videoConfig.bitrate = 1200
+        videoConfig.bitrate = 1500
+        videoConfig.fps = 15
         var mixInputList: [ZegoMixerInput] = []
         if let layOutConfig = liveManager.getMixLayoutConfig(streamList: pkStreamList, videoConfig: videoConfig) {
             mixInputList = layOutConfig
@@ -201,15 +202,27 @@ class PKService: NSObject {
                 input.volume = 100
                 inputList.append(input)
             }
-        } else {
-            let row = 2
-            let maxCellCount = streamList.count % 2 == 0 ? streamList.count : (streamList.count + 1)
-            let column = maxCellCount / row
-            let cellWidth = Int(MixVideoSize.width) / column
-            let cellHeight = Int(MixVideoSize.height) / row
-            var left: Int = 0
-            var top: Int = 0
-            for i in 0...streamList.count - 1 {
+        } else if (streamList.count == 3) {
+            for i in 0...(streamList.count - 1) {
+                let left = i == 0 ? 0 : Int(MixVideoSize.width / 2);
+                let top = i == 2 ? Int(MixVideoSize.height / 2) : 0;
+                let width: Int = Int(MixVideoSize.width / 2)
+                let height: Int = i == 0 ? Int(MixVideoSize.height) : Int(MixVideoSize.height / 2)
+                let rect = CGRect(x: left, y: top, width: width, height: height)
+                let input = ZegoMixerInput(streamID: streamList[i], contentType: .video, layout: rect)
+                input.renderMode = .fill
+                input.soundLevelID = 0
+                input.volume = 100
+                inputList.append(input)
+            }
+          } else if (streamList.count == 4) {
+              let row: Int = 2
+              let column: Int = 2
+              let cellWidth = Int(Int(MixVideoSize.width) / column)
+              let cellHeight = Int(Int(MixVideoSize.width) / row)
+              var left: Int
+              var top: Int
+              for i in 0...(streamList.count - 1) {
                 left = cellWidth * (i % column)
                 top = cellHeight * (i < column ? 0 : 1)
                 let rect = CGRect(x: left, y: top, width: cellWidth, height: cellHeight)
@@ -219,7 +232,41 @@ class PKService: NSObject {
                 input.volume = 100
                 inputList.append(input)
             }
-        }
+          } else if (streamList.count == 5) {
+              var lastLeft: Int = 0
+              var height: Int = 432
+              for i in 0...(streamList.count - 1) {
+                  if (i == 2) {
+                      lastLeft = 0
+                  }
+                  let width: Int = i < 2 ? Int(MixVideoSize.width / 2) : Int(MixVideoSize.width / 3)
+                  let left = lastLeft + (width * (i < 2 ? i : (i - 2)))
+                  let top: Int = i > 1 ? height : 0
+                  let rect = CGRect(x: left, y: top, width: width, height: height)
+                  let input = ZegoMixerInput(streamID: streamList[i], contentType: .video, layout: rect)
+                  input.renderMode = .fill
+                  input.soundLevelID = 0
+                  input.volume = 100
+                  inputList.append(input)
+              }
+          } else if (streamList.count > 5) {
+              let row: Int = streamList.count % 3 == 0 ? (streamList.count / 3) : (streamList.count / 3) + 1;
+              let column: Int = 3
+              let cellWidth: Int = Int(MixVideoSize.width) / column
+              let cellHeight: Int = Int(MixVideoSize.height) / row
+              var left: Int
+              var top: Int
+              for i in 0...(streamList.count - 1) {
+                  left = cellWidth * (i % column)
+                  top = cellHeight * (i < column ? 0 : 1)
+                  let rect = CGRect(x: left, y: top, width: cellWidth, height: cellHeight)
+                  let input = ZegoMixerInput(streamID: streamList[i], contentType: .video, layout: rect)
+                  input.renderMode = .fill
+                  input.soundLevelID = 0
+                  input.volume = 100
+                  inputList.append(input)
+              }
+          }
         return inputList;
     }
     
@@ -401,17 +448,6 @@ class PKService: NSObject {
             }
         }
         return false
-    }
-    
-    func acceptPKResumeRequest(requestID: String) {
-        let requestData: [String: AnyObject] = [
-            "room_id": ZegoSDKManager.shared.expressService.currentRoomID as AnyObject,
-            "user_name": ZegoSDKManager.shared.currentUser?.name as AnyObject,
-            "type": PKProtocolType.resume.rawValue as AnyObject
-        ]
-        let config = ZIMCallAcceptConfig()
-        config.extendedData = requestData.jsonString
-        ZegoSDKManager.shared.zimService.acceptUserRequest(requestID: requestID, config: config, callback: nil)
     }
     
     public func rejectPKBattle(requestID: String) {

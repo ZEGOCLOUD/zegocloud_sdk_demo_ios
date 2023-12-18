@@ -111,6 +111,12 @@ class CallWaitingViewController: UIViewController {
         }
     }
     
+    var isGroupCall: Bool = false {
+        didSet {
+            self.headLabel.isHidden = isGroupCall
+        }
+    }
+    
     var showDeclineButton: Bool = true {
         didSet {
             if showDeclineButton == false {
@@ -145,10 +151,9 @@ class CallWaitingViewController: UIViewController {
     }
     
     @IBAction func handupButtonClick(_ sender: Any) {
-        guard let inviteeUserID = invitee?.id,
-              let callID = ZegoCallManager.shared.currentCallData?.callID
-        else { return }
-        ZegoCallManager.shared.cancelCallRequest(requestID: callID, userID: inviteeUserID, callback: nil)
+        guard let callID = ZegoCallManager.shared.currentCallData?.callID else { return }
+        ZegoCallManager.shared.endCall(callID, callback: nil)
+//        ZegoCallManager.shared.cancelCallRequest(requestID: callID, userID: inviteeUserID, callback: nil)
         ZegoSDKManager.shared.logoutRoom()
         self.dismiss(animated: true)
     }
@@ -158,7 +163,7 @@ class CallWaitingViewController: UIViewController {
         ZegoCallManager.shared.acceptCallRequest(requestID: callID) { requestID, error in
             if error.code == .success {
                 guard let remoteUser = ZegoCallManager.shared.currentCallData?.inviter else { return }
-                self.showCallPage(remoteUser)
+//                self.showCallPage(remoteUser)
             }
         }
     }
@@ -174,9 +179,29 @@ class CallWaitingViewController: UIViewController {
 
 extension CallWaitingViewController: ZegoCallManagerDelegate {
     
+    func onCallAccepted(userID: String, extendedData: String) {
+        
+    }
+    
+    func onCallRejected(userID: String, extendedData: String) {
+        
+    }
+    
+    func onCallUserQuit(userID: String, extendedData: String) {
+        
+    }
+    
+    func onCallTimeout(userID: String, extendedData: String) {
+        
+    }
+    
+    func onInComingCallTimeout(requestID: String) {
+        
+    }
+    
     func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String) {
-        guard let remoteUser = ZegoCallManager.shared.currentCallData?.invitee else { return }
-        showCallPage(remoteUser)
+//        guard let remoteUser = ZegoCallManager.shared.currentCallData?.invitee else { return }
+//        showCallPage(remoteUser)
     }
     
     func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String) {

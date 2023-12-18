@@ -10,17 +10,37 @@ import ZIM
 
 @objc public protocol ZegoCallManagerDelegate: AnyObject {
     
-    @objc optional func onInComingUserRequestTimeout(requestID: String)
-    @objc optional func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String)
-    @objc optional func onOutgoingUserRequestTimeout(requestID: String)
-    @objc optional func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String)
-    @objc optional func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String)
-    @objc optional func onInComingUserRequestReceived(requestID: String, inviter: String, extendedData: String)
+//    @objc optional func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String)
+//    @objc optional func onOutgoingUserRequestTimeout(requestID: String)
+    
+    @objc optional func onCallStart()
+    @objc optional func onCallEnd()
+    
+    @objc optional func onInComingUserRequestReceived(requestID: String, inviter: String, inviteeList: [String], extendedData: String)
+    @objc optional func onInComingCallTimeout(requestID: String)
+    @objc optional func onCallUserJoin(userID: String, extendedData: String)
+    @objc optional func onCallAccepted(userID: String, extendedData: String)
+    @objc optional func onCallRejected(userID: String, extendedData: String)
+    @objc optional func onCallTimeout(userID: String, extendedData: String)
+    @objc optional func onCallUserQuit(userID: String, extendedData: String)
+    
+//    @objc optional func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String)
+//    @objc optional func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String)
 }
+
+typealias CallRequestCallback = (_ code: UInt, _ requestID: String) -> ()
 
 class ZegoCallManager: NSObject {
     
     static let shared = ZegoCallManager()
+    
+    var localUser: ZegoSDKUser? {
+        get {
+            return ZegoSDKManager.shared.currentUser
+        }
+    }
+    
+    var isCallStart: Bool = false
     
     var currentCallData: ZegoCallDataModel?
     
@@ -34,107 +54,147 @@ class ZegoCallManager: NSObject {
     func addCallEventHandler(_ handler: ZegoCallManagerDelegate) {
         callEventHandlers.add(handler)
     }
-    
-    func createCallData(_ callID: String, inviter: ZegoSDKUser, invitee: ZegoSDKUser, type: CallType, callStatus: CallState) {
-        currentCallData = ZegoCallDataModel(callID: callID, inviter: inviter, invitee: invitee, type: type, callStatus: callStatus)
-    }
-    
-    func updateCallData(callStatus: CallState) {
-        currentCallData?.callStatus = callStatus
-    }
-    
-    func clearCallData() {
-        currentCallData = nil
-    }
 
     //MARK - invitation
-    func sendVideoCall(_ targetUserID: String, callback: ZIMCallInvitationSentCallback?) {
+    func sendVideoCall(_ targetUserID: String, callback: CallRequestCallback?) {
         guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         let callType: CallType = .video
-        let extendedData: [String : Any] = ["type": callType.rawValue, "user_name": localUser.name]
-        
-        let config = ZIMCallInviteConfig()
-        config.extendedData = extendedData.jsonString
-        config.timeout = 60
-        ZegoSDKManager.shared.zimService.sendUserRequest(userList: [targetUserID], config: config) { requestID, sentInfo, error in
-            if error.code == .success {
-                let invitee: ZegoSDKUser = ZegoSDKUser(id: targetUserID, name: targetUserID)
-                self.createCallData(requestID, inviter: localUser, invitee: invitee, type: callType, callStatus: .wating)
-            } else {
-                self.clearCallData()
+        if let currentCallData = currentCallData,
+           let callID = currentCallData.callID
+        {
+            addUserToRequest(userList: [targetUserID], requestID: callID) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
             }
-            guard let callback = callback else { return }
-            callback(requestID, sentInfo, error)
+        } else {
+            let extendedData = getCallExtendata(type: callType, userName: localUser.name)
+            sendUserRequest(userList: [targetUserID], extendedData: extendedData.toString() ?? "", type: callType) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
+            }
         }
     }
     
-    func sendVoiceCall(_ targetUserID: String, callback: ZIMCallInvitationSentCallback?) {
+    func sendVoiceCall(_ targetUserID: String, callback: CallRequestCallback?) {
         guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         let callType: CallType = .voice
-        let extendedData: [String : Any] = ["type": callType.rawValue, "user_name": localUser.name]
-        
-        let config = ZIMCallInviteConfig()
-        config.extendedData = extendedData.jsonString
-        config.timeout = 60
-        ZegoSDKManager.shared.zimService.sendUserRequest(userList: [targetUserID], config: config) { requestID, sentInfo, error in
-            if error.code == .success {
-                let invitee: ZegoSDKUser = ZegoSDKUser(id: targetUserID, name: targetUserID)
-                self.createCallData(requestID, inviter: localUser, invitee: invitee, type: callType, callStatus: .wating)
-            } else {
-                self.clearCallData()
+        if let currentCallData = currentCallData,
+           let callID = currentCallData.callID
+        {
+            addUserToRequest(userList: [targetUserID], requestID: callID) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
             }
-            guard let callback = callback else { return }
-            callback(requestID, sentInfo, error)
+        } else {
+            let extendedData = getCallExtendata(type: callType, userName: localUser.name)
+            sendUserRequest(userList: [targetUserID], extendedData: extendedData.toString() ?? "", type: callType) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
+            }
         }
     }
     
-    func cancelCallRequest(requestID: String, userID: String, callback: ZIMCallCancelSentCallback?) {
-        guard let currentCallData = currentCallData else { return }
-        let extendedData: [String : Any] = ["type": currentCallData.type.rawValue]
-        clearCallData()
-        let config = ZIMCallCancelConfig()
-        config.extendedData = extendedData.jsonString
-        ZegoSDKManager.shared.zimService.cancelUserRequest(requestID: requestID, config: config, userList: [userID]) { requestID, errorInvitees, error in
-            guard let callback = callback else { return }
-            callback(requestID, errorInvitees, error)
+    func sendGroupVideoCall(_ targetUserIDs: [String], callback: CallRequestCallback?) {
+        guard let localUser = ZegoSDKManager.shared.currentUser else { return }
+        let callType: CallType = .video
+        if let currentCallData = currentCallData,
+           let callID = currentCallData.callID
+        {
+            addUserToRequest(userList: targetUserIDs, requestID: callID) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
+            }
+        } else {
+            let extendedData = getCallExtendata(type: callType, userName: localUser.name)
+            sendUserRequest(userList: targetUserIDs, extendedData: extendedData.toString() ?? "", type: callType) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
+            }
         }
-
+    }
+    
+    func sendGroupVoiceCall(_ targetUserIDs: [String], callback: CallRequestCallback?) {
+        guard let localUser = ZegoSDKManager.shared.currentUser else { return }
+        let callType: CallType = .voice
+        if let currentCallData = currentCallData,
+           let callID = currentCallData.callID
+        {
+            addUserToRequest(userList: targetUserIDs, requestID: callID) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
+            }
+        } else {
+            let extendedData = getCallExtendata(type: callType, userName: localUser.name)
+            sendUserRequest(userList: targetUserIDs, extendedData: extendedData.toString() ?? "", type: callType) { requestID, sentInfo, error in
+                guard let callback = callback else { return }
+                callback(error.code.rawValue, requestID)
+            }
+        }
+    }
+    
+//    func cancelCallRequest(requestID: String, userID: String, callback: ZIMCallCancelSentCallback?) {
+//        guard let currentCallData = currentCallData else { return }
+//        let extendedData: ZegoCallExtendedData = getCallExtendata(type: currentCallData.type)
+//        clearCallData()
+//        
+//        let config = ZIMCallCancelConfig()
+//        config.extendedData = extendedData.jsonString
+//        ZegoSDKManager.shared.zimService.cancelUserRequest(requestID: requestID, config: config, userList: [userID]) { requestID, errorInvitees, error in
+//            guard let callback = callback else { return }
+//            callback(requestID, errorInvitees, error)
+//        }
+//
+//    }
+    
+    func quitCall(_ requestID: String, callback: ZIMCallQuitSentCallback?) {
+        guard let currentCallData = currentCallData,
+              let localUser = ZegoSDKManager.shared.currentUser
+        else { return }
+        let extendedData = getCallExtendata(type: currentCallData.type, userName: localUser.name)
+        quitUserRequest(requestID: requestID, extendedData: extendedData.toString() ?? "", callback: callback)
+        leaveRoom()
+        clearCallData()
+    }
+    
+    func endCall(_ requestID: String, callback: ZIMCallEndSentCallback?) {
+        guard let currentCallData = currentCallData,
+              let localUser = ZegoSDKManager.shared.currentUser
+        else { return }
+        let extendedData = getCallExtendata(type: currentCallData.type, userName: localUser.name)
+        endUserRequest(requestID: requestID, extendedData: extendedData.toString() ?? "", callback: callback)
+        clearCallData()
     }
     
     func rejectCallRequest(requestID: String, callback: ZIMCallRejectionSentCallback?) {
         if let currentCallData = currentCallData,
            requestID == currentCallData.callID
         {
-            let extendedData: [String : Any] = ["type": currentCallData.type.rawValue]
-            clearCallData()
-            let config = ZIMCallRejectConfig()
-            config.extendedData = extendedData.jsonString
-            ZegoSDKManager.shared.zimService.refuseUserRequest(requestID: requestID, config: config) { requestID, error in
+            let extendedData = getCallExtendata(type: currentCallData.type)
+            refuseUserRequest(requestID: requestID, extendedData: extendedData.toString() ?? "") { requestID, error in
                 guard let callback = callback else { return }
                 callback(requestID,error)
             }
-        }
-    }
-    
-    func acceptCallRequest(requestID: String, callback: ZIMCallAcceptanceSentCallback?) {
-        guard let currentCallData = currentCallData else { return }
-        updateCallData(callStatus: .accept)
-        let extendedData: [String : Any] = ["type": currentCallData.type.rawValue]
-        let config = ZIMCallAcceptConfig()
-        config.extendedData = extendedData.jsonString
-        ZegoSDKManager.shared.zimService.acceptUserRequest(requestID: requestID, config: config) { requestID, error in
-            guard let callback = callback else { return }
-            callback(requestID,error)
+            clearCallData()
         }
     }
     
     func busyRejectCallRequest(requestID: String,  extendedData: String, type: CallType, callback: ZIMCallRejectionSentCallback?) {
-        let config = ZIMCallRejectConfig()
-        config.extendedData = extendedData
-        ZegoSDKManager.shared.zimService.refuseUserRequest(requestID: requestID, config: config) { requestID, error in
-            guard let callback = callback else { return }
-            callback(requestID,error)
-        }
+        refuseUserRequest(requestID: requestID, extendedData: extendedData, callback: callback)
+    }
+    
+    func acceptCallRequest(requestID: String, callback: ZIMCallAcceptanceSentCallback?) {
+        guard let currentCallData = currentCallData else { return }
+        let extendedData = getCallExtendata(type: currentCallData.type)
+        acceptUserRequest(requestID: requestID, extendedData: extendedData.toString() ?? "", callback: callback)
+//
+//        updateCallData(callStatus: .accept)
+//        let extendedData: [String : Any] = ["type": currentCallData.type.rawValue]
+//        let config = ZIMCallAcceptConfig()
+//        config.extendedData = extendedData.jsonString
+//        ZegoSDKManager.shared.zimService.acceptUserRequest(requestID: requestID, config: config) { requestID, error in
+//            guard let callback = callback else { return }
+//            callback(requestID,error)
+//        }
     }
     
     func leaveRoom() {
@@ -153,83 +213,133 @@ class ZegoCallManager: NSObject {
     }
 }
 
-extension ZegoCallManager: ZIMServiceDelegate {
-    func onInComingUserRequestReceived(requestID: String, inviter: String, extendedData: String) {
-        let extendedDict: [String : Any] = extendedData.toDict ?? [:]
-        let callType: CallType? = CallType(rawValue: extendedDict["type"] as? Int ?? -1)
-        guard let callType = callType,
-              let localUser = ZegoSDKManager.shared.currentUser
-        else { return }
-        if !isCallBusiness(type: callType.rawValue) { return }
-        let inRoom: Bool = (ZegoSDKManager.shared.expressService.currentRoomID != nil)
-        if inRoom || (currentCallData != nil && currentCallData?.callID != requestID) {
-            for delegate in callEventHandlers.allObjects {
-                delegate.onInComingUserRequestReceived?(requestID: requestID, inviter: inviter, extendedData: extendedData)
+extension ZegoCallManager {
+    
+//    func createCallData(_ callID: String, inviter: ZegoSDKUser, invitees: [ZegoSDKUser], type: CallType) {
+//        let inviterUser = CallUserInfo(userInfo: inviter, callStatus: .wating)
+//        var inviteeList: [CallUserInfo] = invitees.map { user in
+//            return CallUserInfo(userInfo: user, callStatus: .wating)
+//        }
+//        currentCallData = ZegoCallDataModel(callID: callID, inviter: inviterUser, invitees: inviteeList, type: type, isGroupCall: inviteeList.count > 1)
+//    }
+    
+//    private func updateCallData(callStatus: CallState, userID: String) {
+//        guard let currentCallData = currentCallData else { return }
+//        currentCallData.invitees.forEach { user in
+//            if user.userInfo?.id == userID {
+//                user.callStatus = callStatus
+//            }
+//        }
+//    }
+    
+    func getCallUser(callData: ZegoCallDataModel, userID: String) -> CallUserInfo? {
+        for callUser in callData.callUserList {
+            if callUser.userInfo?.id == userID {
+                return callUser
             }
-            return
         }
-        let userName: String = extendedDict["user_name"] as? String ?? ""
-        let inviterUser = ZegoSDKUser(id: inviter, name: userName)
-        createCallData(requestID, inviter: inviterUser, invitee: localUser, type: callType, callStatus: .wating)
-        
+        return nil
+    }
+    
+    func checkIfPKEnd(requestID: String, currentUser: ZegoSDKUser) {
+        guard let currentCallData = currentCallData else { return }
+        let selfCallUser = getCallUser(callData: currentCallData, userID: currentUser.id)
+        if let selfCallUser = selfCallUser {
+            if selfCallUser.hasAccepted {
+                var hasWaitingUser: Bool = false;
+                for callUser in currentCallData.callUserList {
+                    if callUser.userInfo?.id != localUser?.id {
+                        // except self
+                        if callUser.hasAccepted || callUser.isWaiting {
+                            hasWaitingUser = true
+                        }
+                    }
+                }
+                if (!hasWaitingUser) {
+                    quitCall(requestID, callback: nil)
+                    stopCall()
+                }
+            }
+        }
+    }
+    
+    func stopCall() {
+        clearCallData()
         for delegate in callEventHandlers.allObjects {
-            delegate.onInComingUserRequestReceived?(requestID: requestID, inviter: inviter, extendedData: extendedData)
+            delegate.onCallEnd?()
         }
     }
     
-    func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String) {
-        if let currentCallData = currentCallData,
-           currentCallData.callID == requestID
-        {
-            for delegate in callEventHandlers.allObjects {
-                delegate.onInComingUserRequestCancelled?(requestID: requestID, inviter: inviter, extendedData: extendedData)
+    private func clearCallData() {
+        currentCallData = nil
+    }
+    
+    private func getCallExtendata(type: CallType, userName: String? = nil) -> ZegoCallExtendedData {
+        let extendedData = ZegoCallExtendedData(type: type, userName: userName)
+        return extendedData
+    }
+    
+    private func addUserToRequest(userList: [String], requestID: String, callback: ZIMCallingInvitationSentCallback?) {
+        let config: ZIMCallingInviteConfig = ZIMCallingInviteConfig()
+        ZegoSDKManager.shared.zimService.addUserToRequest(invitees: userList, requestID: requestID, config: config, callback: callback)
+    }
+    
+    private func sendUserRequest(userList: [String], extendedData: String, type: CallType, callback: ZIMCallInvitationSentCallback?) {
+        guard let localUser = ZegoSDKManager.shared.currentUser else { return }
+        currentCallData = ZegoCallDataModel()
+        let config = ZIMCallInviteConfig()
+        config.mode = .advanced
+        config.extendedData = extendedData
+        config.timeout = 60
+        ZegoSDKManager.shared.zimService.sendUserRequest(userList: userList, config: config) { requestID, sentInfo, error in
+            if error.code == .success {
+                let errorUser: [String] = sentInfo.errorUserList.map { userInfo in
+                    userInfo.userID
+                }
+                let sucessUsers = userList.filter { userID in
+                    return !errorUser.contains(userID)
+                }
+                if !sucessUsers.isEmpty {
+//                    let inviteeList: [ZegoSDKUser] = sucessUsers.map { userID in
+//                        ZegoSDKUser(id: userID, name: "")
+//                    }
+                    self.currentCallData?.callID = requestID
+                    self.currentCallData?.inviter = CallUserInfo(userInfo: localUser)
+                    self.currentCallData?.type = type
+                    self.currentCallData?.callUserList = []
+                } else {
+                    self.clearCallData()
+                }
+            } else {
+                self.clearCallData()
             }
-            clearCallData()
+            guard let callback = callback else { return }
+            callback(requestID, sentInfo, error)
         }
     }
     
-    func onInComingUserRequestTimeout(requestID: String) {
-        if let currentCallData = currentCallData,
-           currentCallData.callID == requestID
-        {
-            for delegate in callEventHandlers.allObjects {
-                delegate.onInComingUserRequestTimeout?(requestID: requestID)
-            }
-            clearCallData()
-        }
+    private func endUserRequest(requestID: String, extendedData: String, callback: ZIMCallEndSentCallback?) {
+        let config = ZIMCallEndConfig()
+        config.extendedData = extendedData
+        ZegoSDKManager.shared.zimService.endUserRequest(requestID: requestID, config: config, callback: callback)
     }
     
-    func onOutgoingUserRequestTimeout(requestID: String) {
-        if let currentCallData = currentCallData,
-           currentCallData.callID == requestID
-        {
-            for delegate in callEventHandlers.allObjects {
-                delegate.onOutgoingUserRequestTimeout?(requestID: requestID)
-            }
-            clearCallData()
-        }
+    private func quitUserRequest(requestID: String, extendedData: String, callback: ZIMCallQuitSentCallback?) {
+        let config = ZIMCallQuitConfig()
+        config.extendedData = extendedData
+        ZegoSDKManager.shared.zimService.quitUserRequest(requestID: requestID, config: config, callback: callback)
     }
     
-    func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String) {
-        if let currentCallData = currentCallData,
-           currentCallData.callID == requestID
-        {
-            updateCallData(callStatus: .accept)
-            for delegate in callEventHandlers.allObjects {
-                delegate.onOutgoingUserRequestAccepted?(requestID: requestID, invitee: invitee, extendedData: extendedData)
-            }
-        }
+    private func acceptUserRequest(requestID: String, extendedData: String, callback: ZIMCallAcceptanceSentCallback?) {
+        let config = ZIMCallAcceptConfig()
+        config.extendedData = extendedData
+        ZegoSDKManager.shared.zimService.acceptUserRequest(requestID: requestID, config: config, callback: callback)
     }
     
-    func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String) {
-        if let currentCallData = currentCallData,
-           currentCallData.callID == requestID
-        {
-            updateCallData(callStatus: .reject)
-            clearCallData()
-            for delegate in callEventHandlers.allObjects {
-                delegate.onOutgoingUserRequestRejected?(requestID: requestID, invitee: invitee, extendedData: extendedData)
-            }
-        }
+    private func refuseUserRequest(requestID: String, extendedData: String, callback: ZIMCallRejectionSentCallback?) {
+        let config = ZIMCallRejectConfig()
+        config.extendedData = extendedData
+        ZegoSDKManager.shared.zimService.refuseUserRequest(requestID: requestID, config: config, callback: callback)
     }
+    
 }

@@ -15,7 +15,7 @@ class CallService: NSObject, ZegoCallManagerDelegate {
         ZegoCallManager.shared.addCallEventHandler(self)
     }
     
-    func onInComingUserRequestReceived(requestID: String, inviter: String, extendedData: String) {
+    func onInComingUserRequestReceived(requestID: String, inviter: String, inviteeList: [String], extendedData: String) {
         let extendedDict: [String : Any] = extendedData.toDict ?? [:]
         let callType: CallType? = CallType(rawValue: extendedDict["type"] as? Int ?? -1)
         guard let callType = callType else { return }
@@ -26,8 +26,7 @@ class CallService: NSObject, ZegoCallManagerDelegate {
             ZegoCallManager.shared.busyRejectCallRequest(requestID: requestID, extendedData: extendedData.jsonString, type: callType, callback: nil)
             return
         }
-        guard let inviter = ZegoCallManager.shared.currentCallData?.inviter else { return }
+        guard let inviter = ZegoCallManager.shared.currentCallData?.inviter?.userInfo else { return }
         let _ = ZegoIncomingCallDialog.show(inviter, callID: requestID, type: callType)
     }
-
 }

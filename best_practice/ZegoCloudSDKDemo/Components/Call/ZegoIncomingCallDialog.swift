@@ -112,7 +112,7 @@ class ZegoIncomingCallDialog: UIView {
             if error.code == .success {
                 self.delegate?.onAcceptButtonClick?(inviter)
                 ZegoIncomingCallDialog.hide()
-                self.showCallMainPage(inviter)
+//                self.showCallMainPage(inviter)
             } else {
                 self.makeToast("accept call failed:\(error.code.rawValue)", duration: 2.0, position: .center)
             }
@@ -128,7 +128,6 @@ class ZegoIncomingCallDialog: UIView {
     func showCallMainPage(_ remoteUser: ZegoSDKUser) {
         let callMainPage: CallingViewController = Bundle.main.loadNibNamed("CallingViewController", owner: self, options: nil)?.first as! CallingViewController
         callMainPage.modalPresentationStyle = .fullScreen
-        callMainPage.remoteUser = remoteUser
         currentViewController()?.present(callMainPage, animated: true)
     }
     

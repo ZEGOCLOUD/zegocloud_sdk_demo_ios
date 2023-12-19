@@ -153,7 +153,6 @@ class CallWaitingViewController: UIViewController {
     @IBAction func handupButtonClick(_ sender: Any) {
         guard let callID = ZegoCallManager.shared.currentCallData?.callID else { return }
         ZegoCallManager.shared.endCall(callID, callback: nil)
-//        ZegoCallManager.shared.cancelCallRequest(requestID: callID, userID: inviteeUserID, callback: nil)
         ZegoSDKManager.shared.logoutRoom()
         self.dismiss(animated: true)
     }
@@ -162,10 +161,10 @@ class CallWaitingViewController: UIViewController {
         guard let callID = ZegoCallManager.shared.currentCallData?.callID else { return }
         ZegoCallManager.shared.acceptCallRequest(requestID: callID) { requestID, error in
             if error.code == .success {
-                guard let remoteUser = ZegoCallManager.shared.currentCallData?.inviter else { return }
-//                self.showCallPage(remoteUser)
+                print("acceptCallRequest error:\(error.code)")
             }
         }
+        self.dismiss(animated: true)
     }
     
     func showCallPage(_ remoteUser: ZegoSDKUser) {

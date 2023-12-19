@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ZegoExpressEngine
 
 class GroupCallViewController: UIViewController {
     
@@ -25,19 +26,43 @@ class GroupCallViewController: UIViewController {
         setupUserViewFrame()
     }
     
+    func updateCallUserList(_ userList: [CallUserInfo]) {
+        callUserList = userList
+        updateUserList()
+    }
+    
     func updateUserList() {
-        var newUserView: [GroupCallUserView] = []
+        var needAddView: [GroupCallUserView] = []
+        var needRemoveView: [GroupCallUserView] = []
         for user in callUserList {
             if let cacheView = getCacheView(userID: user.userInfo?.id ?? "") {
-                newUserView.append(cacheView)
+                cacheView.callUserInfo = user
+                needAddView.append(cacheView)
             } else {
                 let view = GroupCallUserView()
                 view.callUserInfo = user
-                newUserView.append(view)
-                containerView.addSubview(view)
+                needAddView.append(view)
             }
         }
-        userViews = newUserView
+        needAddView.forEach { view in
+            self.containerView.addSubview(view)
+        }
+        userViews.forEach { view in
+            var isNeedDelected: Bool = true
+            for addView in needAddView {
+                if addView.callUserInfo?.userInfo?.id == view.callUserInfo?.userInfo?.id {
+                    isNeedDelected = false
+                    break
+                }
+            }
+            if isNeedDelected {
+                needRemoveView.append(view)
+            }
+        }
+        needRemoveView.forEach { view in
+            view.removeFromSuperview()
+        }
+        userViews = needAddView
         setupUserViewFrame()
     }
     
@@ -117,13 +142,35 @@ class GroupCallUserView: UIView {
         return view
     }()
     
+    lazy var waitingView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black
+        view.isHidden = true
+        view.addSubview(self.waitingLabel)
+        return view
+    }()
+    
+    lazy var waitingLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.white
+        label.text = "waiting..."
+        label.textAlignment = .center
+        return label
+    }()
+    
     var callUserInfo: CallUserInfo? {
         didSet {
+            waitingView.isHidden = !(callUserInfo?.isWaiting ?? false)
+            waitingLabel.isHidden = !(callUserInfo?.isWaiting ?? false)
             videoView.userID = callUserInfo?.userInfo?.id
+            videoView.setNameLabel(callUserInfo?.userInfo?.name)
             if callUserInfo?.userInfo?.id == ZegoSDKManager.shared.currentUser?.id {
                 ZegoSDKManager.shared.expressService.startPreview(videoView.renderView)
             } else {
                 ZegoSDKManager.shared.expressService.startPlayingStream(videoView.renderView, streamID: callUserInfo?.streamID ?? "")
+            }
+            if ZegoCallManager.shared.currentCallData?.type == .voice {
+                videoView.enableCamera(false)
             }
         }
     }
@@ -131,6 +178,8 @@ class GroupCallUserView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.addSubview(videoView)
+        self.addSubview(waitingView)
+        ZegoSDKManager.shared.expressService.addEventHandler(self)
     }
     
     required init?(coder: NSCoder) {
@@ -139,5 +188,16 @@ class GroupCallUserView: UIView {
     
     override func layoutSubviews() {
         videoView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+        waitingView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+        waitingLabel.frame = CGRect(x: 0, y: (bounds.height / 2) - 10, width: bounds.width, height: 20)
+    }
+}
+
+extension GroupCallUserView: ExpressServiceDelegate {
+    
+    func onCameraOpen(_ userID: String, isCameraOpen: Bool) {
+        if userID == callUserInfo?.userInfo?.id {
+            videoView.enableCamera(isCameraOpen)
+        }
     }
 }

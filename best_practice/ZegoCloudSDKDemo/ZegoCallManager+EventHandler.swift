@@ -48,14 +48,10 @@ extension ZegoCallManager: ZIMServiceDelegate {
                 }
             }
             
-            if localUser?.id == callUser.userInfo?.id {
-                callData.callUserList.insert(callUser, at: 0)
-            } else {
-                if callUser.userInfo?.id == info.caller {
-                    callUser.userInfo?.name = callExtendedData?.userName ?? ""
-                }
-                callData.callUserList.append(callUser)
+            if callUser.userInfo?.id == info.caller {
+                callUser.userInfo?.name = callExtendedData?.userName ?? ""
             }
+            callData.callUserList.append(callUser)
         }
         currentCallData = callData
         
@@ -71,9 +67,13 @@ extension ZegoCallManager: ZIMServiceDelegate {
         {
             for userInfo in info.callUserList {
                 var findIfAlreadyAdded: Bool = false
+                var hasUserStateUpdate: Bool = false
                 for callUser in currentCallData.callUserList {
                     if callUser.userInfo?.id == userInfo.userID {
-                        callUser.callUserState = userInfo.state
+                        if callUser.callUserState != userInfo.state {
+                            callUser.callUserState = userInfo.state
+                            hasUserStateUpdate = true
+                        }
                         if !userInfo.extendedData.isEmpty {
                             let userData: ZegoCallExtendedData? = ZegoCallExtendedData.parse(extendedData: userInfo.extendedData)
                             if let userData = userData,
@@ -87,22 +87,29 @@ extension ZegoCallManager: ZIMServiceDelegate {
                     }
                 }
                 if !findIfAlreadyAdded {
+                    hasUserStateUpdate = true
                     let callUser = CallUserInfo()
                     callUser.callUserState = userInfo.state
+                    let userData: ZegoCallExtendedData? = ZegoCallExtendedData.parse(extendedData: userInfo.extendedData)
                     callUser.extendedData = userInfo.extendedData
                     if userInfo.userID == localUser?.id {
                         callUser.userInfo = localUser
-                        currentCallData.callUserList.insert(callUser, at: 0)
                     } else {
-                        callUser.userInfo = ZegoSDKUser(id: userInfo.userID, name: "")
-                        currentCallData.callUserList.append(callUser)
+                        callUser.userInfo = ZegoSDKUser(id: userInfo.userID, name: userData?.userName ?? "")
+                    }
+                    currentCallData.callUserList.append(callUser)
+                }
+                
+                if hasUserStateUpdate {
+                    for delegate in callEventHandlers.allObjects {
+                        delegate.onCallUserUpdate?(userID: userInfo.userID, extendedData: userInfo.extendedData)
                     }
                 }
             }
             
             for userInfo in info.callUserList {
                 if userInfo.state == .accepted {
-                    if let callUser = getCallUser(callData: currentCallData, userID: userInfo.userID) {
+                    if let _ = getCallUser(callData: currentCallData, userID: userInfo.userID) {
                         for delegate in callEventHandlers.allObjects {
                             delegate.onCallAccepted?(userID: userInfo.userID, extendedData: userInfo.extendedData)
                         }
@@ -145,7 +152,7 @@ extension ZegoCallManager: ZIMServiceDelegate {
             for delegate in callEventHandlers.allObjects {
                 delegate.onInComingCallTimeout?(requestID: requestID)
             }
-//            clearCallData()
+            clearCallData()
         }
     }
     
@@ -168,11 +175,9 @@ extension ZegoCallManager: ZIMServiceDelegate {
                     }
                 }
                 if moreThanOneAcceptedExceptMe {
-//                    if isPKStarted {
                     for delegate in callEventHandlers.allObjects {
                         delegate.onCallUserQuit?(userID: userInfo.userID, extendedData: userInfo.extendedData)
                     }
-//                    }
                 }
                 if (!hasWaitingUser) {
                     quitCall(requestID, callback: nil)
@@ -212,18 +217,6 @@ extension ZegoCallManager: ZIMServiceDelegate {
             for delegate in self.callEventHandlers.allObjects {
                 delegate.onCallUserJoin?(userID: userInfo.userID, extendedData: userInfo.extendedData)
             }
-            
-//            if (meHasAccepted && moreThanOneAcceptedExceptMe) {
-//                for callUser in currentCallData.callUserList {
-//                    if callUser.hasAccepted {
-//                        for delegate in self.callEventHandlers.allObjects {
-//                            delegate.onCallUserJoin?(userID: userInfo.userID, extendedData: userInfo.extendedData)
-//                        }
-//                    }
-//                }
-//            } else {
-//                
-//            }
         }
     }
     

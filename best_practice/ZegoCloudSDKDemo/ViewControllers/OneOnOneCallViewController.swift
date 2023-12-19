@@ -28,12 +28,15 @@ class OneOnOneCallViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        ZegoSDKManager.shared.expressService.addEventHandler(self)
         for user in callUserList {
             if user.userInfo?.id == ZegoSDKManager.shared.currentUser?.id {
                 smallVideoView.userID = user.userInfo?.id
+                smallVideoView.setNameLabel(user.userInfo?.name)
                 ZegoSDKManager.shared.expressService.startPreview(smallVideoView.renderView)
             } else {
                 largeVideoView.userID = user.userInfo?.id
+                largeVideoView.setNameLabel(user.userInfo?.name)
                 ZegoSDKManager.shared.expressService.startPlayingStream(largeVideoView.renderView, streamID: user.streamID)
             }
         }
@@ -46,9 +49,12 @@ class OneOnOneCallViewController: UIViewController {
 }
 
 extension OneOnOneCallViewController: ExpressServiceDelegate {
-    func onRemoteCameraStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
-        if state != .open && ZegoCallManager.shared.currentCallData?.type == .video {
-            self.view.makeToast("remote user camera close", duration: 2.0, position: .center)
+    
+    func onCameraOpen(_ userID: String, isCameraOpen: Bool) {
+        if userID == smallVideoView.userID {
+            smallVideoView.enableCamera(isCameraOpen)
+        } else if userID == largeVideoView.userID {
+            largeVideoView.enableCamera(isCameraOpen)
         }
     }
     

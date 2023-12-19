@@ -94,37 +94,40 @@ class CallingViewController: UIViewController {
     }
     
     func setupCallSubView() {
-        guard let callUserList = ZegoCallManager.shared.currentCallData?.callUserList else { return }
+        guard let callUserList = ZegoCallManager.shared.currentCallData?.callUserList,
+              let _ = ZegoSDKManager.shared.expressService.currentRoomID
+        else { return }
         var enableShowUsers: [CallUserInfo] = []
         for user in callUserList {
             if user.isWaiting || user.hasAccepted {
                 enableShowUsers.append(user)
             }
         }
-        if enableShowUsers.count > 2 {
+        let seatUserList = seatingArrangement(enableShowUsers)
+        if seatUserList.count > 2 {
             if let callDisplayVC = callDisplayVC,
                callDisplayVC is GroupCallViewController
             {
-                (callDisplayVC as! GroupCallViewController).callUserList = enableShowUsers
+                (callDisplayVC as! GroupCallViewController).updateCallUserList(seatUserList)
             } else {
                 callSubviewContainer.subviews.forEach { subview in
                     subview.removeFromSuperview()
                 }
                 let viewController: GroupCallViewController = GroupCallViewController(nibName: "GroupCallViewController", bundle: nil)
-                viewController.callUserList = enableShowUsers
+                viewController.callUserList = seatUserList
                 callDisplayVC = viewController
             }
         } else {
             if let callDisplayVC = callDisplayVC,
                callDisplayVC is OneOnOneCallViewController
             {
-                (callDisplayVC as! OneOnOneCallViewController).callUserList = enableShowUsers
+                (callDisplayVC as! OneOnOneCallViewController).callUserList = seatUserList
             } else {
                 callSubviewContainer.subviews.forEach { subview in
                     subview.removeFromSuperview()
                 }
                 let viewController: OneOnOneCallViewController = OneOnOneCallViewController(nibName: "OneOnOneCallViewController", bundle: nil)
-                viewController.callUserList = enableShowUsers
+                viewController.callUserList = seatUserList
                 callDisplayVC = viewController
             }
         }
@@ -138,6 +141,29 @@ class CallingViewController: UIViewController {
             callDisplayVC.view.leadingAnchor.constraint(equalTo: callSubviewContainer.leadingAnchor),
             callDisplayVC.view.trailingAnchor.constraint(equalTo: callSubviewContainer.trailingAnchor)
         ])
+    }
+    
+    func seatingArrangement(_ enableShowUserList: [CallUserInfo]) -> [CallUserInfo] {
+        var userList: [CallUserInfo] = []
+        var waitingUser: [CallUserInfo] = []
+        var localUserInfo: CallUserInfo?
+        for callUserInfo in enableShowUserList {
+            if callUserInfo.userInfo?.id == ZegoSDKManager.shared.currentUser?.id {
+                localUserInfo = callUserInfo
+            } else {
+                if callUserInfo.isWaiting {
+                    waitingUser.append(callUserInfo)
+                }
+                if callUserInfo.hasAccepted {
+                    userList.append(callUserInfo)
+                }
+            }
+        }
+        if let localUserInfo = localUserInfo {
+            userList.insert(localUserInfo, at: 0)
+        }
+        userList.append(contentsOf: waitingUser)
+        return userList
     }
     
     func setDeviceStatus() {
@@ -193,7 +219,6 @@ class CallingViewController: UIViewController {
     @objc func buttonClick(_ sender: UIButton) {
         switch sender.tag {
         case 100:
-//            ZegoCallManager.shared.clearCallData()
             ZegoCallManager.shared.quitCall(ZegoCallManager.shared.currentCallData?.callID ?? "", callback: nil)
             ZegoCallManager.shared.leaveRoom()
             self.dismiss(animated: true)
@@ -214,17 +239,50 @@ class CallingViewController: UIViewController {
         }
     }
     
-    
     func showLocalPreview() {
         if type == .video {
            // ZegoSDKManager.shared.expressService.startPreview(smallVideoView)
         }
         ZegoSDKManager.shared.expressService.startPublishingStream(ZegoCallManager.shared.getMainStreamID())
     }
+    
+    @IBAction func addMemberClick(_ sender: Any) {
+        let addAlterView: UIAlertController = UIAlertController(title: "add member", message: nil, preferredStyle: .alert)
+        addAlterView.addTextField { textField in
+            textField.placeholder = "userID"
+        }
+        
+        let sureAction: UIAlertAction = UIAlertAction(title: "sure", style: .default) { [weak self] action in
+            var addMemberList: [String] = []
+            if let textField = addAlterView.textFields?[0] {
+                if let userID = textField.text,
+                   !userID.isEmpty
+                {
+                    addMemberList.append(userID)
+                }
+            }
+            ZegoCallManager.shared.addMemberCall(addMemberList, callback: nil)
+        }
+        
+        let cancelAction: UIAlertAction = UIAlertAction(title: "cancel ", style: .cancel) { action in
+            
+        }
+        addAlterView.addAction(sureAction)
+        addAlterView.addAction(cancelAction)
+        self.present(addAlterView, animated: true)
+    }
 
 }
 
 extension CallingViewController: ExpressServiceDelegate, ZIMServiceDelegate, ZegoCallManagerDelegate {
+    
+    func onCallTimeout(userID: String, extendedData: String) {
+        setupCallSubView()
+    }
+    
+    func onCallUserUpdate(userID: String, extendedData: String) {
+        setupCallSubView()
+    }
     
     func onCallUserJoin(userID: String, extendedData: String) {
         setupCallSubView()
@@ -239,17 +297,17 @@ extension CallingViewController: ExpressServiceDelegate, ZIMServiceDelegate, Zeg
         self.dismiss(animated: true)
     }
     
-    func onRemoteCameraStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
-        if state != .open && type == .video {
-            self.view.makeToast("remote user camera close", duration: 2.0, position: .center)
-        }
-    }
-    
-    func onRemoteMicStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
-        if state != .open {
-            self.view.makeToast("remote user microphone close", duration: 2.0, position: .center)
-        }
-    }
+//    func onRemoteCameraStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
+//        if state != .open && type == .video {
+//            self.view.makeToast("remote user camera close", duration: 2.0, position: .center)
+//        }
+//    }
+//    
+//    func onRemoteMicStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
+//        if state != .open {
+//            self.view.makeToast("remote user microphone close", duration: 2.0, position: .center)
+//        }
+//    }
     
 //    func onRoomUserUpdate(_ updateType: ZegoUpdateType, userList: [ZegoUser], roomID: String) {
 //        if updateType == .delete {

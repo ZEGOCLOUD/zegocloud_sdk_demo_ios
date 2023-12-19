@@ -191,6 +191,11 @@ extension HomeViewController: CallWaitingViewControllerDelegate,
         startShowCallPage(inviter)
     }
     
+    func onInComingCallTimeout(requestID: String) {
+        callWaitingVC?.dismiss(animated: true)
+        ZegoIncomingCallDialog.hide()
+    }
+    
     func startShowCallPage(_ remoteUser: ZegoSDKUser) {
         showCallPage(remoteUser)
     }

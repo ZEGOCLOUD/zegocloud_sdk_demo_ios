@@ -10,22 +10,18 @@ import ZIM
 
 @objc public protocol ZegoCallManagerDelegate: AnyObject {
     
-//    @objc optional func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String)
-//    @objc optional func onOutgoingUserRequestTimeout(requestID: String)
-    
     @objc optional func onCallStart()
     @objc optional func onCallEnd()
     
     @objc optional func onInComingUserRequestReceived(requestID: String, inviter: String, inviteeList: [String], extendedData: String)
     @objc optional func onInComingCallTimeout(requestID: String)
+    @objc optional func onCallUserUpdate(userID: String, extendedData: String)
     @objc optional func onCallUserJoin(userID: String, extendedData: String)
     @objc optional func onCallAccepted(userID: String, extendedData: String)
     @objc optional func onCallRejected(userID: String, extendedData: String)
     @objc optional func onCallTimeout(userID: String, extendedData: String)
     @objc optional func onCallUserQuit(userID: String, extendedData: String)
     
-//    @objc optional func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String)
-//    @objc optional func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String)
 }
 
 typealias CallRequestCallback = (_ code: UInt, _ requestID: String) -> ()
@@ -56,6 +52,16 @@ class ZegoCallManager: NSObject {
     }
 
     //MARK - invitation
+    func addMemberCall(_ targetUserID: [String], callback: CallRequestCallback?) {
+        guard let currentCallData = currentCallData,
+              let callID = currentCallData.callID
+        else { return }
+        addUserToRequest(userList: targetUserID, requestID: callID) { requestID, sentInfo, error in
+            guard let callback = callback else { return }
+            callback(error.code.rawValue, requestID)
+        }
+    }
+    
     func sendVideoCall(_ targetUserID: String, callback: CallRequestCallback?) {
         guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         let callType: CallType = .video
@@ -184,7 +190,7 @@ class ZegoCallManager: NSObject {
     
     func acceptCallRequest(requestID: String, callback: ZIMCallAcceptanceSentCallback?) {
         guard let currentCallData = currentCallData else { return }
-        let extendedData = getCallExtendata(type: currentCallData.type)
+        let extendedData = getCallExtendata(type: currentCallData.type, userName: localUser?.name)
         acceptUserRequest(requestID: requestID, extendedData: extendedData.toString() ?? "", callback: callback)
 //
 //        updateCallData(callStatus: .accept)
@@ -270,7 +276,8 @@ extension ZegoCallManager {
         }
     }
     
-    private func clearCallData() {
+    func clearCallData() {
+        isCallStart = false
         currentCallData = nil
     }
     
@@ -290,7 +297,7 @@ extension ZegoCallManager {
         let config = ZIMCallInviteConfig()
         config.mode = .advanced
         config.extendedData = extendedData
-        config.timeout = 60
+        config.timeout = 10
         ZegoSDKManager.shared.zimService.sendUserRequest(userList: userList, config: config) { requestID, sentInfo, error in
             if error.code == .success {
                 let errorUser: [String] = sentInfo.errorUserList.map { userInfo in

@@ -18,7 +18,7 @@ class HomeViewController: UIViewController {
     var userID: String = ""
     var userName: String = ""
     
-    var invitee: ZegoSDKUser?
+    var invitee: CallUserInfo?
     
     weak var callWaitingVC: CallWaitingViewController?
 
@@ -68,17 +68,13 @@ class HomeViewController: UIViewController {
         if getInviteeUsers().count > 1 {
             //group
             ZegoCallManager.shared.sendGroupVoiceCall(invitees) { code, requestID in
-                if code == 0 {
-                    // call waiting
-                    //guard let invitee = self.invitee else { return }
-                    self.showCallWaitingPage(invitee: nil, isGroupCall: true)
-                } else {
+                if code != 0 {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
                 }
             }
         } else {
             guard let inviteeUserID = callTextField.text else { return }
-            invitee = ZegoSDKUser(id: inviteeUserID, name: "user_\(inviteeUserID)")
+            invitee = CallUserInfo(userID: inviteeUserID)
             //send call invitation
             ZegoCallManager.shared.sendVoiceCall(inviteeUserID) { code, requestID in
                 if code == 0 {
@@ -90,21 +86,6 @@ class HomeViewController: UIViewController {
                 }
             }
         }
-        
-//        ZegoCallManager.shared.sendVoiceCall(inviteeUserID) { requestID, sentInfo, error in
-//            if error.code == .success {
-//                // call waiting
-//                let errorInvitees = sentInfo.errorUserList.compactMap({ $0.userID })
-//                if errorInvitees.contains(inviteeUserID) {
-//                    self.view.makeToast("user is not online", duration: 2.0, position: .center)
-//                } else {
-//                    guard let invitee = self.invitee else { return }
-//                    self.showCallWaitingPage(invitee: invitee)
-//                }
-//            } else {
-//                self.view.makeToast("call failed:\(error.code.rawValue)", duration: 2.0, position: .center)
-//            }
-//        }
     }
     
     @IBAction func videoCallClick(_ sender: UIButton) {
@@ -112,17 +93,13 @@ class HomeViewController: UIViewController {
         if getInviteeUsers().count > 1 {
             //group
             ZegoCallManager.shared.sendGroupVideoCall(invitees) { code, requestID in
-                if code == 0 {
-                    // call waiting
-                    //guard let invitee = self.invitee else { return }
-                    self.showCallWaitingPage(invitee: nil, isGroupCall: true)
-                } else {
+                if code != 0 {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
                 }
             }
         } else {
             guard let inviteeUserID = callTextField.text else { return }
-            invitee = ZegoSDKUser(id: inviteeUserID, name: "user_\(inviteeUserID)")
+            invitee = CallUserInfo(userID: inviteeUserID)
             //send call invitation
             ZegoCallManager.shared.sendVideoCall(inviteeUserID) { code, requestID in
                 if code == 0 {
@@ -133,38 +110,22 @@ class HomeViewController: UIViewController {
                 }
             }
         }
-        
-//        ZegoCallManager.shared.sendVideoCall(inviteeUserID) { requestID, sentInfo, error in
-//            if error.code == .success {
-//                // call waiting
-//                let errorInvitees = sentInfo.errorUserList.compactMap({ $0.userID })
-//                if errorInvitees.contains(inviteeUserID) {
-//                    self.view.makeToast("user is not online", duration: 2.0, position: .center)
-//                } else {
-//                    guard let invitee = self.invitee else { return }
-//                    self.showCallWaitingPage(invitee: invitee)
-//                }
-//            } else {
-//                self.view.makeToast("call failed:\(error.code.rawValue)", duration: 2.0, position: .center)
-//            }
-//        }
     }
 }
 
 // MARK: - Call Invitation
 extension HomeViewController {            
-    func showCallWaitingPage(invitee: ZegoSDKUser?, isGroupCall: Bool) {
+    func showCallWaitingPage(invitee: CallUserInfo?, isGroupCall: Bool) {
         let callWaitingVC: CallWaitingViewController = Bundle.main.loadNibNamed("CallWaitingViewController", owner: self, options: nil)?.first as! CallWaitingViewController
         callWaitingVC.modalPresentationStyle = .fullScreen
         callWaitingVC.isGroupCall = isGroupCall
         callWaitingVC.isInviter = true
         callWaitingVC.invitee = invitee
-        callWaitingVC.delegate = self
         self.callWaitingVC = callWaitingVC
         self.present(callWaitingVC, animated: true)
     }
     
-    func showReceiveCallWaitingPage(inviter: ZegoSDKUser, callID: String, isGroupCall: Bool) {
+    func showReceiveCallWaitingPage(inviter: CallUserInfo, callID: String, isGroupCall: Bool) {
         let callWaitingVC: CallWaitingViewController = Bundle.main.loadNibNamed("CallWaitingViewController", owner: self, options: nil)?.first as! CallWaitingViewController
         callWaitingVC.modalPresentationStyle = .fullScreen
         callWaitingVC.isGroupCall = isGroupCall
@@ -173,10 +134,10 @@ extension HomeViewController {
         self.callWaitingVC = callWaitingVC
         self.present(callWaitingVC, animated: true)
     }
+    
 }
 
-extension HomeViewController: CallWaitingViewControllerDelegate,
-                                ZegoCallManagerDelegate {
+extension HomeViewController: ZegoCallManagerDelegate {
     
     func onCallEnd() {
         callWaitingVC?.dismiss(animated: true)
@@ -185,10 +146,14 @@ extension HomeViewController: CallWaitingViewControllerDelegate,
     
     func onCallStart() {
         callWaitingVC?.dismiss(animated: true)
-        guard let currentCallData = ZegoCallManager.shared.currentCallData,
-        let inviter = currentCallData.inviter?.userInfo
-        else { return }
-        startShowCallPage(inviter)
+        showCallPage()
+    }
+    
+    func onCallRejected(userID: String, extendedData: String) {
+        let callData = extendedData.toDict
+        if let callData = callData, callData["reason"] as? String ?? "" == "busy" {
+            self.view.makeToast("invitee is busy", duration: 2.0, position: .center)
+        }
     }
     
     func onInComingCallTimeout(requestID: String) {
@@ -196,11 +161,8 @@ extension HomeViewController: CallWaitingViewControllerDelegate,
         ZegoIncomingCallDialog.hide()
     }
     
-    func startShowCallPage(_ remoteUser: ZegoSDKUser) {
-        showCallPage(remoteUser)
-    }
     
-    func showCallPage(_ remoteUser: ZegoSDKUser) {
+    func showCallPage() {
         let callMainPage = Bundle.main.loadNibNamed("CallingViewController", owner: self, options: nil)?.first as! CallingViewController
         callMainPage.modalPresentationStyle = .fullScreen
         self.present(callMainPage, animated: false)

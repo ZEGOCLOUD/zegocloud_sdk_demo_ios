@@ -16,10 +16,19 @@ public class ZIMService: NSObject {
     var zim: ZIM? = nil
     var userInfo: ZIMUserInfo? = nil
     
-    var currentRoom: ZIMRoomFullInfo? = nil
+    var currentRoom: ZIMRoomFullInfo? {
+        didSet {
+            guard let currentRoom = currentRoom else {
+                print("currentRoom is nil")
+                return
+            }
+            print("currentRoom : \(currentRoom.baseInfo.roomID)")
+        }
+    }
     var inRoomAttributsDict: [String : String] = [:]
     var roomRequestDict: [String : RoomRequest] = [:]
     var usersAvatarUrlDict: [String: String] = [:]
+    var usersNameDict: [String: String] = [:]
     
     let eventHandlers: NSHashTable<ZIMServiceDelegate> = NSHashTable(options: .weakMemory)
     
@@ -50,6 +59,7 @@ public class ZIMService: NSObject {
         user.userID = userID
         user.userName = userName
         userInfo = user
+        usersNameDict[userID] = userName
         zim?.login(with: user, token: token ?? "") { error in
             callback?(Int(error.code.rawValue), error.message)
         }

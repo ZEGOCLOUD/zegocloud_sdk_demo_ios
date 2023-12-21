@@ -50,10 +50,9 @@ extension ExpressService {
         roomExtraInfoDict.removeAll()
         currentScenario = .default
         ZegoExpressEngine.shared().stopSoundLevelMonitor()
-        if let callback = callback {
-            ZegoExpressEngine.shared().logoutRoom(callback: callback)
-        } else {
-            ZegoExpressEngine.shared().logoutRoom()
+        ZegoExpressEngine.shared().logoutRoom { errorCode, info in
+            guard let callback = callback else { return }
+            callback(errorCode,info)
         }
     }
     

@@ -24,12 +24,22 @@ enum CallType: Int {
 
 class CallUserInfo: NSObject {
     
-    var userInfo: ZegoSDKUser?
+    var userName: String? {
+        get {
+            return ZegoSDKManager.shared.zimService.getUserName(userID: userID ?? "")
+        }
+    }
+    var userID: String?
     var callUserState: ZIMCallUserState = .unknown
     var extendedData: String = ""
+    var headUrl: String? {
+        get {
+            return ZegoSDKManager.shared.zimService.getUserAvatar(userID: userID ?? "")
+        }
+    }
     var streamID: String {
         get {
-            return "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_\(userInfo?.id ?? "")_main"
+            return "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_\(userID ?? "")_main"
         }
     }
     
@@ -45,8 +55,8 @@ class CallUserInfo: NSObject {
         }
     }
     
-    init(userInfo: ZegoSDKUser? = nil) {
-        self.userInfo = userInfo
+    init(userID: String) {
+        self.userID = userID
     }
     
 }

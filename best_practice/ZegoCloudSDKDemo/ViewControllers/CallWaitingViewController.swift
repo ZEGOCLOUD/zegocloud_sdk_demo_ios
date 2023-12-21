@@ -35,19 +35,31 @@ class CallWaitingViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var headImageView: UIImageView! {
+        didSet {
+            headImageView.layer.masksToBounds = true
+            headImageView.layer.cornerRadius = 50
+            headImageView.isHidden = true
+            if !self.isInviter {
+                self.setHeadUrl(invitee?.headUrl ?? "")
+            }
+        }
+    }
+    
+    
     @IBOutlet weak var headLabel: UILabel! {
         didSet {
             headLabel.layer.masksToBounds = true
             headLabel.layer.cornerRadius = 50
             if !self.isInviter {
-                self.setHeadUserName(invitee?.name)
+                self.setHeadUserName(invitee?.userName)
             }
         }
     }
     
     @IBOutlet weak var userNameLabel: UILabel! {
         didSet {
-            userNameLabel.text = invitee?.name
+            userNameLabel.text = invitee?.userName
         }
     }
     @IBOutlet weak var callStatusLabel: UILabel!
@@ -78,23 +90,24 @@ class CallWaitingViewController: UIViewController {
     @IBOutlet weak var acceptButtonLabel: UILabel!
     @IBOutlet weak var switchFacingCameraButton: UIButton!
     
-    var invitee: ZegoSDKUser? {
+    var invitee: CallUserInfo? {
         didSet {
             if isInviter {
-                self.setHeadUserName(invitee?.name)
-                self.userNameLabel.text = invitee?.name
+                self.setHeadUserName(invitee?.userName)
+                self.setHeadUrl(invitee?.headUrl ?? "")
+                self.userNameLabel.text = invitee?.userName
             }
         }
     }
-    var inviter: ZegoSDKUser? {
+    var inviter: CallUserInfo? {
         didSet {
             if !self.isInviter {
-                self.setHeadUserName(inviter?.name)
-                self.userNameLabel.text = inviter?.name
+                self.setHeadUserName(inviter?.userName)
+                self.setHeadUrl(inviter?.headUrl ?? "")
+                self.userNameLabel.text = inviter?.userName
             }
         }
     }
-        
     
     var isInviter: Bool = false {
         didSet {
@@ -107,7 +120,6 @@ class CallWaitingViewController: UIViewController {
                 self.acceptView.isHidden = false
                 self.declineView.isHidden = false
             }
-            
         }
     }
     
@@ -129,11 +141,13 @@ class CallWaitingViewController: UIViewController {
     }
     
     weak var delegate: CallWaitingViewControllerDelegate?
-    
-    
     @IBOutlet weak var trailingConstraint: NSLayoutConstraint!
     
-
+    private func setHeadUrl(_ url: String) {
+        guard let avatarUrl = URL(string: url) else { return }
+        headImageView.isHidden = false
+        headImageView.downloadedFrom(url: avatarUrl)
+    }
     
     private func setHeadUserName(_ userName: String?) {
         guard let userName = userName else { return }
@@ -166,51 +180,10 @@ class CallWaitingViewController: UIViewController {
         }
         self.dismiss(animated: true)
     }
-    
-    func showCallPage(_ remoteUser: ZegoSDKUser) {
-        DispatchQueue.main.async {
-            self.dismiss(animated: false)
-            self.delegate?.startShowCallPage(remoteUser)
-        }
-    }
 
 }
 
 extension CallWaitingViewController: ZegoCallManagerDelegate {
-    
-    func onCallAccepted(userID: String, extendedData: String) {
-        
-    }
-    
-    func onCallRejected(userID: String, extendedData: String) {
-        
-    }
-    
-    func onCallUserQuit(userID: String, extendedData: String) {
-        
-    }
-    
-    func onCallTimeout(userID: String, extendedData: String) {
-        
-    }
-    
-    func onInComingCallTimeout(requestID: String) {
-        
-    }
-    
-    func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String) {
-//        guard let remoteUser = ZegoCallManager.shared.currentCallData?.invitee else { return }
-//        showCallPage(remoteUser)
-    }
-    
-    func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String) {
-        let callData = extendedData.toDict
-        if let callData = callData, callData["reason"] as? String ?? "" == "busy" {
-            self.view.makeToast("invitee is busy", duration: 2.0, position: .center)
-        }
-        ZegoCallManager.shared.leaveRoom()
-        self.dismiss(animated: true)
-    }
     
     func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String) {
         self.dismiss(animated: true)

@@ -27,36 +27,26 @@ extension ZegoCallManager: ZIMServiceDelegate {
             return
         }
         
-        let callData = ZegoCallDataModel()
-        callData.callID = requestID
-        callData.callUserList = []
-        callData.type = callType
-        callData.inviter = CallUserInfo(userInfo: ZegoSDKUser(id: info.inviter, name: callExtendedData?.userName ?? ""))
-        for userInfo in info.callUserList {
-            var callUser: CallUserInfo
-            if userInfo.userID == localUser?.id {
-                callUser = CallUserInfo(userInfo: localUser!)
-            } else {
-                callUser = CallUserInfo(userInfo: ZegoSDKUser(id: userInfo.userID, name: ""))
-            }
-            callUser.callUserState = userInfo.state
-            callUser.extendedData = userInfo.extendedData
-            if !userInfo.extendedData.isEmpty && callUser.userInfo?.id != localUser?.id {
-                let userData = ZegoCallExtendedData.parse(extendedData: userInfo.extendedData)
-                if let userData = userData {
-                    callUser.userInfo?.name = userData.userName ?? ""
-                }
-            }
-            
-            if callUser.userInfo?.id == info.caller {
-                callUser.userInfo?.name = callExtendedData?.userName ?? ""
-            }
-            callData.callUserList.append(callUser)
+        let userIDList: [String] = info.callUserList.map { userInfo in
+            userInfo.userID
         }
-        currentCallData = callData
-        
-        for delegate in callEventHandlers.allObjects {
-            delegate.onInComingUserRequestReceived?(requestID: requestID, inviter: info.inviter, inviteeList: inviteeList, extendedData: info.extendedData)
+        ZegoCallManager.shared.queryUsersInfo(userIDList) { userFullInfoList, errorUserInfoList, error in
+            let callData = ZegoCallDataModel()
+            callData.callID = requestID
+            callData.callUserList = []
+            callData.type = callType
+            callData.inviter = CallUserInfo(userID: info.inviter)
+            for userInfo in info.callUserList {
+                let callUser: CallUserInfo = CallUserInfo(userID: userInfo.userID)
+                callUser.callUserState = userInfo.state
+                callUser.extendedData = userInfo.extendedData
+                callData.callUserList.append(callUser)
+            }
+            self.currentCallData = callData
+            
+            for delegate in self.callEventHandlers.allObjects {
+                delegate.onInComingUserRequestReceived?(requestID: requestID, inviter: info.inviter, inviteeList: inviteeList, extendedData: info.extendedData)
+            }
         }
     }
     
@@ -69,18 +59,10 @@ extension ZegoCallManager: ZIMServiceDelegate {
                 var findIfAlreadyAdded: Bool = false
                 var hasUserStateUpdate: Bool = false
                 for callUser in currentCallData.callUserList {
-                    if callUser.userInfo?.id == userInfo.userID {
+                    if callUser.userID == userInfo.userID {
                         if callUser.callUserState != userInfo.state {
                             callUser.callUserState = userInfo.state
                             hasUserStateUpdate = true
-                        }
-                        if !userInfo.extendedData.isEmpty {
-                            let userData: ZegoCallExtendedData? = ZegoCallExtendedData.parse(extendedData: userInfo.extendedData)
-                            if let userData = userData,
-                               callUser.userInfo?.id != localUser?.id
-                            {
-                                callUser.userInfo?.name = userData.userName ?? ""
-                            }
                         }
                         findIfAlreadyAdded = true
                         break
@@ -88,15 +70,10 @@ extension ZegoCallManager: ZIMServiceDelegate {
                 }
                 if !findIfAlreadyAdded {
                     hasUserStateUpdate = true
-                    let callUser = CallUserInfo()
+                    let callUser = CallUserInfo(userID: userInfo.userID)
                     callUser.callUserState = userInfo.state
                     let userData: ZegoCallExtendedData? = ZegoCallExtendedData.parse(extendedData: userInfo.extendedData)
                     callUser.extendedData = userInfo.extendedData
-                    if userInfo.userID == localUser?.id {
-                        callUser.userInfo = localUser
-                    } else {
-                        callUser.userInfo = ZegoSDKUser(id: userInfo.userID, name: userData?.userName ?? "")
-                    }
                     currentCallData.callUserList.append(callUser)
                 }
                 
@@ -165,7 +142,7 @@ extension ZegoCallManager: ZIMServiceDelegate {
                 var moreThanOneAcceptedExceptMe: Bool = false
                 var hasWaitingUser: Bool = false
                 for callUser in currentCallData.callUserList {
-                    if callUser.userInfo?.id != localUser?.id {
+                    if callUser.userID != localUser?.id {
                         if callUser.hasAccepted || callUser.isWaiting {
                             hasWaitingUser = true
                         }
@@ -197,7 +174,7 @@ extension ZegoCallManager: ZIMServiceDelegate {
             var moreThanOneAcceptedExceptMe = false
             var meHasAccepted = false
             for callUser in currentCallData.callUserList {
-                if callUser.userInfo?.id == localUser?.id {
+                if callUser.userID == localUser?.id {
                     meHasAccepted = callUser.hasAccepted
                 } else {
                     if callUser.hasAccepted {
@@ -207,10 +184,19 @@ extension ZegoCallManager: ZIMServiceDelegate {
 
             }
             
-            if (meHasAccepted && moreThanOneAcceptedExceptMe && !isCallStart) {
-                isCallStart = true
-                for delegate in callEventHandlers.allObjects {
-                    delegate.onCallStart?()
+            if currentCallData.isGroupCall {
+                if (meHasAccepted && !isCallStart) {
+                    isCallStart = true
+                    for delegate in callEventHandlers.allObjects {
+                        delegate.onCallStart?()
+                    }
+                }
+            } else {
+                if (meHasAccepted && moreThanOneAcceptedExceptMe && !isCallStart) {
+                    isCallStart = true
+                    for delegate in callEventHandlers.allObjects {
+                        delegate.onCallStart?()
+                    }
                 }
             }
             

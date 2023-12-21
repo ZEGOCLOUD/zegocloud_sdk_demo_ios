@@ -81,7 +81,9 @@ class CallingViewController: UIViewController {
         setDeviceStatus()
         setUpBottomBar()
         
-        if let roomID = ZegoCallManager.shared.currentCallData?.callID {
+        if let currentCallData = ZegoCallManager.shared.currentCallData,
+           let roomID = currentCallData.callID
+        {
             ZegoSDKManager.shared.loginRoom(roomID, scenario: (type == .voice) ? .standardVoiceCall : .standardVideoCall) { code, message in
                 if code == 0 {
                     ZegoSDKManager.shared.expressService.startPublishingStream(ZegoCallManager.shared.getMainStreamID())
@@ -148,7 +150,7 @@ class CallingViewController: UIViewController {
         var waitingUser: [CallUserInfo] = []
         var localUserInfo: CallUserInfo?
         for callUserInfo in enableShowUserList {
-            if callUserInfo.userInfo?.id == ZegoSDKManager.shared.currentUser?.id {
+            if callUserInfo.userID == ZegoSDKManager.shared.currentUser?.id {
                 localUserInfo = callUserInfo
             } else {
                 if callUserInfo.isWaiting {
@@ -220,7 +222,6 @@ class CallingViewController: UIViewController {
         switch sender.tag {
         case 100:
             ZegoCallManager.shared.quitCall(ZegoCallManager.shared.currentCallData?.callID ?? "", callback: nil)
-            ZegoCallManager.shared.leaveRoom()
             self.dismiss(animated: true)
         case 101:
             sender.isSelected = !sender.isSelected
@@ -237,13 +238,6 @@ class CallingViewController: UIViewController {
         default:
             break
         }
-    }
-    
-    func showLocalPreview() {
-        if type == .video {
-           // ZegoSDKManager.shared.expressService.startPreview(smallVideoView)
-        }
-        ZegoSDKManager.shared.expressService.startPublishingStream(ZegoCallManager.shared.getMainStreamID())
     }
     
     @IBAction func addMemberClick(_ sender: Any) {
@@ -296,44 +290,6 @@ extension CallingViewController: ExpressServiceDelegate, ZIMServiceDelegate, Zeg
         ZegoCallManager.shared.leaveRoom()
         self.dismiss(animated: true)
     }
-    
-//    func onRemoteCameraStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
-//        if state != .open && type == .video {
-//            self.view.makeToast("remote user camera close", duration: 2.0, position: .center)
-//        }
-//    }
-//    
-//    func onRemoteMicStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
-//        if state != .open {
-//            self.view.makeToast("remote user microphone close", duration: 2.0, position: .center)
-//        }
-//    }
-    
-//    func onRoomUserUpdate(_ updateType: ZegoUpdateType, userList: [ZegoUser], roomID: String) {
-//        if updateType == .delete {
-//            for user in userList {
-//                if user.userID == remoteUser?.id {
-//                    ZegoCallManager.shared.clearCallData()
-//                    ZegoCallManager.shared.leaveRoom()
-//                    self.dismiss(animated: true)
-//                }
-//            }
-//        }
-//    }
-    
-//    func onRoomStreamUpdate(_ updateType: ZegoUpdateType, streamList: [ZegoStream], extendedData: [AnyHashable : Any]?, roomID: String) {
-//        for stream in streamList {
-//            if updateType == .add {
-//                if type == .video {
-//                    ZegoSDKManager.shared.expressService.startPlayingStream(largeVideoView, streamID: stream.streamID, viewMode: .aspectFill)
-//                } else {
-//                    ZegoSDKManager.shared.expressService.startPlayingStream(nil, streamID: stream.streamID)
-//                }
-//            } else {
-//                ZegoSDKManager.shared.expressService.stopPlayingStream(stream.streamID)
-//            }
-//        }
-//    }
     
     func zim(_ zim: ZIM, connectionStateChanged state: ZIMConnectionState, event: ZIMConnectionEvent, extendedData: [AnyHashable : Any]) {
         if state == .disconnected {

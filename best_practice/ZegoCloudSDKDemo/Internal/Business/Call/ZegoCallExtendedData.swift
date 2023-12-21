@@ -10,11 +10,9 @@ import UIKit
 class ZegoCallExtendedData: NSObject {
     
     var type: CallType?
-    var userName: String?
     
-    init(type: CallType?, userName: String? = nil) {
+    init(type: CallType?) {
         self.type = type
-        self.userName = userName
     }
     
     static func parse(extendedData: String) -> ZegoCallExtendedData? {
@@ -22,7 +20,7 @@ class ZegoCallExtendedData: NSObject {
         if let dict = dict {
             if dict.keys.contains("type") {
                 let type: Int = dict["type"] as! Int
-                let data: ZegoCallExtendedData = ZegoCallExtendedData(type: CallType(rawValue: type), userName: dict["user_name"] as? String)
+                let data: ZegoCallExtendedData = ZegoCallExtendedData(type: CallType(rawValue: type))
                 return data
             }
         }
@@ -31,7 +29,6 @@ class ZegoCallExtendedData: NSObject {
     
     func toString() -> String? {
         var dict: [String: Any] = [:]
-        dict["user_name"] = userName
         dict["type"] = type?.rawValue
         return dict.jsonString
     }

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CallWaitingViewController" customModule="ZegoCallWithInvitationDemo" customModuleProvider="target"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CallWaitingViewController" customModule="ZegoCloudSDKDemo" customModuleProvider="target"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <viewController restorationIdentifier="CallWaitViewController" id="Y3a-pg-wah" customClass="CallWaitingViewController" customModule="ZegoCallWithInvitationDemo" customModuleProvider="target">
+        <viewController restorationIdentifier="CallWaitViewController" id="Y3a-pg-wah" customClass="CallWaitingViewController" customModule="ZegoCloudSDKDemo" customModuleProvider="target">
             <view key="view" contentMode="scaleToFill" id="vSB-jY-6kK">
                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -135,6 +135,13 @@
                         </constraints>
                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                     </button>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="8ch-cz-xnx">
+                        <rect key="frame" x="157" y="186" width="100" height="100"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="100" id="uc3-Bj-MVn"/>
+                            <constraint firstAttribute="width" constant="100" id="wzP-qX-DJt"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <viewLayoutGuide key="safeArea" id="ICG-dh-p66"/>
                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -157,6 +164,8 @@
                     <constraint firstItem="1Ja-I8-yfa" firstAttribute="top" secondItem="vSB-jY-6kK" secondAttribute="top" id="dT7-Xc-fS9"/>
                     <constraint firstItem="1Ja-I8-yfa" firstAttribute="trailing" secondItem="ICG-dh-p66" secondAttribute="trailing" id="dW2-Ju-09h"/>
                     <constraint firstItem="xkI-mk-Nag" firstAttribute="leading" secondItem="ICG-dh-p66" secondAttribute="leading" constant="70" id="eWS-nO-frK"/>
+                    <constraint firstItem="8ch-cz-xnx" firstAttribute="centerX" secondItem="vSB-jY-6kK" secondAttribute="centerX" id="hN4-rA-DBk"/>
+                    <constraint firstItem="8ch-cz-xnx" firstAttribute="top" secondItem="ICG-dh-p66" secondAttribute="top" constant="138" id="j4M-vG-fJQ"/>
                     <constraint firstItem="ICG-dh-p66" firstAttribute="bottom" secondItem="xkI-mk-Nag" secondAttribute="bottom" constant="28" id="kDD-sK-YUq"/>
                     <constraint firstItem="ICG-dh-p66" firstAttribute="trailing" secondItem="x3F-Tp-EIz" secondAttribute="trailing" constant="70" id="n08-Y5-zaO"/>
                     <constraint firstItem="23e-2m-WOZ" firstAttribute="top" secondItem="vSB-jY-6kK" secondAttribute="top" id="olA-7w-piU"/>
@@ -173,6 +182,7 @@
                 <outlet property="declineButton" destination="4p7-Md-VYj" id="wX9-vL-a5f"/>
                 <outlet property="declineButtonLabel" destination="vwt-BO-HWJ" id="sON-R1-qZL"/>
                 <outlet property="declineView" destination="xkI-mk-Nag" id="XBD-p6-4pd"/>
+                <outlet property="headImageView" destination="8ch-cz-xnx" id="EWd-Ja-1wW"/>
                 <outlet property="headLabel" destination="2Fr-ez-FUn" id="rKG-za-yhO"/>
                 <outlet property="switchFacingCameraButton" destination="AQU-Cg-BeJ" id="qhA-74-MCH"/>
                 <outlet property="trailingConstraint" destination="n08-Y5-zaO" id="nHL-FR-2DV"/>

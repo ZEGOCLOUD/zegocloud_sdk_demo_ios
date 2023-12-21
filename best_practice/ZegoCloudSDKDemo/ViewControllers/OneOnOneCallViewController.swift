@@ -30,13 +30,15 @@ class OneOnOneCallViewController: UIViewController {
         // Do any additional setup after loading the view.
         ZegoSDKManager.shared.expressService.addEventHandler(self)
         for user in callUserList {
-            if user.userInfo?.id == ZegoSDKManager.shared.currentUser?.id {
-                smallVideoView.userID = user.userInfo?.id
-                smallVideoView.setNameLabel(user.userInfo?.name)
+            if user.userID == ZegoSDKManager.shared.currentUser?.id {
+                smallVideoView.userID = user.userID
+                smallVideoView.setNameLabel(user.userName)
+                smallVideoView.setAvatar(user.headUrl ?? "")
                 ZegoSDKManager.shared.expressService.startPreview(smallVideoView.renderView)
             } else {
-                largeVideoView.userID = user.userInfo?.id
-                largeVideoView.setNameLabel(user.userInfo?.name)
+                largeVideoView.userID = user.userID
+                largeVideoView.setNameLabel(user.userName)
+                largeVideoView.setAvatar(user.headUrl ?? "")
                 ZegoSDKManager.shared.expressService.startPlayingStream(largeVideoView.renderView, streamID: user.streamID)
             }
         }

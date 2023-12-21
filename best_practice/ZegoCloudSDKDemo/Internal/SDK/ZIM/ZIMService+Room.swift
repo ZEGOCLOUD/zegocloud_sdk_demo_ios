@@ -12,10 +12,14 @@ extension ZIMService {
     public func loginRoom(_ roomID: String,
                          roomName: String?,
                          callback: CommonCallback? = nil) {
+        if let currentRoom = currentRoom {
+            debugPrint("zim room is logined")
+            return
+        }
         
         let roomInfo = ZIMRoomInfo()
-        roomInfo.roomID = roomID;
-        roomInfo.roomName = roomName ?? roomID;
+        roomInfo.roomID = roomID
+        roomInfo.roomName = roomName ?? roomID
         
         zim?.enterRoom(with: roomInfo, config: ZIMRoomAdvancedConfig(), callback: { roomFullInfo, errorInfo in
             
@@ -36,7 +40,6 @@ extension ZIMService {
         
         zim?.leaveRoom(by: currentRoom.baseInfo.roomID, callback: { roomID, errorInfo in
             if(errorInfo.code.rawValue == 0){
-                self.currentRoom = nil
                 self.removeRoomData()
             }
             guard let callback = callback else { return }

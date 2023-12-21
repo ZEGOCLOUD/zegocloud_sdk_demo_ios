@@ -26,7 +26,7 @@ class CallService: NSObject, ZegoCallManagerDelegate {
             ZegoCallManager.shared.busyRejectCallRequest(requestID: requestID, extendedData: extendedData.jsonString, type: callType, callback: nil)
             return
         }
-        guard let inviter = ZegoCallManager.shared.currentCallData?.inviter?.userInfo else { return }
-        let _ = ZegoIncomingCallDialog.show(inviter, callID: requestID, type: callType)
+//        guard let inviter = ZegoCallManager.shared.currentCallData?.inviter?.userInfo else { return }
+        let _ = ZegoIncomingCallDialog.show()
     }
 }

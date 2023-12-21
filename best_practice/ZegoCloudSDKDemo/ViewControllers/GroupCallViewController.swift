@@ -35,7 +35,7 @@ class GroupCallViewController: UIViewController {
         var needAddView: [GroupCallUserView] = []
         var needRemoveView: [GroupCallUserView] = []
         for user in callUserList {
-            if let cacheView = getCacheView(userID: user.userInfo?.id ?? "") {
+            if let cacheView = getCacheView(userID: user.userID ?? "") {
                 cacheView.callUserInfo = user
                 needAddView.append(cacheView)
             } else {
@@ -50,7 +50,7 @@ class GroupCallViewController: UIViewController {
         userViews.forEach { view in
             var isNeedDelected: Bool = true
             for addView in needAddView {
-                if addView.callUserInfo?.userInfo?.id == view.callUserInfo?.userInfo?.id {
+                if addView.callUserInfo?.userID == view.callUserInfo?.userID {
                     isNeedDelected = false
                     break
                 }
@@ -68,7 +68,7 @@ class GroupCallViewController: UIViewController {
     
     func getCacheView(userID: String) -> GroupCallUserView?{
         for view in userViews {
-            if view.callUserInfo?.userInfo?.id == userID {
+            if view.callUserInfo?.userID == userID {
                 return view
             }
         }
@@ -162,9 +162,10 @@ class GroupCallUserView: UIView {
         didSet {
             waitingView.isHidden = !(callUserInfo?.isWaiting ?? false)
             waitingLabel.isHidden = !(callUserInfo?.isWaiting ?? false)
-            videoView.userID = callUserInfo?.userInfo?.id
-            videoView.setNameLabel(callUserInfo?.userInfo?.name)
-            if callUserInfo?.userInfo?.id == ZegoSDKManager.shared.currentUser?.id {
+            videoView.userID = callUserInfo?.userID
+            videoView.setAvatar(callUserInfo?.headUrl ?? "")
+            videoView.setNameLabel(callUserInfo?.userName)
+            if callUserInfo?.userID == ZegoSDKManager.shared.currentUser?.id {
                 ZegoSDKManager.shared.expressService.startPreview(videoView.renderView)
             } else {
                 ZegoSDKManager.shared.expressService.startPlayingStream(videoView.renderView, streamID: callUserInfo?.streamID ?? "")
@@ -196,7 +197,7 @@ class GroupCallUserView: UIView {
 extension GroupCallUserView: ExpressServiceDelegate {
     
     func onCameraOpen(_ userID: String, isCameraOpen: Bool) {
-        if userID == callUserInfo?.userInfo?.id {
+        if userID == callUserInfo?.userID {
             videoView.enableCamera(isCameraOpen)
         }
     }

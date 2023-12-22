@@ -185,17 +185,7 @@ class CallWaitingViewController: UIViewController {
 
 extension CallWaitingViewController: ZegoCallManagerDelegate {
     
-    func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String) {
-        self.dismiss(animated: true)
-    }
-    
     func onInComingUserRequestTimeout(requestID: String) {
-        ZegoCallManager.shared.leaveRoom()
-        self.dismiss(animated: true)
-    }
-    
-    func onOutgoingUserRequestTimeout(requestID: String) {
-        ZegoCallManager.shared.leaveRoom()
         self.dismiss(animated: true)
     }
     

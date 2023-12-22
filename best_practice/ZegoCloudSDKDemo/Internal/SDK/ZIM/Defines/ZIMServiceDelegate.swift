@@ -23,14 +23,8 @@ import ZIM
     
     @objc optional func onUserRequestStateChanged(info: ZIMCallUserStateChangeInfo, requestID: String)
     @objc optional func onUserRequestEnded(info: ZIMCallInvitationEndedInfo, requestID: String)
-    
-    
     @objc optional func onInComingUserRequestReceived(requestID: String, info: ZIMCallInvitationReceivedInfo)
     @objc optional func onInComingUserRequestTimeout(requestID: String, info: ZIMCallInvitationTimeoutInfo?)
-    @objc optional func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String)
-    @objc optional func onOutgoingUserRequestTimeout(requestID: String)
-    @objc optional func onOutgoingUserRequestAccepted(requestID: String, invitee: String, extendedData: String)
-    @objc optional func onOutgoingUserRequestRejected(requestID: String, invitee: String, extendedData: String)
     
     @objc optional func onRoomCommandReceived(senderID: String, command: String)
     

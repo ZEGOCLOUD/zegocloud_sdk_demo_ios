@@ -60,7 +60,6 @@ class ZegoCallManager: NSObject {
     }
     
     func sendVideoCall(_ targetUserID: String, callback: CallRequestCallback?) {
-        guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         let callType: CallType = .video
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -73,7 +72,6 @@ class ZegoCallManager: NSObject {
     }
     
     func sendVoiceCall(_ targetUserID: String, callback: CallRequestCallback?) {
-        guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         let callType: CallType = .voice
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -86,7 +84,6 @@ class ZegoCallManager: NSObject {
     }
     
     func sendGroupVideoCall(_ targetUserIDs: [String], callback: CallRequestCallback?) {
-        guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         let callType: CallType = .video
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -99,7 +96,6 @@ class ZegoCallManager: NSObject {
     }
     
     func sendGroupVoiceCall(_ targetUserIDs: [String], callback: CallRequestCallback?) {
-        guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         let callType: CallType = .voice
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -255,7 +251,7 @@ extension ZegoCallManager {
                 let config = ZIMCallInviteConfig()
                 config.mode = .advanced
                 config.extendedData = extendedData
-                config.timeout = 10
+                config.timeout = 60
                 ZegoSDKManager.shared.zimService.sendUserRequest(userList: userList, config: config) { requestID, sentInfo, error in
                     if error.code == .success {
                         let errorUser: [String] = sentInfo.errorUserList.map { userInfo in

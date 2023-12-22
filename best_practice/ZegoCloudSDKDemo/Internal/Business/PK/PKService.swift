@@ -420,16 +420,6 @@ class PKService: NSObject {
         }
     }
     
-    public func cancelPKBattle(requestID: String, userID: String) {
-        if let pkInfo = pkInfo,
-           pkInfo.requestID == requestID
-        {
-            let extendedData = getPKExtendedData(type: PKExtendedData.STARK_PK) ?? ""
-            cancelUserRequest(userID: userID, requestID: requestID, extendedData: extendedData, callback: nil)
-            self.pkInfo = nil
-        }
-    }
-    
     public func isPKUser(userID: String) -> Bool {
         guard let pkInfo = pkInfo else { return false }
         for pkUser in pkInfo.pkUserList {

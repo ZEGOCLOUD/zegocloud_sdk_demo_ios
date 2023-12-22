@@ -76,7 +76,6 @@ class CallingViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         ZegoCallManager.shared.addCallEventHandler(self)
-        ZegoSDKManager.shared.expressService.addEventHandler(self)
         ZegoSDKManager.shared.zimService.addEventHandler(self)
         setDeviceStatus()
         setUpBottomBar()
@@ -255,7 +254,7 @@ class CallingViewController: UIViewController {
                     addMemberList.append(userID)
                 }
             }
-            ZegoCallManager.shared.addMemberCall(addMemberList, callback: nil)
+            ZegoCallManager.shared.inviteUserToJoinCall(addMemberList, callback: nil)
         }
         
         let cancelAction: UIAlertAction = UIAlertAction(title: "cancel ", style: .cancel) { action in
@@ -268,9 +267,9 @@ class CallingViewController: UIViewController {
 
 }
 
-extension CallingViewController: ExpressServiceDelegate, ZIMServiceDelegate, ZegoCallManagerDelegate {
+extension CallingViewController: ZIMServiceDelegate, ZegoCallManagerDelegate {
     
-    func onCallTimeout(userID: String, extendedData: String) {
+    func onOutgoingCallInvitationTimeout(userID: String, extendedData: String) {
         setupCallSubView()
     }
     
@@ -278,7 +277,7 @@ extension CallingViewController: ExpressServiceDelegate, ZIMServiceDelegate, Zeg
         setupCallSubView()
     }
     
-    func onCallUserJoin(userID: String, extendedData: String) {
+    func onOutgoingCallInvitationAccepted(userID: String, extendedData: String) {
         setupCallSubView()
     }
     
@@ -287,7 +286,6 @@ extension CallingViewController: ExpressServiceDelegate, ZIMServiceDelegate, Zeg
     }
     
     func onCallEnd() {
-        ZegoCallManager.shared.leaveRoom()
         self.dismiss(animated: true)
     }
     

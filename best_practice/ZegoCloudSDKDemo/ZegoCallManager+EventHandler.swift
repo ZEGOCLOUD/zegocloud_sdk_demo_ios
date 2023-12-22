@@ -22,7 +22,7 @@ extension ZegoCallManager: ZIMServiceDelegate {
         }
         if inRoom || (currentCallData != nil && currentCallData?.callID != requestID) {
             for delegate in callEventHandlers.allObjects {
-                delegate.onInComingUserRequestReceived?(requestID: requestID, inviter: info.inviter, inviteeList: inviteeList, extendedData: info.extendedData)
+                delegate.onInComingCallInvitationReceived?(requestID: requestID, inviter: info.inviter, inviteeList: inviteeList, extendedData: info.extendedData)
             }
             return
         }
@@ -45,7 +45,7 @@ extension ZegoCallManager: ZIMServiceDelegate {
             self.currentCallData = callData
             
             for delegate in self.callEventHandlers.allObjects {
-                delegate.onInComingUserRequestReceived?(requestID: requestID, inviter: info.inviter, inviteeList: inviteeList, extendedData: info.extendedData)
+                delegate.onInComingCallInvitationReceived?(requestID: requestID, inviter: info.inviter, inviteeList: inviteeList, extendedData: info.extendedData)
             }
         }
     }
@@ -86,22 +86,17 @@ extension ZegoCallManager: ZIMServiceDelegate {
             
             for userInfo in info.callUserList {
                 if userInfo.state == .accepted {
-                    if let _ = getCallUser(callData: currentCallData, userID: userInfo.userID) {
-                        for delegate in callEventHandlers.allObjects {
-                            delegate.onCallAccepted?(userID: userInfo.userID, extendedData: userInfo.extendedData)
-                        }
-                    }
                     onReceiveCallUserAccepted(userInfo: userInfo)
                 } else if userInfo.state == .rejected {
                     for delegate in callEventHandlers.allObjects {
-                        delegate.onCallRejected?(userID: userInfo.userID, extendedData: userInfo.extendedData)
+                        delegate.onOutgoingCallInvitationRejected?(userID: userInfo.userID, extendedData: userInfo.extendedData)
                     }
                     if let localUser = localUser {
                         checkIfPKEnd(requestID: requestID, currentUser: localUser)
                     }
                 } else if userInfo.state == .timeout {
                     for delegate in callEventHandlers.allObjects {
-                        delegate.onCallTimeout?(userID: userInfo.userID, extendedData: userInfo.extendedData)
+                        delegate.onOutgoingCallInvitationTimeout?(userID: userInfo.userID, extendedData: userInfo.extendedData)
                     }
                     if let localUser = localUser {
                         checkIfPKEnd(requestID: requestID, currentUser: localUser)
@@ -127,7 +122,7 @@ extension ZegoCallManager: ZIMServiceDelegate {
            currentCallData.callID == requestID
         {
             for delegate in callEventHandlers.allObjects {
-                delegate.onInComingCallTimeout?(requestID: requestID)
+                delegate.onInComingCallInvitationTimeout?(requestID: requestID)
             }
             clearCallData()
         }
@@ -165,44 +160,38 @@ extension ZegoCallManager: ZIMServiceDelegate {
     }
     
     private func onReceiveCallUserAccepted(userInfo: ZIMCallUserInfo) {
-        let callExtendedData = ZegoCallExtendedData.parse(extendedData: userInfo.extendedData)
-        guard let callExtendedData = callExtendedData,
-              let callType = callExtendedData.type,
-        let currentCallData = currentCallData
-        else { return }
-        if (isCallBusiness(type: callType.rawValue)) {
-            var moreThanOneAcceptedExceptMe = false
-            var meHasAccepted = false
-            for callUser in currentCallData.callUserList {
-                if callUser.userID == localUser?.id {
-                    meHasAccepted = callUser.hasAccepted
-                } else {
-                    if callUser.hasAccepted {
-                        moreThanOneAcceptedExceptMe = true
-                    }
-                }
-
-            }
-            
-            if currentCallData.isGroupCall {
-                if (meHasAccepted && !isCallStart) {
-                    isCallStart = true
-                    for delegate in callEventHandlers.allObjects {
-                        delegate.onCallStart?()
-                    }
-                }
+        guard let currentCallData = currentCallData else { return }
+        var moreThanOneAcceptedExceptMe = false
+        var meHasAccepted = false
+        for callUser in currentCallData.callUserList {
+            if callUser.userID == localUser?.id {
+                meHasAccepted = callUser.hasAccepted
             } else {
-                if (meHasAccepted && moreThanOneAcceptedExceptMe && !isCallStart) {
-                    isCallStart = true
-                    for delegate in callEventHandlers.allObjects {
-                        delegate.onCallStart?()
-                    }
+                if callUser.hasAccepted {
+                    moreThanOneAcceptedExceptMe = true
                 }
             }
-            
-            for delegate in self.callEventHandlers.allObjects {
-                delegate.onCallUserJoin?(userID: userInfo.userID, extendedData: userInfo.extendedData)
+
+        }
+        
+        if currentCallData.isGroupCall {
+            if (meHasAccepted && !isCallStart) {
+                isCallStart = true
+                for delegate in callEventHandlers.allObjects {
+                    delegate.onCallStart?()
+                }
             }
+        } else {
+            if (meHasAccepted && moreThanOneAcceptedExceptMe && !isCallStart) {
+                isCallStart = true
+                for delegate in callEventHandlers.allObjects {
+                    delegate.onCallStart?()
+                }
+            }
+        }
+        
+        for delegate in callEventHandlers.allObjects {
+            delegate.onOutgoingCallInvitationAccepted?(userID: userInfo.userID, extendedData: userInfo.extendedData)
         }
     }
     

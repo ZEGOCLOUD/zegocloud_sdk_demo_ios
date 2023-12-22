@@ -122,7 +122,7 @@ class ZegoIncomingCallDialog: UIView {
         guard let inviter = callData?.inviter,
               let callID = callData?.callID
         else { return }
-        ZegoCallManager.shared.acceptCallRequest(requestID: callID) { requestID, error in
+        ZegoCallManager.shared.acceptCallInvitation(requestID: callID) { requestID, error in
             if error.code == .success {
                 self.delegate?.onAcceptButtonClick?(inviter)
                 ZegoIncomingCallDialog.hide()
@@ -134,7 +134,7 @@ class ZegoIncomingCallDialog: UIView {
     
     @IBAction func rejectButtonClick(_ sender: UIButton) {
         guard let callID = callData?.callID else { return }
-        ZegoCallManager.shared.rejectCallRequest(requestID: callID, callback: nil)
+        ZegoCallManager.shared.rejectCallInvitation(requestID: callID, callback: nil)
         ZegoIncomingCallDialog.hide()
     }
     

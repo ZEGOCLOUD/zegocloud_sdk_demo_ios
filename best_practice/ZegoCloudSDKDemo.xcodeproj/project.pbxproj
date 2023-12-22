@@ -38,6 +38,7 @@
 		868F03062B2AECCE0088CEC1 /* GroupCallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 868F03042B2AECCE0088CEC1 /* GroupCallViewController.xib */; };
 		868F030D2B2AF2980088CEC1 /* OneOnOneCallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868F030B2B2AF2980088CEC1 /* OneOnOneCallViewController.swift */; };
 		868F030E2B2AF2980088CEC1 /* OneOnOneCallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 868F030C2B2AF2980088CEC1 /* OneOnOneCallViewController.xib */; };
+		868F03102B358DDC0088CEC1 /* ZegoCallManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868F030F2B358DDC0088CEC1 /* ZegoCallManagerInterface.swift */; };
 		86A8ACC42A5BF11A00E4076E /* ZIMServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A8ACC32A5BF11A00E4076E /* ZIMServiceDelegate.swift */; };
 		86A8ACC82A5C102A00E4076E /* RoomSeatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A8ACC72A5C102A00E4076E /* RoomSeatService.swift */; };
 		86A8ACCC2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A8ACCB2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift */; };
@@ -121,6 +122,7 @@
 		868F03042B2AECCE0088CEC1 /* GroupCallViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GroupCallViewController.xib; sourceTree = "<group>"; };
 		868F030B2B2AF2980088CEC1 /* OneOnOneCallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneCallViewController.swift; sourceTree = "<group>"; };
 		868F030C2B2AF2980088CEC1 /* OneOnOneCallViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OneOnOneCallViewController.xib; sourceTree = "<group>"; };
+		868F030F2B358DDC0088CEC1 /* ZegoCallManagerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallManagerInterface.swift; sourceTree = "<group>"; };
 		86A8ACC32A5BF11A00E4076E /* ZIMServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIMServiceDelegate.swift; sourceTree = "<group>"; };
 		86A8ACC72A5C102A00E4076E /* RoomSeatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSeatService.swift; sourceTree = "<group>"; };
 		86A8ACCB2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZegoLiveAudioRoomManager.swift; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				86B75B182AFCD30A00608395 /* ZegoLiveStreamingManager+ExpressEventHandler.swift */,
 				86A8ACCB2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift */,
 				86A8AD062A67D3AB00E4076E /* ZegoCallManager.swift */,
+				868F030F2B358DDC0088CEC1 /* ZegoCallManagerInterface.swift */,
 				868F02FF2B29A6870088CEC1 /* ZegoCallManager+EventHandler.swift */,
 				8E7E123B2A72517600CA8791 /* Utils.swift */,
 				8E7E123A2A72517600CA8791 /* ZegoDefine.swift */,
@@ -554,6 +557,7 @@
 				86325CB92A2741E4004185B1 /* PKInvitation.swift in Sources */,
 				86A8ACC42A5BF11A00E4076E /* ZIMServiceDelegate.swift in Sources */,
 				86A8AD152A6A34CB00E4076E /* CallService.swift in Sources */,
+				868F03102B358DDC0088CEC1 /* ZegoCallManagerInterface.swift in Sources */,
 				8606246F2AF25695006B04A8 /* PKBattleViewContainer.swift in Sources */,
 				8E7E123C2A72517600CA8791 /* ZegoDefine.swift in Sources */,
 				8E318D7229D573D4001596F3 /* SceneDelegate.swift in Sources */,

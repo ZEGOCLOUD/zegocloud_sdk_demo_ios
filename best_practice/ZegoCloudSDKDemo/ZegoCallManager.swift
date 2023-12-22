@@ -12,34 +12,29 @@ import ZIM
     
     @objc optional func onCallStart()
     @objc optional func onCallEnd()
-    
-    @objc optional func onInComingUserRequestReceived(requestID: String, inviter: String, inviteeList: [String], extendedData: String)
-    @objc optional func onInComingCallTimeout(requestID: String)
+    @objc optional func onInComingCallInvitationReceived(requestID: String, inviter: String, inviteeList: [String], extendedData: String)
+    @objc optional func onInComingCallInvitationTimeout(requestID: String)
     @objc optional func onCallUserUpdate(userID: String, extendedData: String)
     @objc optional func onCallUserJoin(userID: String, extendedData: String)
-    @objc optional func onCallAccepted(userID: String, extendedData: String)
-    @objc optional func onCallRejected(userID: String, extendedData: String)
-    @objc optional func onCallTimeout(userID: String, extendedData: String)
+    @objc optional func onOutgoingCallInvitationAccepted(userID: String, extendedData: String)
+    @objc optional func onOutgoingCallInvitationRejected(userID: String, extendedData: String)
+    @objc optional func onOutgoingCallInvitationTimeout(userID: String, extendedData: String)
     @objc optional func onCallUserQuit(userID: String, extendedData: String)
     
 }
 
 typealias CallRequestCallback = (_ code: UInt, _ requestID: String?) -> ()
 
-class ZegoCallManager: NSObject {
+class ZegoCallManager: NSObject, CallManagerProtocol {
     
     static let shared = ZegoCallManager()
-    
     var localUser: ZegoSDKUser? {
         get {
             return ZegoSDKManager.shared.currentUser
         }
     }
-    
     var isCallStart: Bool = false
-    
     var currentCallData: ZegoCallDataModel?
-    
     let callEventHandlers: NSHashTable<ZegoCallManagerDelegate> = NSHashTable(options: .weakMemory)
     
     override init() {
@@ -52,14 +47,14 @@ class ZegoCallManager: NSObject {
     }
 
     //MARK - invitation
-    func addMemberCall(_ targetUserID: [String], callback: CallRequestCallback?) {
+    func inviteUserToJoinCall(_ targetUserID: [String], callback: CallRequestCallback?) {
         guard let currentCallData = currentCallData,
               let callID = currentCallData.callID
         else { return }
         addUserToRequest(userList: targetUserID, requestID: callID, callback: callback)
     }
     
-    func sendVideoCall(_ targetUserID: String, callback: CallRequestCallback?) {
+    func sendVideoCallInvitation(_ targetUserID: String, callback: CallRequestCallback?) {
         let callType: CallType = .video
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -71,7 +66,7 @@ class ZegoCallManager: NSObject {
         }
     }
     
-    func sendVoiceCall(_ targetUserID: String, callback: CallRequestCallback?) {
+    func sendVoiceCallInvitation(_ targetUserID: String, callback: CallRequestCallback?) {
         let callType: CallType = .voice
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -83,7 +78,7 @@ class ZegoCallManager: NSObject {
         }
     }
     
-    func sendGroupVideoCall(_ targetUserIDs: [String], callback: CallRequestCallback?) {
+    func sendGroupVideoCallInvitation(_ targetUserIDs: [String], callback: CallRequestCallback?) {
         let callType: CallType = .video
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -95,7 +90,7 @@ class ZegoCallManager: NSObject {
         }
     }
     
-    func sendGroupVoiceCall(_ targetUserIDs: [String], callback: CallRequestCallback?) {
+    func sendGroupVoiceCallInvitation(_ targetUserIDs: [String], callback: CallRequestCallback?) {
         let callType: CallType = .voice
         if let currentCallData = currentCallData,
            let callID = currentCallData.callID
@@ -121,10 +116,11 @@ class ZegoCallManager: NSObject {
         else { return }
         let extendedData = getCallExtendata(type: currentCallData.type)
         endUserRequest(requestID: requestID, extendedData: extendedData.toString() ?? "", callback: callback)
+        leaveRoom()
         clearCallData()
     }
     
-    func rejectCallRequest(requestID: String, callback: ZIMCallRejectionSentCallback?) {
+    func rejectCallInvitation(requestID: String, callback: ZIMCallRejectionSentCallback?) {
         if let currentCallData = currentCallData,
            requestID == currentCallData.callID
         {
@@ -137,11 +133,11 @@ class ZegoCallManager: NSObject {
         }
     }
     
-    func busyRejectCallRequest(requestID: String,  extendedData: String, type: CallType, callback: ZIMCallRejectionSentCallback?) {
+    func rejectCallInvitationCauseBusy(requestID: String,  extendedData: String, type: CallType, callback: ZIMCallRejectionSentCallback?) {
         refuseUserRequest(requestID: requestID, extendedData: extendedData, callback: callback)
     }
     
-    func acceptCallRequest(requestID: String, callback: ZIMCallAcceptanceSentCallback?) {
+    func acceptCallInvitation(requestID: String, callback: ZIMCallAcceptanceSentCallback?) {
         guard let currentCallData = currentCallData else { return }
         let extendedData = getCallExtendata(type: currentCallData.type)
         acceptUserRequest(requestID: requestID, extendedData: extendedData.toString() ?? "", callback: callback)
@@ -162,23 +158,23 @@ class ZegoCallManager: NSObject {
         return ZegoSDKManager.shared.zimService.getUserAvatar(userID: userID);
     }
     
-    func leaveRoom() {
-        ZegoSDKManager.shared.logoutRoom()
-    }
-     
-    func isCallBusiness(type: Int) -> Bool {
-        if type == CallType.video.rawValue || type == CallType.voice.rawValue {
-            return true
-        }
-        return false
-    }
-    
     func getMainStreamID() -> String {
         return "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_\(ZegoSDKManager.shared.currentUser?.id ?? "")_main"
     }
 }
 
 extension ZegoCallManager {
+    
+    func leaveRoom() {
+        ZegoSDKManager.shared.logoutRoom()
+    }
+    
+    func isCallBusiness(type: Int) -> Bool {
+        if type == CallType.video.rawValue || type == CallType.voice.rawValue {
+            return true
+        }
+        return false
+    }
     
     func getCallUser(callData: ZegoCallDataModel, userID: String) -> CallUserInfo? {
         for callUser in callData.callUserList {
@@ -213,6 +209,7 @@ extension ZegoCallManager {
     
     func stopCall() {
         clearCallData()
+        leaveRoom()
         for delegate in callEventHandlers.allObjects {
             delegate.onCallEnd?()
         }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ZIM
 
 enum CallState: Int {
     case error
@@ -21,18 +22,54 @@ enum CallType: Int {
     case voice = 10001
 }
 
+class CallUserInfo: NSObject {
+    
+    var userName: String? {
+        get {
+            return ZegoSDKManager.shared.zimService.getUserName(userID: userID ?? "")
+        }
+    }
+    var userID: String?
+    var callUserState: ZIMCallUserState = .unknown
+    var extendedData: String = ""
+    var headUrl: String? {
+        get {
+            return ZegoSDKManager.shared.zimService.getUserAvatar(userID: userID ?? "")
+        }
+    }
+    var streamID: String {
+        get {
+            return "\(ZegoSDKManager.shared.expressService.currentRoomID ?? "")_\(userID ?? "")_main"
+        }
+    }
+    
+    var hasAccepted: Bool {
+        get {
+            return callUserState == .accepted
+        }
+    }
+    
+    var isWaiting: Bool {
+        get {
+            return callUserState == .received
+        }
+    }
+    
+    init(userID: String) {
+        self.userID = userID
+    }
+    
+}
+
 class ZegoCallDataModel: NSObject {
     var callID: String?
-    var inviter: ZegoSDKUser?
-    var invitee: ZegoSDKUser?
+    var inviter: CallUserInfo?
+    var callUserList: [CallUserInfo] = []
     var type: CallType = .voice
-    var callStatus: CallState = .error
     
-    init(callID: String? = nil, inviter: ZegoSDKUser? = nil, invitee: ZegoSDKUser? = nil, type: CallType = .voice, callStatus: CallState = .error) {
-        self.callID = callID
-        self.inviter = inviter
-        self.invitee = invitee
-        self.type = type
-        self.callStatus = callStatus
+    var isGroupCall: Bool {
+        get {
+            return callUserList.count > 2
+        }
     }
 }

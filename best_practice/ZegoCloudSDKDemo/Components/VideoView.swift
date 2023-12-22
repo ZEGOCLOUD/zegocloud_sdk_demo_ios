@@ -22,6 +22,16 @@ public class VideoView: UIView {
         return view
     }()
     
+    lazy var headImageView: UIImageView = {
+        let headImage = UIImageView()
+        headImage.backgroundColor = UIColor.white
+        headImage.translatesAutoresizingMaskIntoConstraints = false
+        headImage.layer.cornerRadius = 40
+        headImage.layer.masksToBounds = true
+        headImage.isHidden = true
+        return headImage
+    }()
+    
     lazy var nameHeadLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -67,6 +77,7 @@ public class VideoView: UIView {
     private func initData() {
         addSubview(backgroundView)
         addSubview(nameHeadLabel)
+        addSubview(headImageView)
         addSubview(renderView)
         addSubview(nameLabel)
         
@@ -94,6 +105,13 @@ public class VideoView: UIView {
             nameHeadLabel.widthAnchor.constraint(equalToConstant: 80),
             nameHeadLabel.heightAnchor.constraint(equalToConstant: 80)
         ])
+        
+        NSLayoutConstraint.activate([
+            headImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            headImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            headImageView.widthAnchor.constraint(equalToConstant: 80),
+            headImageView.heightAnchor.constraint(equalToConstant: 80)
+        ])
     }
     
     // MARK: - Public
@@ -111,6 +129,13 @@ public class VideoView: UIView {
            name.count > 0
         {
             nameHeadLabel.text = String(name[name.startIndex])
+        }
+    }
+    
+    public func setAvatar(_ url: String) {
+        if let avatarUrl = URL(string: url) {
+            headImageView.downloadedFrom(url: avatarUrl)
+            headImageView.isHidden = false
         }
     }
     

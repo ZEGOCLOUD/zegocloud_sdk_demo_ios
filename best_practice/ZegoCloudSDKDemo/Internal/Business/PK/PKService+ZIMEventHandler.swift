@@ -87,17 +87,6 @@ extension PKService: ZIMServiceDelegate {
         }
     }
     
-    func onInComingUserRequestCancelled(requestID: String, inviter: String, extendedData: String) {
-        if let pkInfo = pkInfo,
-           pkInfo.requestID == requestID
-        {
-            self.pkInfo = nil
-            for delegate in eventDelegates.allObjects {
-                delegate.onIncomingPKRequestCancelled?()
-            }
-        }
-    }
-    
     func onInComingUserRequestTimeout(requestID: String) {
         if let pkInfo = pkInfo,
            pkInfo.requestID == requestID
@@ -105,18 +94,6 @@ extension PKService: ZIMServiceDelegate {
             self.pkInfo = nil
             for delegate in eventDelegates.allObjects {
                 delegate.onIncomingPKRequestTimeout?()
-            }
-        }
-    }
-    
-    func onOutgoingUserRequestTimeout(requestID: String) {
-        if let pkInfo = pkInfo,
-           pkInfo.requestID == requestID
-        {
-            self.pkInfo = nil
-            isPKStarted = false
-            for delegate in eventDelegates.allObjects {
-                delegate.onOutgoingPKRequestTimeout?()
             }
         }
     }

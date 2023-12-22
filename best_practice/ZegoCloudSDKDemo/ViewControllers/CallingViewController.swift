@@ -19,24 +19,13 @@ enum CallButtonType: Int {
 
 class CallingViewController: UIViewController {
     
-    @IBOutlet weak var largeViewContainer: UIView! {
-        didSet {
-            largeViewContainer.backgroundColor = .init(hex: "#4A4B4D")
-        }
-    }
-    @IBOutlet weak var largeVideoView: UIView!
-    @IBOutlet weak var smallViewContainer: UIView! {
-        didSet {
-            smallViewContainer.backgroundColor = .init(hex: "#333437")
-        }
-    }
-    @IBOutlet weak var smallVideoView: UIView!
+    
+    @IBOutlet weak var callSubviewContainer: UIView!
     @IBOutlet weak var bottomBar: UIView! {
         didSet {
             bottomBar.backgroundColor = .init(hex: "#333437", alpha: 0.9)
         }
     }
-    var remoteUser: ZegoSDKUser?
     var localUser: ZegoSDKUser? {
         get {
             return ZegoSDKManager.shared.currentUser
@@ -80,24 +69,102 @@ class CallingViewController: UIViewController {
     let itemSize: CGSize = CGSize.init(width: 60, height: 60)
     
     var isFrontFacingCamera: Bool = true
+    
+    var callDisplayVC: UIViewController!
         
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        ZegoSDKManager.shared.expressService.addEventHandler(self)
+        ZegoCallManager.shared.addCallEventHandler(self)
         ZegoSDKManager.shared.zimService.addEventHandler(self)
         setDeviceStatus()
         setUpBottomBar()
         
-        if let roomID = ZegoCallManager.shared.currentCallData?.callID {
+        if let currentCallData = ZegoCallManager.shared.currentCallData,
+           let roomID = currentCallData.callID
+        {
             ZegoSDKManager.shared.loginRoom(roomID, scenario: (type == .voice) ? .standardVoiceCall : .standardVideoCall) { code, message in
                 if code == 0 {
-                    self.showLocalPreview()
+                    ZegoSDKManager.shared.expressService.startPublishingStream(ZegoCallManager.shared.getMainStreamID())
+                    self.setupCallSubView()
                 } else {
                     self.view.makeToast("login room fail:\(code)", duration: 2.0, position: .center)
                 }
             }
         }
+    }
+    
+    func setupCallSubView() {
+        guard let callUserList = ZegoCallManager.shared.currentCallData?.callUserList,
+              let _ = ZegoSDKManager.shared.expressService.currentRoomID
+        else { return }
+        var enableShowUsers: [CallUserInfo] = []
+        for user in callUserList {
+            if user.isWaiting || user.hasAccepted {
+                enableShowUsers.append(user)
+            }
+        }
+        let seatUserList = seatingArrangement(enableShowUsers)
+        if seatUserList.count > 2 {
+            if let callDisplayVC = callDisplayVC,
+               callDisplayVC is GroupCallViewController
+            {
+                (callDisplayVC as! GroupCallViewController).updateCallUserList(seatUserList)
+            } else {
+                callSubviewContainer.subviews.forEach { subview in
+                    subview.removeFromSuperview()
+                }
+                let viewController: GroupCallViewController = GroupCallViewController(nibName: "GroupCallViewController", bundle: nil)
+                viewController.callUserList = seatUserList
+                callDisplayVC = viewController
+            }
+        } else {
+            if let callDisplayVC = callDisplayVC,
+               callDisplayVC is OneOnOneCallViewController
+            {
+                (callDisplayVC as! OneOnOneCallViewController).callUserList = seatUserList
+            } else {
+                callSubviewContainer.subviews.forEach { subview in
+                    subview.removeFromSuperview()
+                }
+                let viewController: OneOnOneCallViewController = OneOnOneCallViewController(nibName: "OneOnOneCallViewController", bundle: nil)
+                viewController.callUserList = seatUserList
+                callDisplayVC = viewController
+            }
+        }
+        addChild(callDisplayVC)
+        callSubviewContainer.addSubview(callDisplayVC.view)
+        callDisplayVC.didMove(toParent: self)
+        callDisplayVC.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            callDisplayVC.view.topAnchor.constraint(equalTo: callSubviewContainer.topAnchor),
+            callDisplayVC.view.bottomAnchor.constraint(equalTo: callSubviewContainer.bottomAnchor),
+            callDisplayVC.view.leadingAnchor.constraint(equalTo: callSubviewContainer.leadingAnchor),
+            callDisplayVC.view.trailingAnchor.constraint(equalTo: callSubviewContainer.trailingAnchor)
+        ])
+    }
+    
+    func seatingArrangement(_ enableShowUserList: [CallUserInfo]) -> [CallUserInfo] {
+        var userList: [CallUserInfo] = []
+        var waitingUser: [CallUserInfo] = []
+        var localUserInfo: CallUserInfo?
+        for callUserInfo in enableShowUserList {
+            if callUserInfo.userID == ZegoSDKManager.shared.currentUser?.id {
+                localUserInfo = callUserInfo
+            } else {
+                if callUserInfo.isWaiting {
+                    waitingUser.append(callUserInfo)
+                }
+                if callUserInfo.hasAccepted {
+                    userList.append(callUserInfo)
+                }
+            }
+        }
+        if let localUserInfo = localUserInfo {
+            userList.insert(localUserInfo, at: 0)
+        }
+        userList.append(contentsOf: waitingUser)
+        return userList
     }
     
     func setDeviceStatus() {
@@ -134,7 +201,6 @@ class CallingViewController: UIViewController {
                 button.tag = 101
                 button.setImage(UIImage(named: "icon_camera_normal"), for: .normal)
                 button.setImage(UIImage(named: "icon_camera_off"), for: .selected)
-                
             case .toggleMicrophoneButton:
                 button.tag = 102
                 button.setImage(UIImage(named: "icon_mic_normal"), for: .normal)
@@ -154,8 +220,7 @@ class CallingViewController: UIViewController {
     @objc func buttonClick(_ sender: UIButton) {
         switch sender.tag {
         case 100:
-            ZegoCallManager.shared.clearCallData()
-            ZegoCallManager.shared.leaveRoom()
+            ZegoCallManager.shared.quitCall(ZegoCallManager.shared.currentCallData?.callID ?? "", callback: nil)
             self.dismiss(animated: true)
         case 101:
             sender.isSelected = !sender.isSelected
@@ -174,54 +239,54 @@ class CallingViewController: UIViewController {
         }
     }
     
-    
-    func showLocalPreview() {
-        if type == .video {
-            ZegoSDKManager.shared.expressService.startPreview(smallVideoView)
+    @IBAction func addMemberClick(_ sender: Any) {
+        let addAlterView: UIAlertController = UIAlertController(title: "add member", message: nil, preferredStyle: .alert)
+        addAlterView.addTextField { textField in
+            textField.placeholder = "userID"
         }
-        ZegoSDKManager.shared.expressService.startPublishingStream(ZegoCallManager.shared.getMainStreamID())
+        
+        let sureAction: UIAlertAction = UIAlertAction(title: "sure", style: .default) { [weak self] action in
+            var addMemberList: [String] = []
+            if let textField = addAlterView.textFields?[0] {
+                if let userID = textField.text,
+                   !userID.isEmpty
+                {
+                    addMemberList.append(userID)
+                }
+            }
+            ZegoCallManager.shared.inviteUserToJoinCall(addMemberList, callback: nil)
+        }
+        
+        let cancelAction: UIAlertAction = UIAlertAction(title: "cancel ", style: .cancel) { action in
+            
+        }
+        addAlterView.addAction(sureAction)
+        addAlterView.addAction(cancelAction)
+        self.present(addAlterView, animated: true)
     }
 
 }
 
-extension CallingViewController: ExpressServiceDelegate, ZIMServiceDelegate {
+extension CallingViewController: ZIMServiceDelegate, ZegoCallManagerDelegate {
     
-    func onRemoteCameraStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
-        if state != .open && type == .video {
-            self.view.makeToast("remote user camera close", duration: 2.0, position: .center)
-        }
+    func onOutgoingCallInvitationTimeout(userID: String, extendedData: String) {
+        setupCallSubView()
     }
     
-    func onRemoteMicStateUpdate(_ state: ZegoRemoteDeviceState, streamID: String) {
-        if state != .open {
-            self.view.makeToast("remote user microphone close", duration: 2.0, position: .center)
-        }
+    func onCallUserUpdate(userID: String, extendedData: String) {
+        setupCallSubView()
     }
     
-    func onRoomUserUpdate(_ updateType: ZegoUpdateType, userList: [ZegoUser], roomID: String) {
-        if updateType == .delete {
-            for user in userList {
-                if user.userID == remoteUser?.id {
-                    ZegoCallManager.shared.clearCallData()
-                    ZegoCallManager.shared.leaveRoom()
-                    self.dismiss(animated: true)
-                }
-            }
-        }
+    func onOutgoingCallInvitationAccepted(userID: String, extendedData: String) {
+        setupCallSubView()
     }
     
-    func onRoomStreamUpdate(_ updateType: ZegoUpdateType, streamList: [ZegoStream], extendedData: [AnyHashable : Any]?, roomID: String) {
-        for stream in streamList {
-            if updateType == .add {
-                if type == .video {
-                    ZegoSDKManager.shared.expressService.startPlayingStream(largeVideoView, streamID: stream.streamID, viewMode: .aspectFill)
-                } else {
-                    ZegoSDKManager.shared.expressService.startPlayingStream(nil, streamID: stream.streamID)
-                }
-            } else {
-                ZegoSDKManager.shared.expressService.stopPlayingStream(stream.streamID)
-            }
-        }
+    func onCallUserQuit(userID: String, extendedData: String) {
+        setupCallSubView()
+    }
+    
+    func onCallEnd() {
+        self.dismiss(animated: true)
     }
     
     func zim(_ zim: ZIM, connectionStateChanged state: ZIMConnectionState, event: ZIMConnectionEvent, extendedData: [AnyHashable : Any]) {

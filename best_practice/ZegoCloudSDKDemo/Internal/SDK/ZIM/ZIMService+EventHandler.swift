@@ -105,41 +105,6 @@ extension ZIMService: ZIMEventHandler {
         }
     }
     
-    public func zim(_ zim: ZIM, callInvitationAccepted info: ZIMCallInvitationAcceptedInfo, callID: String) {
-        for handler in eventHandlers.allObjects {
-            handler.onOutgoingUserRequestAccepted?(requestID: callID, invitee: info.invitee, extendedData: info.extendedData)
-            handler.zim?(zim, callInvitationAccepted: info, callID: callID)
-        }
-    }
-    
-    public func zim(_ zim: ZIM, callInvitationRejected info: ZIMCallInvitationRejectedInfo, callID: String) {
-        for handler in eventHandlers.allObjects {
-            handler.onOutgoingUserRequestRejected?(requestID: callID, invitee: info.invitee, extendedData: info.extendedData)
-            handler.zim?(zim, callInvitationRejected: info, callID: callID)
-        }
-    }
-    
-    public func zim(_ zim: ZIM, callInvitationCancelled info: ZIMCallInvitationCancelledInfo, callID: String) {
-        for handler in eventHandlers.allObjects {
-            handler.onInComingUserRequestCancelled?(requestID: callID, inviter: info.inviter, extendedData: info.extendedData)
-            handler.zim?(zim, callInvitationCancelled: info, callID: callID)
-        }
-    }
-    
-    public func zim(_ zim: ZIM, callInvitationTimeout callID: String) {
-        for handler in eventHandlers.allObjects {
-            handler.onInComingUserRequestTimeout?(requestID: callID, info: nil)
-            handler.zim?(zim, callInvitationTimeout: callID)
-        }
-    }
-    
-    public func zim(_ zim: ZIM, callInviteesAnsweredTimeout invitees: [String], callID: String) {
-        for handler in eventHandlers.allObjects {
-            handler.onOutgoingUserRequestTimeout?(requestID: callID)
-            handler.zim?(zim, callInviteesAnsweredTimeout: invitees, callID: callID)
-        }
-    }
-    
     //MARK: - New Invitation
     public func zim(_ zim: ZIM, callUserStateChanged info: ZIMCallUserStateChangeInfo, callID: String) {
         // accept、reject、answerTimeout

@@ -12,7 +12,14 @@ public class ExpressService: NSObject {
     
     public static let shared = ExpressService()
     
-    public var currentUser: ZegoSDKUser?
+    public var currentUser: ZegoSDKUser? {
+        didSet {
+            if let currentUser = currentUser {
+                print("currentUser.name:\(currentUser.name)")
+            }
+            
+        }
+    }
     
     let eventHandlers: NSHashTable<ExpressServiceDelegate> = NSHashTable(options: .weakMemory)
     
@@ -51,8 +58,14 @@ public class ExpressService: NSObject {
     
     public func connectUser(userID: String,
                             userName: String? = nil, token: String?) {
-        let userName = userName ?? userID
-        currentUser = ZegoSDKUser(id: userID, name: userName)
+        if let userName = userName,
+           !userName.isEmpty
+        {
+            currentUser = ZegoSDKUser(id: userID, name: userName)
+        } else {
+            currentUser = ZegoSDKUser(id: userID, name: userID)
+        }
+        
     }
     
     public func disconnectUser() {

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OneOnOneCallViewController" customModule="ZegoCloudSDKDemo" customModuleProvider="target">
+            <connections>
+                <outlet property="largeVideoView" destination="uWx-nL-EaL" id="JBR-au-SAq"/>
+                <outlet property="largetViewContainer" destination="Bqb-en-XRc" id="Ixk-Gh-z0D"/>
+                <outlet property="smallVideoView" destination="DIg-fp-xyW" id="8At-Zj-MPO"/>
+                <outlet property="smallViewContainer" destination="Xgl-lK-SSD" id="TTs-JQ-nQX"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bqb-en-XRc">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uWx-nL-EaL" customClass="VideoView" customModule="ZegoCloudSDKDemo" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            <color key="backgroundColor" systemColor="systemPurpleColor"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="uWx-nL-EaL" firstAttribute="top" secondItem="Bqb-en-XRc" secondAttribute="top" id="ONR-rX-nGn"/>
+                        <constraint firstAttribute="bottom" secondItem="uWx-nL-EaL" secondAttribute="bottom" id="QY9-aL-Dsb"/>
+                        <constraint firstItem="uWx-nL-EaL" firstAttribute="leading" secondItem="Bqb-en-XRc" secondAttribute="leading" id="seO-cD-Jfy"/>
+                        <constraint firstAttribute="trailing" secondItem="uWx-nL-EaL" secondAttribute="trailing" id="yl2-Wz-3Bu"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xgl-lK-SSD">
+                    <rect key="frame" x="278" y="129" width="95" height="164"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DIg-fp-xyW" customClass="VideoView" customModule="ZegoCloudSDKDemo" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="95" height="164"/>
+                            <color key="backgroundColor" systemColor="systemPinkColor"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="DIg-fp-xyW" firstAttribute="top" secondItem="Xgl-lK-SSD" secondAttribute="top" id="Dlz-dx-uNO"/>
+                        <constraint firstAttribute="trailing" secondItem="DIg-fp-xyW" secondAttribute="trailing" id="J3S-I6-0Mu"/>
+                        <constraint firstAttribute="height" constant="164" id="KEd-re-bmE"/>
+                        <constraint firstAttribute="bottom" secondItem="DIg-fp-xyW" secondAttribute="bottom" id="RNz-Pg-VxW"/>
+                        <constraint firstAttribute="width" constant="95" id="TkF-ja-CfQ"/>
+                        <constraint firstItem="DIg-fp-xyW" firstAttribute="leading" secondItem="Xgl-lK-SSD" secondAttribute="leading" id="heH-H4-7xW"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="Bqb-en-XRc" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="9Nd-h6-tWK"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="Xgl-lK-SSD" secondAttribute="trailing" constant="20" id="AxX-aB-TwQ"/>
+                <constraint firstItem="Bqb-en-XRc" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="FTQ-3q-BIq"/>
+                <constraint firstItem="Bqb-en-XRc" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="bXV-Aa-3bh"/>
+                <constraint firstAttribute="bottom" secondItem="Bqb-en-XRc" secondAttribute="bottom" id="cCu-JG-xhc"/>
+                <constraint firstItem="Xgl-lK-SSD" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="70" id="tIo-NU-weM"/>
+            </constraints>
+            <point key="canvasLocation" x="-54.198473282442748" y="20.422535211267608"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemPinkColor">
+            <color red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemPurpleColor">
+            <color red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

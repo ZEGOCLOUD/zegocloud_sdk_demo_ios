@@ -10,7 +10,11 @@ import Foundation
 public class ZegoSDKUser: NSObject {
     public var id: String
     
-    public var name: String
+    public var name: String {
+        didSet {
+            print("ZegoSDKUser.id:\(id) ZegoSDKUser.name:\(name)")
+        }
+    }
         
     public var isMicrophoneOpen = true
     

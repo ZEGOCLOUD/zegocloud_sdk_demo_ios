@@ -50,6 +50,9 @@ class LoginViewController: UIViewController {
         
         ZegoSDKManager.shared.connectUser(userID: userID, userName: userName) { code , message in
             if code == 0 {
+                ZegoSDKManager.shared.zimService.updateUserAvatarUrl("https://robohash.org/\(userID)?set=set4") { userAvatarUrl, error in
+                    
+                }
                 self.performSegue(withIdentifier: "login", sender: sender)
             } else {
                 self.view.makeToast("zim login failed:\(code)", duration: 2.0, position: .center)

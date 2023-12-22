@@ -27,6 +27,7 @@ extension ZIMService {
                 let userID: String = userFullInfo.baseInfo.userID
                 let beforeValue: String = self.usersAvatarUrlDict[userID] ?? ""
                 self.usersAvatarUrlDict[userID] = userFullInfo.userAvatarUrl
+                self.usersNameDict[userID] = userFullInfo.baseInfo.userName
                 if userFullInfo.userAvatarUrl != beforeValue {
 
                 }
@@ -37,5 +38,9 @@ extension ZIMService {
     
     public func getUserAvatar(userID: String) -> String? {
         return self.usersAvatarUrlDict[userID]
+    }
+    
+    public func getUserName(userID: String) -> String? {
+        return self.usersNameDict[userID]
     }
 }

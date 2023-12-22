@@ -17,28 +17,29 @@ extension ExpressService {
         
         self.currentRoomID = roomID
         
-        let userID = currentUser?.id ?? ""
-        let userName = currentUser?.name ?? ""
-        let user = ZegoUser(userID: userID, userName: userName)
-                
-        let config = ZegoRoomConfig()
-        config.isUserStatusNotify = true
-        if let token = token {
-            config.token = token
-        }
-        
-        ZegoExpressEngine.shared().loginRoom(roomID, user: user, config: config) { [weak self] error, data in
-            if error == 0 {
-                self?.inRoomUserDict[userID] = self?.currentUser
-                // monitor sound level
-                guard let callback = callback else { return }
-                callback(error,data)
-            } else {
-                guard let callback = callback else { return }
-                callback(error,data)
+        if let currentUser = currentUser {
+            let userID = currentUser.id
+            let userName = currentUser.name
+            let user = ZegoUser(userID: userID, userName: userName)
+                    
+            let config = ZegoRoomConfig()
+            config.isUserStatusNotify = true
+            if let token = token {
+                config.token = token
             }
-        };
-
+            
+            ZegoExpressEngine.shared().loginRoom(roomID, user: user, config: config) { [weak self] error, data in
+                if error == 0 {
+                    self?.inRoomUserDict[userID] = self?.currentUser
+                    // monitor sound level
+                    guard let callback = callback else { return }
+                    callback(error,data)
+                } else {
+                    guard let callback = callback else { return }
+                    callback(error,data)
+                }
+            };
+        }
     }
     
     public func logoutRoom(callback: ZegoRoomLogoutCallback?) {
@@ -49,10 +50,9 @@ extension ExpressService {
         roomExtraInfoDict.removeAll()
         currentScenario = .default
         ZegoExpressEngine.shared().stopSoundLevelMonitor()
-        if let callback = callback {
-            ZegoExpressEngine.shared().logoutRoom(callback: callback)
-        } else {
-            ZegoExpressEngine.shared().logoutRoom()
+        ZegoExpressEngine.shared().logoutRoom { errorCode, info in
+            guard let callback = callback else { return }
+            callback(errorCode,info)
         }
     }
     

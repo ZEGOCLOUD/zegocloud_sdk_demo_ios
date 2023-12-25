@@ -55,4 +55,14 @@ extension ZIMService {
             callback(requestID, info, error)
         })
     }
+    
+    public func joinUserRequest(requestID: String,
+                                config: ZIMCallJoinConfig,
+                                callback: ZIMCallJoinSentCallback?) {
+        zim?.callJoin(by: requestID, config: config, callback: { requestID, info, error in
+            guard let callback = callback else { return }
+            callback(requestID, info, error)
+        })
+    }
+    
 }

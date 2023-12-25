@@ -114,6 +114,10 @@ extension ZegoLiveStreamingManager {
         pkService?.invitePKbattle(targetUserIDList: targetUserIDList, autoAccept: false, callback: callback)
     }
     
+//    func joinPKBattle(requestID: String, callback: UserRequestCallback?) {
+//        pkService?.joinPKbattle(requestID: requestID, callback: callback)
+//    }
+    
     func acceptPKStartRequest(requestID: String) {
         pkService?.acceptPKBattle(requestID: requestID)
     }

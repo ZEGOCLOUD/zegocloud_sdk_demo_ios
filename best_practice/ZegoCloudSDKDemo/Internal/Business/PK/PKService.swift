@@ -107,6 +107,12 @@ class PKService: NSObject {
         ZegoSDKManager.shared.zimService.addUserToRequest(invitees: invitees, requestID: requestID, config: config, callback: callback)
     }
     
+    private func joinUserRequest(requestID: String, extendedData: String, callback: ZIMCallJoinSentCallback?) {
+        let config = ZIMCallJoinConfig()
+        config.extendedData = extendedData
+        ZegoSDKManager.shared.zimService.joinUserRequest(requestID: requestID, config: config, callback: callback)
+    }
+    
     private func acceptUserRequest(requestID: String, extendedData: String, callback: ZIMCallAcceptanceSentCallback?) {
         let config = ZIMCallAcceptConfig()
         config.extendedData = extendedData
@@ -359,6 +365,23 @@ class PKService: NSObject {
         seiTimeDict.removeValue(forKey: userID)
     }
     
+    public func joinPKbattle(requestID: String, callback: UserRequestCallback?) {
+        pkInfo = PKInfo()
+        let pkExtendedData: String? = getPKExtendedData(type: PKExtendedData.STARK_PK)
+        var dataDict: [String: Any] = pkExtendedData?.toDict ?? [:]
+        dataDict["user_id"] = localUser?.id
+        joinUserRequest(requestID: requestID, extendedData: dataDict.jsonString) { requestID, info, error in
+            if error.code == .success {
+                self.pkInfo!.requestID = requestID
+                self.pkInfo!.pkUserList = []
+            } else {
+                self.pkInfo = nil
+            }
+            guard let callback = callback else { return }
+            callback(error.code.rawValue, requestID)
+        }
+    }
+    
     public func invitePKbattle(targetUserIDList: [String], autoAccept: Bool,callback: UserRequestCallback?) {
         if let pkInfo = pkInfo {
             addUserToRequest(invitees: targetUserIDList, requestID: pkInfo.requestID) { requestID, info, error in
@@ -383,6 +406,7 @@ class PKService: NSObject {
             }
         }
     }
+    
     
     public func acceptPKBattle(requestID: String) {
         if let pkInfo = pkInfo,

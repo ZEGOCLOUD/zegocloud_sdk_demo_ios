@@ -144,6 +144,13 @@ extension PKService: ZIMServiceDelegate {
                         pkUser.microphone = localUser?.isMicrophoneOpen ?? false
                         pkInfo.pkUserList.insert(pkUser, at: 0)
                     } else {
+                        if !userInfo.extendedData.isEmpty {
+                            let userData: PKExtendedData? = PKExtendedData.parse(extendedData: userInfo.extendedData)
+                            if let userData = userData {
+                                pkUser.userName = userData.userName ?? ""
+                                pkUser.roomID = userData.roomID ?? ""
+                            }
+                        }
                         pkInfo.pkUserList.append(pkUser)
                     }
                 }

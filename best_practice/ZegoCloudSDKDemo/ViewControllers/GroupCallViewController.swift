@@ -181,6 +181,7 @@ class GroupCallUserView: UIView {
         self.addSubview(videoView)
         self.addSubview(waitingView)
         ZegoSDKManager.shared.expressService.addEventHandler(self)
+        ZegoCallManager.shared.addCallEventHandler(self)
     }
     
     required init?(coder: NSCoder) {
@@ -194,11 +195,18 @@ class GroupCallUserView: UIView {
     }
 }
 
-extension GroupCallUserView: ExpressServiceDelegate {
+extension GroupCallUserView: ExpressServiceDelegate, ZegoCallManagerDelegate {
     
     func onCameraOpen(_ userID: String, isCameraOpen: Bool) {
         if userID == callUserInfo?.userID {
             videoView.enableCamera(isCameraOpen)
+        }
+    }
+    
+    func onCallUserInfoUpdate() {
+        if let callUserInfo = callUserInfo {
+            videoView.setAvatar(callUserInfo.headUrl ?? "")
+            videoView.setNameLabel(callUserInfo.userName)
         }
     }
 }

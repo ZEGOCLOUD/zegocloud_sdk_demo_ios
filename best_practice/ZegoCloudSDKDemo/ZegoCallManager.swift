@@ -20,6 +20,7 @@ import ZIM
     @objc optional func onOutgoingCallInvitationRejected(userID: String, extendedData: String)
     @objc optional func onOutgoingCallInvitationTimeout(userID: String, extendedData: String)
     @objc optional func onCallUserQuit(userID: String, extendedData: String)
+    @objc optional func onCallUserInfoUpdate(userList: [String])
     
 }
 

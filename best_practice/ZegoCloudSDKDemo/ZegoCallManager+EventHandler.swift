@@ -84,8 +84,12 @@ extension ZegoCallManager: ZIMServiceDelegate {
                 }
             }
             
+            var receivedUsers: [ZIMCallUserInfo] = []
             for userInfo in info.callUserList {
-                if userInfo.state == .accepted {
+                if userInfo.state == .received {
+                    receivedUsers.append(userInfo)
+                    onReceiveCallUserReceived(userInfoList: receivedUsers)
+                } else if userInfo.state == .accepted {
                     onReceiveCallUserAccepted(userInfo: userInfo)
                 } else if userInfo.state == .rejected {
                     for delegate in callEventHandlers.allObjects {
@@ -154,6 +158,21 @@ extension ZegoCallManager: ZIMServiceDelegate {
                 if (!hasWaitingUser) {
                     quitCall(requestID, callback: nil)
                     stopCall()
+                }
+            }
+        }
+    }
+    
+    private func onReceiveCallUserReceived(userInfoList: [ZIMCallUserInfo]) {
+        if userInfoList.count > 0 {
+            let userIDList: [String] = userInfoList.map { userInfo in
+                userInfo.userID
+            }
+            ZegoSDKManager.shared.zimService.queryUsersInfo(userIDList) { fullInfoList, errorUserInfoList, error in
+                if error.code == .success {
+                    for delegate in self.callEventHandlers.allObjects {
+                        delegate.onCallUserInfoUpdate?(userList: userIDList)
+                    }
                 }
             }
         }

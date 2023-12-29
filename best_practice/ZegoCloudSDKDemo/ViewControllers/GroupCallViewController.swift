@@ -104,7 +104,7 @@ class GroupCallViewController: UIViewController {
             }
           } else if (userViews.count == 5) {
               var lastLeft: CGFloat = 0
-              var height: CGFloat = view.bounds.height / 2
+              var height: CGFloat = containerViewHeight / 2
               for i in 0...(userViews.count - 1) {
                   if (i == 2) {
                       lastLeft = 0
@@ -125,7 +125,7 @@ class GroupCallViewController: UIViewController {
               var top: CGFloat
               for i in 0...(userViews.count - 1) {
                   left = cellWidth * (CGFloat)(i % column)
-                  top = cellHeight * (CGFloat)(i < column ? 0 : 1)
+                  top = cellHeight * (CGFloat)(i / column)
                   let rect = CGRect(x: left, y: top, width: cellWidth, height: cellHeight)
                   let view = userViews[i]
                   view.frame = rect

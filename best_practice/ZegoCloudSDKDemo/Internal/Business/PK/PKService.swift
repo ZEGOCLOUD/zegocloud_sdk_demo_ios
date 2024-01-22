@@ -225,7 +225,7 @@ class PKService: NSObject {
               let row: Int = 2
               let column: Int = 2
               let cellWidth = Int(Int(MixVideoSize.width) / column)
-              let cellHeight = Int(Int(MixVideoSize.width) / row)
+              let cellHeight = Int(Int(MixVideoSize.height) / row)
               var left: Int
               var top: Int
               for i in 0...(streamList.count - 1) {

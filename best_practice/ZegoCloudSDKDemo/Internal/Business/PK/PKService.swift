@@ -264,7 +264,7 @@ class PKService: NSObject {
               var top: Int
               for i in 0...(streamList.count - 1) {
                   left = cellWidth * (i % column)
-                  top = cellHeight * (i < column ? 0 : 1)
+                  top = cellHeight * (i / column)
                   let rect = CGRect(x: left, y: top, width: cellWidth, height: cellHeight)
                   let input = ZegoMixerInput(streamID: streamList[i], contentType: .video, layout: rect)
                   input.renderMode = .fill

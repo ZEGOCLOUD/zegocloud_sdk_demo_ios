@@ -822,16 +822,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/zegolibrary/express-video-ios";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		86AEB24C29FB6D9F00DA4BF3 /* XCRemoteSwiftPackageReference "zim-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/zegolibrary/zim-ios";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		8E1B929529DEB4E10097C9ED /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {

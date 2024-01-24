@@ -44,6 +44,14 @@ class LiveStreamingViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var giftButton: UIButton! {
+        didSet {
+            giftButton.layer.masksToBounds = true
+            giftButton.layer.cornerRadius = 6
+        }
+    }
+    
+    
     lazy var redDot: UIView = {
         let redDotView = UIView(frame: CGRect(x: 40, y: 25, width: 8, height: 8))
         redDotView.backgroundColor = UIColor.red
@@ -54,11 +62,14 @@ class LiveStreamingViewController: UIViewController {
     }()
     
     
-    
-    
     lazy var coHostVideoContainerView: CoHostContainerView = {
         let view = CoHostContainerView(frame: .zero)
         return view
+    }()
+    
+    lazy var giftView: GiftView = {
+        let giftView = GiftView(frame: view.bounds)
+        return giftView
     }()
     
     var alterView: UIAlertController?
@@ -109,6 +120,7 @@ class LiveStreamingViewController: UIViewController {
     func configUI() {
         liveContainerView.isHidden = isMySelfHost
         preBackgroundView.isHidden = !isMySelfHost
+        giftButton.isHidden = isMySelfHost
         liveContainerView.addSubview(coHostVideoContainerView)
         if isMySelfHost {
             ZegoSDKManager.shared.expressService.turnCameraOn(true)
@@ -278,10 +290,30 @@ class LiveStreamingViewController: UIViewController {
         self.present(applyVC, animated: true)
     }
     
+    @IBAction func sendGiftClick(_ sender: Any) {
+        ZegoSDKManager.shared.zimService.sendRoomCommand(command: "gift") { code, message in
+            if code == 0 {
+                debugPrint("send gift sucess!")
+                DispatchQueue.main.async {
+                    self.giftView.show("vap.mp4", container: self.view)
+                }
+            } else {
+                debugPrint("send gift fail! errorCode:\(code)")
+            }
+        }
+    }
     
 }
 
 extension LiveStreamingViewController: ZegoLiveStreamingManagerDelegate {
+    
+    func onRoomCommandReceived(senderID: String, command: String) {
+        if (senderID != ZegoSDKManager.shared.currentUser?.id) && command == "gift" {
+            DispatchQueue.main.async {
+                self.giftView.show("vap.mp4", container: self.view)
+            }
+        }
+    }
     
     func onRoomStreamAdd(streamList: [ZegoStream]) {
         for stream in streamList {

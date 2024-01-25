@@ -11,7 +11,7 @@ import ZegoExpressEngine
 
 typealias UserRequestCallback = (_ code: UInt, _ requestID: String) -> ()
 
-let MixVideoSize: CGSize = CGSize(width: 486 * 2, height: 864)
+let MixVideoSize: CGSize = CGSize(width: 405 * 2, height: 720)
 
 @objc protocol PKServiceDelegate: AnyObject {
     
@@ -240,7 +240,7 @@ class PKService: NSObject {
             }
           } else if (streamList.count == 5) {
               var lastLeft: Int = 0
-              var height: Int = 432
+              let height: Int = Int(MixVideoSize.height / 2)
               for i in 0...(streamList.count - 1) {
                   if (i == 2) {
                       lastLeft = 0

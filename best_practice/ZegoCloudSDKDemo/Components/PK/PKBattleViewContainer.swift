@@ -63,8 +63,8 @@ class PKBattleViewContainer: UIView {
     }
     
     func sizeConversion() {
-        w_ratio = self.bounds.size.width / 972
-        h_ratio = self.bounds.size.height / 864
+        w_ratio = self.bounds.size.width / 810
+        h_ratio = self.bounds.size.height / 720
     }
 }
 

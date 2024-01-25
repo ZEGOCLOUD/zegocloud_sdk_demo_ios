@@ -11,7 +11,7 @@ import ZegoExpressEngine
 
 typealias UserRequestCallback = (_ code: UInt, _ requestID: String) -> ()
 
-let MixVideoSize: CGSize = CGSize(width: 405 * 2, height: 720)
+let MixVideoSize: CGSize = CGSize(width: 486 * 2, height: 864)
 
 @objc protocol PKServiceDelegate: AnyObject {
     

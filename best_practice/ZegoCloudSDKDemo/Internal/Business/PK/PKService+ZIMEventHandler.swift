@@ -45,8 +45,7 @@ extension PKService: ZIMServiceDelegate {
         if inviterExtendedData.type == PKExtendedData.STARK_PK {
             let currentRoomID: String = ZegoSDKManager.shared.expressService.currentRoomID ?? ""
             let userNotHost: Bool = currentRoomID.isEmpty || !liveManager.isLocalUserHost()
-            if let _ = pkInfo,
-               userNotHost
+            if (pkInfo != nil || userNotHost)
             {
                 rejectPKBattle(requestID: requestID)
                 return

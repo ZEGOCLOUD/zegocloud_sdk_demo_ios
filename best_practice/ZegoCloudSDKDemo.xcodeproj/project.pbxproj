@@ -29,6 +29,8 @@
 		863B285F2A56ABC300613C8F /* PKDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863B285E2A56ABC300613C8F /* PKDefines.swift */; };
 		863B28612A56AC2500613C8F /* PKService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863B28602A56AC2500613C8F /* PKService.swift */; };
 		863B28632A56BE4900613C8F /* CoHostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863B28622A56BE4900613C8F /* CoHostService.swift */; };
+		8646974A2B60E3DB008B3005 /* GiftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864697492B60E3DB008B3005 /* GiftView.swift */; };
+		8646974C2B60E40A008B3005 /* Mp4PlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8646974B2B60E40A008B3005 /* Mp4PlayerManager.swift */; };
 		866AE59D2A31B1DD002C32A9 /* ZegoExpressEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 866AE59C2A31B1DD002C32A9 /* ZegoExpressEngine */; };
 		866C753D2AD7993E0018BC74 /* CoHostContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866C753C2AD7993E0018BC74 /* CoHostContainerView.swift */; };
 		866C75432AD7A45F0018BC74 /* CoHostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866C75422AD7A45F0018BC74 /* CoHostViewModel.swift */; };
@@ -114,6 +116,8 @@
 		863B285E2A56ABC300613C8F /* PKDefines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKDefines.swift; sourceTree = "<group>"; };
 		863B28602A56AC2500613C8F /* PKService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKService.swift; sourceTree = "<group>"; };
 		863B28622A56BE4900613C8F /* CoHostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoHostService.swift; sourceTree = "<group>"; };
+		864697492B60E3DB008B3005 /* GiftView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GiftView.swift; sourceTree = "<group>"; };
+		8646974B2B60E40A008B3005 /* Mp4PlayerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mp4PlayerManager.swift; sourceTree = "<group>"; };
 		866C753C2AD7993E0018BC74 /* CoHostContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoHostContainerView.swift; sourceTree = "<group>"; };
 		866C75422AD7A45F0018BC74 /* CoHostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoHostViewModel.swift; sourceTree = "<group>"; };
 		868F02FD2B298EAD0088CEC1 /* ZegoCallExtendedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallExtendedData.swift; sourceTree = "<group>"; };
@@ -258,6 +262,7 @@
 		863B28572A56A80100613C8F /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				864697482B60E3D2008B3005 /* Gift */,
 				8606246D2AF25670006B04A8 /* PK */,
 				86A8AD0D2A67D3F900E4076E /* Call */,
 				8E1B926A29DBD1250097C9ED /* VideoView.swift */,
@@ -316,6 +321,14 @@
 			path = PK;
 			sourceTree = "<group>";
 		};
+		864697482B60E3D2008B3005 /* Gift */ = {
+			isa = PBXGroup;
+			children = (
+				864697492B60E3DB008B3005 /* GiftView.swift */,
+			);
+			path = Gift;
+			sourceTree = "<group>";
+		};
 		86A8AD082A67D3CB00E4076E /* Call */ = {
 			isa = PBXGroup;
 			children = (
@@ -369,6 +382,7 @@
 				8E318D6F29D573D4001596F3 /* AppDelegate.swift */,
 				8E318D7129D573D4001596F3 /* SceneDelegate.swift */,
 				860624722AF341A4006B04A8 /* KeyCenter.swift */,
+				8646974B2B60E40A008B3005 /* Mp4PlayerManager.swift */,
 				86325CB42A25DC66004185B1 /* ZegoLiveStreamingManager.swift */,
 				86B75B182AFCD30A00608395 /* ZegoLiveStreamingManager+ExpressEventHandler.swift */,
 				86A8ACCB2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift */,
@@ -539,7 +553,9 @@
 				86A8ACCC2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift in Sources */,
 				8606247D2AF4C9E8006B04A8 /* PKConnectingView.swift in Sources */,
 				863B28632A56BE4900613C8F /* CoHostService.swift in Sources */,
+				8646974A2B60E3DB008B3005 /* GiftView.swift in Sources */,
 				86A8ACD02A5D643700E4076E /* LiveAudioRoomViewController.swift in Sources */,
+				8646974C2B60E40A008B3005 /* Mp4PlayerManager.swift in Sources */,
 				86A8AD072A67D3AB00E4076E /* ZegoCallManager.swift in Sources */,
 				8E7E123F2A7251CB00CA8791 /* ExpressService+Process.swift in Sources */,
 				866C753D2AD7993E0018BC74 /* CoHostContainerView.swift in Sources */,

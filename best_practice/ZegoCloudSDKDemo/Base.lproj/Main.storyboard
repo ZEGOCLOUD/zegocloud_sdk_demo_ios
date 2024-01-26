@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="aIH-P7-q2b">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="aIH-P7-q2b">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -553,6 +553,22 @@
                                             <color key="titleColor" red="0.95686274510000002" green="0.96862745100000003" blue="0.98431372549999996" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                     </button>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HLh-qo-jgD">
+                                        <rect key="frame" x="258" y="711" width="120" height="30"/>
+                                        <color key="backgroundColor" red="0.0" green="0.33333333329999998" blue="1" alpha="0.70999999999999996" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="120" id="04O-vS-Ljv"/>
+                                            <constraint firstAttribute="height" constant="30" id="rdY-eT-70z"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="send gift">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="sendGiftClick:" destination="863-Jx-pjQ" eventType="touchUpInside" id="2Ja-fa-vtN"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -573,6 +589,8 @@
                                     <constraint firstItem="uXH-J3-8ih" firstAttribute="centerY" secondItem="rCu-Fc-Vde" secondAttribute="centerY" id="ils-r7-lkC"/>
                                     <constraint firstItem="rCu-Fc-Vde" firstAttribute="centerY" secondItem="c51-7G-4ED" secondAttribute="centerY" id="m9G-mP-M79"/>
                                     <constraint firstItem="NnR-vj-zBW" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="bIO-wF-BG1" secondAttribute="trailing" priority="250" constant="30" id="ngv-dy-5sp"/>
+                                    <constraint firstAttribute="trailing" secondItem="HLh-qo-jgD" secondAttribute="trailing" constant="15" id="r2S-nt-aNZ"/>
+                                    <constraint firstItem="YWP-ge-Dpu" firstAttribute="top" secondItem="HLh-qo-jgD" secondAttribute="bottom" constant="10" id="x13-RQ-rvG"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PdE-Ir-D2I">
@@ -668,6 +686,7 @@
                         <outlet property="endCoHostButton" destination="rCu-Fc-Vde" id="ERF-kX-G7Q"/>
                         <outlet property="flipButton" destination="uXH-J3-8ih" id="wqr-pV-FOE"/>
                         <outlet property="flipButtonConstraint" destination="Hgr-l2-21M" id="Qob-zY-ePo"/>
+                        <outlet property="giftButton" destination="HLh-qo-jgD" id="df2-kn-Pje"/>
                         <outlet property="liveContainerView" destination="V3d-Bj-QLI" id="XNM-ai-853"/>
                         <outlet property="mainVideoView" destination="YIG-Vo-AtC" id="bDj-UU-Ubt"/>
                         <outlet property="memberButton" destination="NnR-vj-zBW" id="pJc-Uv-UD4"/>
@@ -824,6 +843,22 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qit-nq-dbV">
+                                <rect key="frame" x="258" y="752" width="120" height="30"/>
+                                <color key="backgroundColor" red="0.0" green="0.33333333329999998" blue="1" alpha="0.70999999999999996" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="kQS-UV-ej8"/>
+                                    <constraint firstAttribute="width" constant="120" id="mbe-Df-lOY"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="send gift">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendGiftClick:" destination="S6s-H3-HoD" eventType="touchUpInside" id="RLl-9B-iDa"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="p2g-n8-zAV"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -831,8 +866,10 @@
                             <constraint firstItem="3GQ-XR-CIt" firstAttribute="leading" secondItem="p2g-n8-zAV" secondAttribute="leading" constant="30" id="9iG-Pq-kJJ"/>
                             <constraint firstItem="a2L-HF-Lhg" firstAttribute="trailing" secondItem="p2g-n8-zAV" secondAttribute="trailing" id="FRZ-Ba-59u"/>
                             <constraint firstItem="p2g-n8-zAV" firstAttribute="trailing" secondItem="khX-aN-Ynq" secondAttribute="trailing" constant="30" id="JCF-DR-P9J"/>
+                            <constraint firstItem="p2g-n8-zAV" firstAttribute="trailing" secondItem="qit-nq-dbV" secondAttribute="trailing" constant="15" id="Mr4-j2-4f2"/>
                             <constraint firstItem="a2L-HF-Lhg" firstAttribute="leading" secondItem="p2g-n8-zAV" secondAttribute="leading" id="QUX-x0-49u"/>
                             <constraint firstItem="YVd-QY-VqM" firstAttribute="top" secondItem="3GQ-XR-CIt" secondAttribute="bottom" constant="5" id="arV-Vc-KSX"/>
+                            <constraint firstItem="a2L-HF-Lhg" firstAttribute="top" secondItem="qit-nq-dbV" secondAttribute="bottom" constant="10" id="bGy-mH-eLV"/>
                             <constraint firstItem="YVd-QY-VqM" firstAttribute="leading" secondItem="p2g-n8-zAV" secondAttribute="leading" constant="30" id="jIj-FX-RV7"/>
                             <constraint firstItem="3GQ-XR-CIt" firstAttribute="top" secondItem="p2g-n8-zAV" secondAttribute="top" constant="40" id="n6j-7K-Lhn"/>
                             <constraint firstItem="p2g-n8-zAV" firstAttribute="bottom" secondItem="a2L-HF-Lhg" secondAttribute="bottom" id="s1i-iL-U1B"/>
@@ -843,6 +880,7 @@
                     <connections>
                         <outlet property="applyBecomeSpeakerButton" destination="gf7-zI-sRc" id="n0O-gs-aw3"/>
                         <outlet property="bottomSeatButton" destination="DIq-7j-R2r" id="cNy-AY-ZZI"/>
+                        <outlet property="giftButton" destination="qit-nq-dbV" id="Ory-Gs-HEW"/>
                         <outlet property="memberButton" destination="LHh-al-TG5" id="iad-2n-5wV"/>
                         <outlet property="micButton" destination="VPm-ku-15x" id="0KN-ML-n2c"/>
                         <outlet property="roomIDLabel" destination="YVd-QY-VqM" id="5u4-mc-KXP"/>

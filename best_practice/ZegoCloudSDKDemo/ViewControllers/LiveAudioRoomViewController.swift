@@ -93,6 +93,19 @@ class LiveAudioRoomViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var giftButton: UIButton! {
+        didSet {
+            giftButton.layer.masksToBounds = true
+            giftButton.layer.cornerRadius = 6
+        }
+    }
+    
+    
+    lazy var giftView: GiftView = {
+        let giftView = GiftView(frame: view.bounds)
+        return giftView
+    }()
+    
     var isApply: Bool = false {
         didSet {
             if isApply {
@@ -106,6 +119,7 @@ class LiveAudioRoomViewController: UIViewController {
     
     func updateRole(_ role: UserRole) {
         mySelfRole = role
+        giftButton.isHidden = role == .host
         if mySelfRole == .host {
             micButton.isHidden = false
             bottomSeatButton.isHidden = false
@@ -238,6 +252,19 @@ class LiveAudioRoomViewController: UIViewController {
         self.present(leaveRoomAlterView, animated: true)
     }
     
+    
+    @IBAction func sendGiftClick(_ sender: Any) {
+        ZegoSDKManager.shared.zimService.sendRoomCommand(command: "gift") { code, message in
+            if code == 0 {
+                debugPrint("send gift sucess!")
+                DispatchQueue.main.async {
+                    self.giftView.show("vap.mp4", container: self.view)
+                }
+            } else {
+                debugPrint("send gift fail! errorCode:\(code)")
+            }
+        }
+    }
     
     
     func joinRoomAfterUpdateRoomInfo() {
@@ -430,6 +457,14 @@ extension LiveAudioRoomViewController: ZegoLiveAudioRoomManagerDelegate {
 }
 
 extension LiveAudioRoomViewController: ZIMServiceDelegate {
+    
+    func onRoomCommandReceived(senderID: String, command: String) {
+        if (senderID != ZegoSDKManager.shared.currentUser?.id) && command == "gift" {
+            DispatchQueue.main.async {
+                self.giftView.show("vap.mp4", container: self.view)
+            }
+        }
+    }
     
     func onInComingRoomRequestReceived(requestID: String, extendedData: String) {
         self.view.makeToast("receive become speaker apply", duration: 1.0, position: .center)

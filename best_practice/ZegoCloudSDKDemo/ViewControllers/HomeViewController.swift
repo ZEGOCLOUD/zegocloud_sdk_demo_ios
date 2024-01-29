@@ -163,7 +163,9 @@ extension HomeViewController: ZegoCallManagerDelegate {
     
     func showCallPage() {
         let callMainPage = Bundle.main.loadNibNamed("CallingViewController", owner: self, options: nil)?.first as! CallingViewController
-        callMainPage.modalPresentationStyle = .fullScreen
-        self.present(callMainPage, animated: false)
+        
+        let navgationVC = UINavigationController(rootViewController: callMainPage)
+        navgationVC.modalPresentationStyle = .fullScreen
+        self.present(navgationVC, animated: false)
     }
 }

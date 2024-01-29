@@ -114,6 +114,7 @@ extension ZegoLiveStreamingManager {
         pkService?.invitePKbattle(targetUserIDList: targetUserIDList, autoAccept: false, callback: callback)
     }
     
+    //TODO: wait for ZIM to fix the bug before uncommenting
 //    func joinPKBattle(requestID: String, callback: UserRequestCallback?) {
 //        pkService?.joinPKbattle(requestID: requestID, callback: callback)
 //    }

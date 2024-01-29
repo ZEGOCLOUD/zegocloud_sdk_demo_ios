@@ -51,6 +51,17 @@ class LiveStreamingViewController: UIViewController {
         }
     }
     
+    lazy var inviteUserPKButton: UIButton = {
+        let button: UIButton = UIButton()
+        button.backgroundColor = UIColor.purple
+        button.setTitleColor(UIColor.white, for: .normal)
+        button.setTitle("invite user", for: .normal)
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 6
+        button.isHidden = true
+        button.addTarget(self, action: #selector(inviterUserPKClick), for: .touchUpInside)
+        return button
+    }()
     
     lazy var redDot: UIView = {
         let redDotView = UIView(frame: CGRect(x: 40, y: 25, width: 8, height: 8))
@@ -102,6 +113,7 @@ class LiveStreamingViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        inviteUserPKButton.frame = CGRect(origin: CGPointMake(view.bounds.width - 135, view.bounds.height - 150), size: CGSize(width: 120, height: 30))
     }
     
     func updateCoHostContainerFrame() {
@@ -127,6 +139,7 @@ class LiveStreamingViewController: UIViewController {
             ZegoSDKManager.shared.expressService.turnMicrophoneOn(true)
             startPreviewIfHost()
             updateUserNameLabel(ZegoSDKManager.shared.expressService.currentUser?.name)
+            self.view.addSubview(inviteUserPKButton)
         } else {
             userNameLabel.isHidden = true
             coHostButton.isHidden = false
@@ -357,6 +370,7 @@ extension LiveStreamingViewController: ZegoLiveStreamingManagerDelegate {
         pkBattleContainer.isHidden = false
         coHostButton.isHidden = true
         coHostWidthConstraint.constant = 0
+        inviteUserPKButton.isHidden = false
     }
     
     func endPKUpdateUI() {
@@ -364,6 +378,7 @@ extension LiveStreamingViewController: ZegoLiveStreamingManagerDelegate {
         pkBattleContainer.isHidden = true
         coHostButton.isHidden = isMySelfHost
         coHostWidthConstraint.constant = 165
+        inviteUserPKButton.isHidden = true
     }
     
     func headName(_ userName: String) -> String {
@@ -447,6 +462,30 @@ extension LiveStreamingViewController {
             coHostVideoContainerView.coHostModels = coHostVideoViews
             updateCoHostContainerFrame()
         }
+    }
+    
+    @objc func inviterUserPKClick() {
+        let invitePKAlterView: UIAlertController = UIAlertController(title: "invite user pk", message: nil, preferredStyle: .alert)
+        invitePKAlterView.addTextField { textField in
+            textField.placeholder = "userID"
+        }
+        let sureAction: UIAlertAction = UIAlertAction(title: "sure", style: .default) { [weak self] action in
+            if let textField = invitePKAlterView.textFields?[0] {
+                if let userID = textField.text,
+                   !userID.isEmpty
+                {
+                    self?.liveManager.invitePKBattle(targetUserID: userID, callback: { code, requestID in
+                        if code != 0 {
+                            self?.view.makeToast("invite user pk fail:\(code)", position: .center)
+                        }
+                    })
+                }
+            }
+        }
+        let cancelAction: UIAlertAction = UIAlertAction(title: "cancel ", style: .cancel, handler: nil)
+        invitePKAlterView.addAction(sureAction)
+        invitePKAlterView.addAction(cancelAction)
+        self.present(invitePKAlterView, animated: true)
     }
 }
 

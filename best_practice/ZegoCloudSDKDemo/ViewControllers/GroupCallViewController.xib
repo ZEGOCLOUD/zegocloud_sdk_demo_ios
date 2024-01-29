@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -21,7 +21,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ad4-91-gz7">
-                    <rect key="frame" x="0.0" y="79" width="393" height="349.33333333333331"/>
+                    <rect key="frame" x="0.0" y="59" width="393" height="349.33333333333331"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="ad4-91-gz7" secondAttribute="height" multiplier="18:16" id="8if-hQ-pzs"/>
@@ -32,7 +32,7 @@
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="ad4-91-gz7" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="OCD-9Q-YRo"/>
-                <constraint firstItem="ad4-91-gz7" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="20" id="h7z-3Q-xyC"/>
+                <constraint firstItem="ad4-91-gz7" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="h7z-3Q-xyC"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="ad4-91-gz7" secondAttribute="trailing" id="q0k-5P-oLV"/>
             </constraints>
             <point key="canvasLocation" x="-13" y="20"/>

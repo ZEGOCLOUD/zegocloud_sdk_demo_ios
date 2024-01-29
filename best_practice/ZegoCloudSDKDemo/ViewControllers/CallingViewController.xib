@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -27,20 +27,6 @@
                             <constraint firstAttribute="height" constant="70" id="jJa-8E-mbt"/>
                         </constraints>
                     </view>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L04-uT-zC7">
-                        <rect key="frame" x="250" y="683" width="123" height="35"/>
-                        <color key="backgroundColor" red="0.65490196079999996" green="0.3294117647" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="35" id="WTX-et-xSV"/>
-                            <constraint firstAttribute="width" constant="123" id="pYH-he-Vgf"/>
-                        </constraints>
-                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <state key="normal" title="Button"/>
-                        <buttonConfiguration key="configuration" style="plain" title="Add Member"/>
-                        <connections>
-                            <action selector="addMemberClick:" destination="Z9A-VZ-fz4" eventType="touchUpInside" id="M7V-xx-jy0"/>
-                        </connections>
-                    </button>
                 </subviews>
                 <viewLayoutGuide key="safeArea" id="ggA-jw-K3l"/>
                 <color key="backgroundColor" systemColor="systemPinkColor"/>
@@ -50,8 +36,6 @@
                     <constraint firstItem="9Qd-5l-Sez" firstAttribute="top" secondItem="WG7-TQ-CqR" secondAttribute="top" id="9zA-xI-6my"/>
                     <constraint firstItem="lQ5-Mv-5ft" firstAttribute="trailing" secondItem="ggA-jw-K3l" secondAttribute="trailing" id="SCT-7G-pSD"/>
                     <constraint firstItem="9Qd-5l-Sez" firstAttribute="leading" secondItem="ggA-jw-K3l" secondAttribute="leading" id="Zl9-mS-vgy"/>
-                    <constraint firstItem="lQ5-Mv-5ft" firstAttribute="top" secondItem="L04-uT-zC7" secondAttribute="bottom" constant="30" id="gXa-3j-n3K"/>
-                    <constraint firstItem="ggA-jw-K3l" firstAttribute="trailing" secondItem="L04-uT-zC7" secondAttribute="trailing" constant="20" id="mfM-eV-V2J"/>
                     <constraint firstItem="ggA-jw-K3l" firstAttribute="bottom" secondItem="lQ5-Mv-5ft" secondAttribute="bottom" id="wly-5U-DOC"/>
                     <constraint firstAttribute="bottom" secondItem="9Qd-5l-Sez" secondAttribute="bottom" id="x4x-2c-U03"/>
                 </constraints>

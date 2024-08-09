@@ -10,7 +10,7 @@ extension ZIMService {
         guard let currentUser = userInfo else { return }
         let roomRequest = RoomRequest(requestID: "", actionType: .request, senderID: currentUser.userID, receiverID: receiverID, extendedData: extendedData)
         sendCommand(command: roomRequest.jsonString() ?? "") { message, error in
-            if error.code == .success {
+            if error.code == .ZIMErrorCodeSuccess {
                 roomRequest.requestID = "\(message.messageID)"
                 var extendedDict: [String: Any] = extendedData.toDict ?? [:]
                 extendedDict.updateValue(roomRequest.requestID as AnyObject, forKey: "request_id")

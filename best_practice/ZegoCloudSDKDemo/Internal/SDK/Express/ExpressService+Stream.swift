@@ -10,6 +10,15 @@ import ZegoExpressEngine
 
 extension ExpressService {
     
+  
+    func isRunningOnSimulator() -> Bool {
+        #if targetEnvironment(simulator)
+            return true
+        #else
+            return false
+        #endif
+    }
+  
     public func startPreview(_ renderView: UIView,
                              viewMode: ZegoViewMode = .aspectFill) {
         let canvas = ZegoCanvas(view: renderView)
@@ -48,6 +57,11 @@ extension ExpressService {
         if currentScenario == .highQualityChatroom || currentScenario == .highQualityVideoCall || currentScenario == .standardVideoCall || currentScenario == .standardVoiceCall || currentScenario == .standardChatroom {
             config.resourceMode = .onlyRTC
         }
+      
+//        if isRunningOnSimulator() == true {
+//          return
+//        }
+      
         if let renderView = renderView {
             let canvas = ZegoCanvas(view: renderView)
             canvas.viewMode = viewMode

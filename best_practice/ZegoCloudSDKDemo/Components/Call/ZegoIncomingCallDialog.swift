@@ -123,7 +123,7 @@ class ZegoIncomingCallDialog: UIView {
               let callID = callData?.callID
         else { return }
         ZegoCallManager.shared.acceptCallInvitation(requestID: callID) { requestID, error in
-            if error.code == .success {
+            if error.code == .ZIMErrorCodeSuccess {
                 self.delegate?.onAcceptButtonClick?(inviter)
                 ZegoIncomingCallDialog.hide()
             } else {

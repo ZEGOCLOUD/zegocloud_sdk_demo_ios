@@ -204,7 +204,7 @@ class LiveAudioRoomViewController: UIViewController {
             for seat in ZegoLiveAudioRoomManager.shared.seatList {
                 if seat.currentUser?.id == ZegoSDKManager.shared.currentUser?.id {
                     ZegoLiveAudioRoomManager.shared.leaveSeat(seatIndex: seat.seatIndex) { roomID, errorKeys, errorInfo in
-                        if errorInfo.code == .success && !errorKeys.contains("\(seat.seatIndex)") {
+                        if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains("\(seat.seatIndex)") {
                             self.updateRole(.audience)
                             self.updateSeatView()
                         }
@@ -272,7 +272,7 @@ class LiveAudioRoomViewController: UIViewController {
             ZegoLiveAudioRoomManager.shared.setSelfHost()
             //take seat
             ZegoLiveAudioRoomManager.shared.takeSeat(seatIndex: 0) { roomID, errorKeys, errorInfo in
-                if errorInfo.code == .success && !errorKeys.contains(ZegoSDKManager.shared.currentUser?.id ?? "") {
+                if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains(ZegoSDKManager.shared.currentUser?.id ?? "") {
                     self.openMicAndStartPublishStream()
                     ZegoLiveAudioRoomManager.shared.hostSeatIndex = 0
                     self.updateSeatView()
@@ -340,7 +340,7 @@ extension LiveAudioRoomViewController: ZegoSeatViewDelegate {
             }
             if let localUserSeat = localUserSeat {
                 ZegoLiveAudioRoomManager.shared.switchSeat(fromSeatIndex: localUserSeat.seatIndex, toSeatIndex: roomSeat.seatIndex) { roomID, errorInfo in
-                    if errorInfo.code == .success {
+                    if errorInfo.code == .ZIMErrorCodeSuccess {
                         if self.mySelfRole == .host {
                             ZegoLiveAudioRoomManager.shared.hostSeatIndex = roomSeat.seatIndex
                         }
@@ -394,7 +394,7 @@ extension LiveAudioRoomViewController: ZegoSeatViewDelegate {
     
     func takeSeat(_ seatIndex: Int) {
         ZegoLiveAudioRoomManager.shared.takeSeat(seatIndex: seatIndex) { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success && !errorKeys.contains(ZegoSDKManager.shared.currentUser?.id ?? "") {
+            if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains(ZegoSDKManager.shared.currentUser?.id ?? "") {
                 self.updateRole(.coHost)
                 self.openMicAndStartPublishStream()
                 self.updateSeatView()

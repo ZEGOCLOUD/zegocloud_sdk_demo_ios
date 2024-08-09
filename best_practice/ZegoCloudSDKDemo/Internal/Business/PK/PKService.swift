@@ -371,7 +371,7 @@ class PKService: NSObject {
         var dataDict: [String: Any] = pkExtendedData?.toDict ?? [:]
         dataDict["user_id"] = localUser?.id
         joinUserRequest(requestID: requestID, extendedData: dataDict.jsonString) { requestID, info, error in
-            if error.code == .success {
+            if error.code == .ZIMErrorCodeSuccess {
                 self.pkInfo!.requestID = requestID
                 self.pkInfo!.pkUserList = []
             } else {
@@ -395,7 +395,7 @@ class PKService: NSObject {
             dataDict["user_id"] = localUser?.id
             dataDict["auto_accept"] = autoAccept
             sendUserRequest(userIDList: targetUserIDList, extendedData: dataDict.jsonString, advanced: true) { requestID, info, error in
-                if error.code == .success {
+                if error.code == .ZIMErrorCodeSuccess {
                     self.pkInfo?.requestID = requestID
                     self.pkInfo?.pkUserList = []
                 } else {
@@ -414,7 +414,7 @@ class PKService: NSObject {
         {
             let extendedData = getPKExtendedData(type: PKExtendedData.STARK_PK) ?? ""
             acceptUserRequest(requestID: requestID, extendedData: extendedData) { requestID, error in
-                if error.code != .success {
+                if error.code != .ZIMErrorCodeSuccess {
                     self.pkInfo = nil
                 }
             }

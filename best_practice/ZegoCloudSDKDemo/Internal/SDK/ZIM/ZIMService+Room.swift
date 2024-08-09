@@ -57,7 +57,7 @@ extension ZIMService {
         config.isDeleteAfterOwnerLeft = isDeleteAfterOwnerLeft
         config.isUpdateOwner = isUpdateOwner
         zim?.setRoomAttributes([key: value], roomID: roomID, config: config, callback: { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success && !errorKeys.contains(key) {
+            if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains(key) {
                 self.inRoomAttributsDict[key] = value
             }
             callback(roomID,errorKeys,errorInfo)
@@ -74,7 +74,7 @@ extension ZIMService {
         config.isDeleteAfterOwnerLeft = isDeleteAfterOwnerLeft
         config.isUpdateOwner = isUpdateOwner
         zim?.setRoomAttributes(attributes, roomID: roomID, config: config, callback: { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success {
+            if errorInfo.code == .ZIMErrorCodeSuccess {
                 attributes.forEach { (key, value) in
                     if !errorKeys.contains(key) {
                         self.inRoomAttributsDict[key] = value
@@ -95,7 +95,7 @@ extension ZIMService {
         let config = ZIMRoomAttributesDeleteConfig()
         config.isForce = isForce
         zim?.deleteRoomAttributes(by: keys, roomID: roomID, config: config, callback: { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success {
+            if errorInfo.code == .ZIMErrorCodeSuccess {
                 for key in keys {
                     if !errorKeys.contains(key) {
                         self.inRoomAttributsDict.removeValue(forKey: key)

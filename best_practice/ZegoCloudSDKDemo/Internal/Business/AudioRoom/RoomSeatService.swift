@@ -57,7 +57,7 @@ class RoomSeatService: NSObject {
     func tryTakeSeat(seatIndex: Int, callback: ZIMRoomAttributesOperatedCallback?) {
         guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         ZegoSDKManager.shared.zimService.setRoomAttributes("\(seatIndex)", value: localUser.id) { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success && !errorKeys.contains("\(seatIndex)") {
+            if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains("\(seatIndex)") {
                 for seat in self.seatList {
                     if seat.seatIndex == seatIndex {
                         seat.currentUser = localUser
@@ -72,7 +72,7 @@ class RoomSeatService: NSObject {
     func takeSeat(seatIndex: Int, callback: ZIMRoomAttributesOperatedCallback?) {
         guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         ZegoSDKManager.shared.zimService.setRoomAttributes("\(seatIndex)", value: localUser.id) { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success && !errorKeys.contains("\(seatIndex)") {
+            if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains("\(seatIndex)") {
                 for seat in self.seatList {
                     if seat.seatIndex == seatIndex {
                         seat.currentUser = localUser
@@ -101,7 +101,7 @@ class RoomSeatService: NSObject {
     
     func leaveSeat(seatIndex: Int, callback: ZIMRoomAttributesOperatedCallback?) {
         ZegoSDKManager.shared.zimService.deletedRoomAttributes(["\(seatIndex)"]) { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success && !errorKeys.contains("\(seatIndex)") {
+            if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains("\(seatIndex)") {
                 for seat in self.seatList {
                     if seat.seatIndex == seatIndex {
                         seat.currentUser = nil
@@ -115,7 +115,7 @@ class RoomSeatService: NSObject {
     
     func emptySeat(seatIndex: Int, callback: ZIMRoomAttributesOperatedCallback?) {
         ZegoSDKManager.shared.zimService.deletedRoomAttributes(["\(seatIndex)"], isForce: true) { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .success && !errorKeys.contains("\(seatIndex)") {
+            if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains("\(seatIndex)") {
                 for seat in self.seatList {
                     if seat.seatIndex == seatIndex {
                         seat.currentUser = nil

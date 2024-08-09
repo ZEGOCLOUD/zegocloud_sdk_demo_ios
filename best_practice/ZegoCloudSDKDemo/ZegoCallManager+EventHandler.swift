@@ -169,7 +169,7 @@ extension ZegoCallManager: ZIMServiceDelegate {
                 userInfo.userID
             }
             ZegoSDKManager.shared.zimService.queryUsersInfo(userIDList) { fullInfoList, errorUserInfoList, error in
-                if error.code == .success {
+                if error.code == .ZIMErrorCodeSuccess {
                     for delegate in self.callEventHandlers.allObjects {
                         delegate.onCallUserInfoUpdate?(userList: userIDList)
                     }

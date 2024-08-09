@@ -219,7 +219,7 @@ extension ZegoLiveAudioRoomManager: ExpressServiceDelegate, ZIMServiceDelegate {
             self.queryUsersInfo(userList.map({
                 return $0.userID
             })) { userFullInfoList, errorUserInfoList, errorInfo in
-                if errorInfo.code == .success {
+                if errorInfo.code == .ZIMErrorCodeSuccess {
                     self.delegate?.onQueryUserInfoSucess()
                 }
             }

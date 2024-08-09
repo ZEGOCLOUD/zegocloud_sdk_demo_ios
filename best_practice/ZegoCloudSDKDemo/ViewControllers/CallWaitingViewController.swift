@@ -173,7 +173,7 @@ class CallWaitingViewController: UIViewController {
     @IBAction func acceptButtonClick(_ sender: Any) {
         guard let callID = ZegoCallManager.shared.currentCallData?.callID else { return }
         ZegoCallManager.shared.acceptCallInvitation(requestID: callID) { requestID, error in
-            if error.code == .success {
+            if error.code == .ZIMErrorCodeSuccess {
                 print("acceptCallRequest error:\(error.code)")
             }
         }

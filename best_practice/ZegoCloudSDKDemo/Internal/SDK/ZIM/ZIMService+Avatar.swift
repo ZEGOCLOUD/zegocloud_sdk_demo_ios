@@ -11,7 +11,7 @@ import ZIM
 extension ZIMService {
     public func updateUserAvatarUrl(_ url: String, callback: @escaping ZIMUserAvatarUrlUpdatedCallback) {
         zim?.updateUserAvatarUrl(url, callback: { userAvatarUrl, errorInfo in
-            if errorInfo.code == .success {
+            if errorInfo.code == .ZIMErrorCodeSuccess {
                 if let userID = self.userInfo?.userID {
                     self.usersAvatarUrlDict[userID] = url
                 }

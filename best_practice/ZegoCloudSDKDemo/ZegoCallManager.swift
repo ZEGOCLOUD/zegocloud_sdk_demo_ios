@@ -228,7 +228,7 @@ extension ZegoCallManager {
     
     private func addUserToRequest(userList: [String], requestID: String, callback: CallRequestCallback?) {
         ZegoSDKManager.shared.zimService.queryUsersInfo(userList) { fullInfoList, errorUserInfoList, error in
-            if error.code == .success {
+            if error.code == .ZIMErrorCodeSuccess {
                 let config: ZIMCallingInviteConfig = ZIMCallingInviteConfig()
                 ZegoSDKManager.shared.zimService.addUserToRequest(invitees: userList, requestID: requestID, config: config) { requestID, sentInfo, error in
                     guard let callback = callback else { return }
@@ -244,14 +244,14 @@ extension ZegoCallManager {
     private func sendUserRequest(userList: [String], extendedData: String, type: CallType, callback: CallRequestCallback?) {
         guard let localUser = ZegoSDKManager.shared.currentUser else { return }
         ZegoSDKManager.shared.zimService.queryUsersInfo(userList) { fullInfoList, errorUserInfoList, error in
-            if error.code == .success {
+            if error.code == .ZIMErrorCodeSuccess {
                 self.currentCallData = ZegoCallDataModel()
                 let config = ZIMCallInviteConfig()
                 config.mode = .advanced
                 config.extendedData = extendedData
                 config.timeout = 60
                 ZegoSDKManager.shared.zimService.sendUserRequest(userList: userList, config: config) { requestID, sentInfo, error in
-                    if error.code == .success {
+                    if error.code == .ZIMErrorCodeSuccess {
                         let errorUser: [String] = sentInfo.errorUserList.map { userInfo in
                             userInfo.userID
                         }

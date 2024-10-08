@@ -28,5 +28,13 @@ class CallService: NSObject, ZegoCallManagerDelegate {
         }
 //        guard let inviter = ZegoCallManager.shared.currentCallData?.inviter?.userInfo else { return }
         let _ = ZegoIncomingCallDialog.show()
+        startOutgoingRing()
+
+    }
+  
+    func startOutgoingRing() {
+      let ringResourcePath = Bundle.main.path(forResource: "zego_outgoing", ofType: "mp3")
+        guard let ringResourcePath = ringResourcePath else { return }
+        ZegoCallAudioPlayerTool.startPlay(ringResourcePath)
     }
 }

@@ -57,7 +57,7 @@ extension ZIMService {
         config.isDeleteAfterOwnerLeft = isDeleteAfterOwnerLeft
         config.isUpdateOwner = isUpdateOwner
         zim?.setRoomAttributes([key: value], roomID: roomID, config: config, callback: { roomID, errorKeys, errorInfo in
-            if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains(key) {
+          if errorInfo.code == .ZIMErrorCodeSuccess && !errorKeys.contains(key) {
                 self.inRoomAttributsDict[key] = value
             }
             callback(roomID,errorKeys,errorInfo)

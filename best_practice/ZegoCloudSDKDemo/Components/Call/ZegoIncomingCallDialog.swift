@@ -129,6 +129,7 @@ class ZegoIncomingCallDialog: UIView {
             } else {
                 self.makeToast("accept call failed:\(error.code.rawValue)", duration: 2.0, position: .center)
             }
+          ZegoCallAudioPlayerTool.stopPlay()
         }
     }
     
@@ -136,6 +137,7 @@ class ZegoIncomingCallDialog: UIView {
         guard let callID = callData?.callID else { return }
         ZegoCallManager.shared.rejectCallInvitation(requestID: callID, callback: nil)
         ZegoIncomingCallDialog.hide()
+        ZegoCallAudioPlayerTool.stopPlay()
     }
     
     func showCallMainPage(_ remoteUser: ZegoSDKUser) {

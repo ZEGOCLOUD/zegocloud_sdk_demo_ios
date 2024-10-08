@@ -70,6 +70,8 @@ class HomeViewController: UIViewController {
             ZegoCallManager.shared.sendGroupVoiceCallInvitation(invitees) { code, requestID in
                 if code != 0 {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
+                } else {
+                  self.startOutgoingRing()
                 }
             }
         } else {
@@ -80,6 +82,7 @@ class HomeViewController: UIViewController {
                 if code == 0 {
                     // call waiting
                     guard let invitee = self.invitee else { return }
+                    self.startOutgoingRing()
                     self.showCallWaitingPage(invitee: invitee, isGroupCall: false)
                 } else {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
@@ -95,6 +98,8 @@ class HomeViewController: UIViewController {
             ZegoCallManager.shared.sendGroupVideoCallInvitation(invitees) { code, requestID in
                 if code != 0 {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
+                } else {
+                  self.startOutgoingRing()
                 }
             }
         } else {
@@ -104,6 +109,7 @@ class HomeViewController: UIViewController {
             ZegoCallManager.shared.sendVideoCallInvitation(inviteeUserID) { code, requestID in
                 if code == 0 {
                     guard let invitee = self.invitee else { return }
+                    self.startOutgoingRing()
                     self.showCallWaitingPage(invitee: invitee, isGroupCall: false)
                 } else {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
@@ -111,6 +117,26 @@ class HomeViewController: UIViewController {
             }
         }
     }
+  //MARK: customer
+  func startIncomingRing() {
+
+    let ringResourcePath = Bundle.main.path(forResource: "zego_incoming", ofType: "mp3")
+    guard let ringResourcePath = ringResourcePath else { return }
+      ZegoCallAudioPlayerTool.startPlay(ringResourcePath)
+  }
+
+  func startOutgoingRing() {
+    let ringResourcePath = Bundle.main.path(forResource: "zego_outgoing", ofType: "mp3")
+      guard let ringResourcePath = ringResourcePath else { return }
+      ZegoCallAudioPlayerTool.startPlay(ringResourcePath)
+  }
+  func getMusicBundle() -> Bundle? {
+      guard let resourcePath: String = Bundle.main.resourcePath else { return nil }
+      let pathComponent = "/Frameworks/ZegoUIKitPrebuiltCall.framework/ZegoUIKitPrebuiltCall.bundle"
+      let bundlePath = resourcePath + pathComponent
+      let bundle = Bundle(path: bundlePath)
+      return bundle
+  }
 }
 
 // MARK: - Call Invitation
@@ -154,14 +180,17 @@ extension HomeViewController: ZegoCallManagerDelegate {
         if let callData = callData, callData["reason"] as? String ?? "" == "busy" {
             self.view.makeToast("invitee is busy", duration: 2.0, position: .center)
         }
+      ZegoCallAudioPlayerTool.stopPlay()
     }
     
     func onInComingCallInvitationTimeout(requestID: String) {
         callWaitingVC?.dismiss(animated: true)
         ZegoIncomingCallDialog.hide()
+        ZegoCallAudioPlayerTool.stopPlay()
     }
     
     func showCallPage() {
+        ZegoCallAudioPlayerTool.stopPlay()
         let callMainPage = Bundle.main.loadNibNamed("CallingViewController", owner: self, options: nil)?.first as! CallingViewController
         
         let navgationVC = UINavigationController(rootViewController: callMainPage)

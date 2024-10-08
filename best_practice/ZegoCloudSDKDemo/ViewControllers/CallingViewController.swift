@@ -302,6 +302,7 @@ extension CallingViewController: ZIMServiceDelegate, ZegoCallManagerDelegate {
     }
     
     func onCallEnd() {
+        ZegoCallAudioPlayerTool.stopPlay()
         self.dismiss(animated: true)
     }
     

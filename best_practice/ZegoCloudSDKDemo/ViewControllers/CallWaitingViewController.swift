@@ -165,6 +165,7 @@ class CallWaitingViewController: UIViewController {
     }
     
     @IBAction func handupButtonClick(_ sender: Any) {
+        ZegoCallAudioPlayerTool.stopPlay()
         guard let callID = ZegoCallManager.shared.currentCallData?.callID else { return }
         ZegoCallManager.shared.endCall(callID, callback: nil)
         self.dismiss(animated: true)

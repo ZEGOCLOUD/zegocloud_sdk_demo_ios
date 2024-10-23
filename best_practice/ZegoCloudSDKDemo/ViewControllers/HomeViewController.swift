@@ -166,6 +166,7 @@ extension HomeViewController {
 extension HomeViewController: ZegoCallManagerDelegate {
     
     func onCallEnd() {
+        ZegoCallAudioPlayerTool.stopPlay()
         callWaitingVC?.dismiss(animated: true)
         ZegoIncomingCallDialog.hide()
     }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="aIH-P7-q2b">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="aIH-P7-q2b">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -541,6 +541,24 @@
                                             <action selector="coHostAction:" destination="863-Jx-pjQ" eventType="touchUpInside" id="SxR-7W-AHN"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S9I-ly-qLd" userLabel="MiniButton">
+                                        <rect key="frame" x="238" y="9.6666666666666643" width="35" height="35"/>
+                                        <color key="backgroundColor" red="0.1176470588" green="0.1529411765" blue="0.25098039220000001" alpha="0.40192984269999998" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="YUd-cp-meg"/>
+                                            <constraint firstAttribute="width" constant="35" id="i6D-d4-YlI"/>
+                                        </constraints>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="minimizing_icon"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <real key="value" value="17.5"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="onClickPip:" destination="863-Jx-pjQ" eventType="touchUpInside" id="CS7-8o-jgn"/>
+                                        </connections>
+                                    </button>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YWP-ge-Dpu" customClass="PKButton" customModule="ZegoCloudSDKDemo" customModuleProvider="target">
                                         <rect key="frame" x="258" y="751" width="120" height="29"/>
                                         <color key="backgroundColor" red="0.0" green="0.33333333329999998" blue="1" alpha="0.70643504899999998" colorSpace="custom" customColorSpace="calibratedRGB"/>
@@ -572,7 +590,9 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstItem="NnR-vj-zBW" firstAttribute="leading" secondItem="S9I-ly-qLd" secondAttribute="trailing" constant="10" id="08u-lb-Zxq"/>
                                     <constraint firstItem="NnR-vj-zBW" firstAttribute="centerY" secondItem="1OS-Bv-SOj" secondAttribute="centerY" id="4SY-v8-tQb"/>
+                                    <constraint firstItem="S9I-ly-qLd" firstAttribute="centerY" secondItem="NnR-vj-zBW" secondAttribute="centerY" id="5od-gK-nOk"/>
                                     <constraint firstAttribute="trailing" secondItem="rCu-Fc-Vde" secondAttribute="trailing" constant="16" id="7u2-fx-A0x"/>
                                     <constraint firstItem="e3R-i2-ROm" firstAttribute="centerY" secondItem="DRD-oZ-0uI" secondAttribute="centerY" id="BA6-G5-xNX"/>
                                     <constraint firstItem="DRD-oZ-0uI" firstAttribute="leading" secondItem="e3R-i2-ROm" secondAttribute="trailing" constant="10" id="HBL-6K-GDv"/>
@@ -680,6 +700,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="bir-Rc-GWv"/>
                     <connections>
+                        <outlet property="ZegoMinimizationButton" destination="S9I-ly-qLd" id="Rmg-rl-QSN"/>
                         <outlet property="cameraButton" destination="e3R-i2-ROm" id="7eI-E2-EqB"/>
                         <outlet property="coHostButton" destination="c51-7G-4ED" id="a5W-IN-acP"/>
                         <outlet property="coHostWidthConstraint" destination="bmf-rP-p3g" id="6CV-R4-tA9"/>
@@ -987,6 +1008,7 @@
         <image name="icon_mic_normal" width="48" height="48"/>
         <image name="icon_mic_off" width="48" height="48"/>
         <image name="icon_nav_flip" width="36" height="36"/>
+        <image name="minimizing_icon" width="22" height="22"/>
         <image name="top_close" width="12" height="12"/>
         <image name="top_close_1" width="51.666667938232422" height="51"/>
         <image name="top_people" width="12" height="12"/>

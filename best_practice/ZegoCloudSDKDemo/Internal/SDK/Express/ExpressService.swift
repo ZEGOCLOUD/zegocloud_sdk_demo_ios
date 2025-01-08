@@ -29,6 +29,8 @@ public class ExpressService: NSObject {
     
     // StreamID: UserID 
     public var streamDict: [String: String] = [:]
+    //pk 其他房主的流
+    public var pkStreamDict: [String: String] = [:]
     
     // UserID: UserInfo
     public var inRoomUserDict: [String: ZegoSDKUser] = [:]
@@ -86,5 +88,18 @@ public class ExpressService: NSObject {
                 eventHandlers.remove(delegate)
             }
         }
+    }
+    
+    public func callExperimentalAPI(params: String) {
+        ZegoExpressEngine.shared().callExperimentalAPI(params)
+    }
+    
+    public func enableCustomVideoRender(enable: Bool) {
+        let renderConfig: ZegoCustomVideoRenderConfig = ZegoCustomVideoRenderConfig()
+        renderConfig.bufferType = .cvPixelBuffer
+        renderConfig.frameFormatSeries = .RGB
+        renderConfig.enableEngineRender = true
+        ZegoExpressEngine.shared().enableCustomVideoRender(enable, config: renderConfig)
+        ZegoExpressEngine.shared().setCustomVideoRenderHandler(self)
     }
 }

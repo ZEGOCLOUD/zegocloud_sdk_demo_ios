@@ -136,6 +136,9 @@ class RoomSeatService: NSObject {
 }
 
 extension RoomSeatService: ExpressServiceDelegate {
+    func onRemoteSoundLevelUpdate(_ soundLevels: [String : NSNumber]) {
+        
+    }
     
     func onRoomUserUpdate(_ updateType: ZegoUpdateType, userList: [ZegoUser], roomID: String) {
         for user in userList {

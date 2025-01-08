@@ -21,10 +21,10 @@ class HomeViewController: UIViewController {
     var invitee: CallUserInfo?
     
     weak var callWaitingVC: CallWaitingViewController?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         userIDLabel.text = "User ID: " + userID
         liveIDTextField.text = String(UInt32.random(in: 100..<1000))
         audioRoomTextField.text = String(UInt32.random(in: 100..<1000))
@@ -38,6 +38,7 @@ class HomeViewController: UIViewController {
         if let liveVC = segue.destination as? LiveStreamingViewController {
             liveVC.isMySelfHost = segue.identifier! == "start_live"
             liveVC.liveID = liveIDTextField.text ?? ""
+            liveVC.delegate = self
         }
         
         if let liveVC = segue.destination as? LiveAudioRoomViewController {
@@ -71,7 +72,7 @@ class HomeViewController: UIViewController {
                 if code != 0 {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
                 } else {
-                  self.startOutgoingRing()
+                    self.startOutgoingRing()
                 }
             }
         } else {
@@ -99,7 +100,7 @@ class HomeViewController: UIViewController {
                 if code != 0 {
                     self.view.makeToast("call failed:\(code)", duration: 2.0, position: .center)
                 } else {
-                  self.startOutgoingRing()
+                    self.startOutgoingRing()
                 }
             }
         } else {
@@ -117,30 +118,30 @@ class HomeViewController: UIViewController {
             }
         }
     }
-  //MARK: customer
-  func startIncomingRing() {
-
-    let ringResourcePath = Bundle.main.path(forResource: "zego_incoming", ofType: "mp3")
-    guard let ringResourcePath = ringResourcePath else { return }
-      ZegoCallAudioPlayerTool.startPlay(ringResourcePath)
-  }
-
-  func startOutgoingRing() {
-    let ringResourcePath = Bundle.main.path(forResource: "zego_outgoing", ofType: "mp3")
-      guard let ringResourcePath = ringResourcePath else { return }
-      ZegoCallAudioPlayerTool.startPlay(ringResourcePath)
-  }
-  func getMusicBundle() -> Bundle? {
-      guard let resourcePath: String = Bundle.main.resourcePath else { return nil }
-      let pathComponent = "/Frameworks/ZegoUIKitPrebuiltCall.framework/ZegoUIKitPrebuiltCall.bundle"
-      let bundlePath = resourcePath + pathComponent
-      let bundle = Bundle(path: bundlePath)
-      return bundle
-  }
+    //MARK: customer
+    func startIncomingRing() {
+        
+        let ringResourcePath = Bundle.main.path(forResource: "zego_incoming", ofType: "mp3")
+        guard let ringResourcePath = ringResourcePath else { return }
+        ZegoCallAudioPlayerTool.startPlay(ringResourcePath)
+    }
+    
+    func startOutgoingRing() {
+        let ringResourcePath = Bundle.main.path(forResource: "zego_outgoing", ofType: "mp3")
+        guard let ringResourcePath = ringResourcePath else { return }
+        ZegoCallAudioPlayerTool.startPlay(ringResourcePath)
+    }
+    func getMusicBundle() -> Bundle? {
+        guard let resourcePath: String = Bundle.main.resourcePath else { return nil }
+        let pathComponent = "/Frameworks/ZegoUIKitPrebuiltCall.framework/ZegoUIKitPrebuiltCall.bundle"
+        let bundlePath = resourcePath + pathComponent
+        let bundle = Bundle(path: bundlePath)
+        return bundle
+    }
 }
 
 // MARK: - Call Invitation
-extension HomeViewController {            
+extension HomeViewController {
     func showCallWaitingPage(invitee: CallUserInfo?, isGroupCall: Bool) {
         let callWaitingVC: CallWaitingViewController = Bundle.main.loadNibNamed("CallWaitingViewController", owner: self, options: nil)?.first as! CallWaitingViewController
         callWaitingVC.modalPresentationStyle = .fullScreen
@@ -163,6 +164,18 @@ extension HomeViewController {
     
 }
 
+extension HomeViewController : LiveStreamingCallVCDelegate {
+    func getCurrentPipRenderStreamID(streamsDicts:[String:String]) -> String? {
+//        var streamid:String = ""
+//        for (streamID,userID) in streamsDicts {
+//            if streamID.hasSuffix("_main_cohost") && userID != self.userID {
+//                streamid = streamID
+//            }
+//        }
+        return ""
+    }
+}
+
 extension HomeViewController: ZegoCallManagerDelegate {
     
     func onCallEnd() {
@@ -181,7 +194,7 @@ extension HomeViewController: ZegoCallManagerDelegate {
         if let callData = callData, callData["reason"] as? String ?? "" == "busy" {
             self.view.makeToast("invitee is busy", duration: 2.0, position: .center)
         }
-      ZegoCallAudioPlayerTool.stopPlay()
+        ZegoCallAudioPlayerTool.stopPlay()
     }
     
     func onInComingCallInvitationTimeout(requestID: String) {

@@ -10,6 +10,11 @@ import ZegoExpressEngine
 import ZIM
 import Toast
 
+
+@objc public protocol LiveStreamingCallVCDelegate: AnyObject {
+    @objc optional func getCurrentPipRenderStreamID(streamsDicts:[String:String]) -> String?
+}
+
 class LiveStreamingViewController: UIViewController {
     
     
@@ -30,6 +35,7 @@ class LiveStreamingViewController: UIViewController {
     }
     @IBOutlet weak var flipButtonConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var ZegoMinimizationButton: UIButton!
     @IBOutlet weak var endCoHostButton: UIButton!
     @IBOutlet weak var coHostButton: UIButton!
     @IBOutlet weak var coHostWidthConstraint: NSLayoutConstraint!
@@ -85,7 +91,7 @@ class LiveStreamingViewController: UIViewController {
     
     var alterView: UIAlertController?
     var coHostRequestAlterView: UIAlertController?
-
+    
     var coHostVideoViews: [CoHostViewModel] = []
     
     var isMySelfHost: Bool = false
@@ -94,14 +100,21 @@ class LiveStreamingViewController: UIViewController {
     
     var currentRoomRequestID: String?
     let liveManager = ZegoLiveStreamingManager.shared
-    
+    public weak var delegate: LiveStreamingCallVCDelegate?
     deinit {
+        NotificationCenter.default.removeObserver(self)
+        
         print("\(String(describing: type(of: self))) \(#function)")
     }
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        ExpressService.shared.enableCustomVideoRender(enable: true)
+        
+        ZegoMinimizeManager.shared.delegate = self
+        ZegoMinimizeManager.shared.setupPipControllerWithSourceView(sourceView: view, isOneOnOneVideo: true)
+        
         ZegoSDKManager.shared.zimService.addEventHandler(self)
         liveManager.addPKDelegate(self)
         liveManager.eventDelegates.add(self)
@@ -134,6 +147,7 @@ class LiveStreamingViewController: UIViewController {
         preBackgroundView.isHidden = !isMySelfHost
         giftButton.isHidden = isMySelfHost
         liveContainerView.addSubview(coHostVideoContainerView)
+        ZegoSDKManager.shared.expressService.startSoundLevelMonitor()
         if isMySelfHost {
             ZegoSDKManager.shared.expressService.turnCameraOn(true)
             ZegoSDKManager.shared.expressService.turnMicrophoneOn(true)
@@ -192,6 +206,7 @@ class LiveStreamingViewController: UIViewController {
     }
     
     @IBAction func backButtonAction(_ sender: Any) {
+        ExpressService.shared.enableCustomVideoRender(enable: false)
         dismiss(animated: true)
     }
     
@@ -199,6 +214,7 @@ class LiveStreamingViewController: UIViewController {
         func leaveRoom() {
             liveManager.isLiveStart = false
             liveManager.leaveRoom()
+            ExpressService.shared.enableCustomVideoRender(enable: false)
             dismiss(animated: true)
         }
         
@@ -219,7 +235,7 @@ class LiveStreamingViewController: UIViewController {
     @IBAction func switchCamera(_ sender: UIButton) {
         ZegoSDKManager.shared.expressService.useFrontCamera(!ZegoSDKManager.shared.expressService.isUsingFrontCamera)
     }
-        
+    
     @IBAction func endCoHostAction(_ sender: UIButton) {
         let localUserID = ZegoSDKManager.shared.expressService.currentUser!.id
         ZegoSDKManager.shared.expressService.stopPublishingStream()
@@ -290,10 +306,10 @@ class LiveStreamingViewController: UIViewController {
         }
     }
     
-//    @IBAction func muteAnotherAudioClick(_ sender: UIButton) {
-//        sender.isSelected = !sender.isSelected
-//        liveManager.mutePKUser(mute: sender.isSelected, callback: nil)
-//    }
+    //    @IBAction func muteAnotherAudioClick(_ sender: UIButton) {
+    //        sender.isSelected = !sender.isSelected
+    //        liveManager.mutePKUser(mute: sender.isSelected, callback: nil)
+    //    }
     
     @IBAction func memberButtonClick(_ sender: Any) {
         if !isMySelfHost {
@@ -316,7 +332,55 @@ class LiveStreamingViewController: UIViewController {
         }
     }
     
+    
+    @IBAction func onClickPip(_ sender: Any) {
+        
+        if isMySelfHost {
+            guard coHostVideoViews.count > 0 || liveManager.isPKStarted == true else {
+                return
+            }
+        } else {
+            
+        }
+        //  区分是否显示混流
+        if isMySelfHost == false {
+            // 主播
+        } else {
+            // 观众、连麦
+            if liveManager.isPKStarted == true {
+                // 观众
+            }
+            
+        }
+
+        ZegoMinimizeManager.shared.pipView?.isEnablePreview = ZegoSDKManager.shared.currentUser?.streamID?.count ?? 0 > 0 ? true : false
+        if #available(iOS 15.0, *) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
+                ZegoMinimizeManager.shared.isNarrow = true
+                ZegoMinimizeManager.shared.callVC = self
+                self.dismiss(animated: false)
+            }
+        }
+        
+    }
+    
 }
+extension LiveStreamingViewController: ZegoMinimizeManagerDelegate {
+    func getCurrentPipRenderStreamID(streamsDict: [String : String]) -> String? {
+        return self.delegate?.getCurrentPipRenderStreamID?(streamsDicts: streamsDict)
+    }
+    
+    func willStopPictureInPicture() {
+        if let callVC = ZegoMinimizeManager.shared.callVC,
+           ZegoMinimizeManager.shared.isNarrow
+        {
+            ZegoMinimizeManager.shared.isNarrow = false
+            currentViewController()?.present(callVC, animated: false)
+            ZegoMinimizeManager.shared.callVC = nil
+        }
+    }
+}
+
 
 extension LiveStreamingViewController: ZegoLiveStreamingManagerDelegate {
     
@@ -339,7 +403,7 @@ extension LiveStreamingViewController: ZegoLiveStreamingManagerDelegate {
             removeCoHost(stream)
         }
     }
-        
+    
     func onRoomUserAdd(userList: [ZegoUser]) {
         userCount = userCount + userList.count;
         memberButton.setTitle("\(userCount)", for: .normal)
@@ -420,7 +484,7 @@ extension LiveStreamingViewController {
         coHostRequestAlterView?.dismiss(animated: true)
         self.view.makeToast("onReceiveCancelCoHostApply", position: .center)
     }
-
+    
     func onReceiveRefuseCoHostApply(){
         self.view.makeToast("onReceiveRefuseCoHostApply", position: .center)
         coHostButton.isSelected = false
@@ -514,7 +578,7 @@ extension LiveStreamingViewController: ZIMServiceDelegate {
     func onOutgoingRoomRequestRejected(requestID: String, extendedData: String) {
         onReceiveRefuseCoHostApply()
     }
-
+    
 }
 
 extension LiveStreamingViewController: PKServiceDelegate {
@@ -539,7 +603,7 @@ extension LiveStreamingViewController: PKServiceDelegate {
             self.present(alterView!, animated: true)
         }
     }
-
+    
     
     func onIncomingPKRequestCancelled() {
         alterView?.dismiss(animated: true)

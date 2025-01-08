@@ -8,7 +8,7 @@
 import Foundation
 import ZegoExpressEngine
 
-extension ExpressService: ZegoEventHandler {
+extension ExpressService: ZegoEventHandler,ZegoCustomVideoRenderHandler {
     public func onDebugError(_ errorCode: Int32, funcName: String, info: String) {
         for handler in eventHandlers.allObjects {
             handler.onDebugError?(errorCode, funcName: funcName, info: info)
@@ -474,6 +474,20 @@ extension ExpressService: ZegoEventHandler {
     public func onNetworkTimeSynchronized() {
         for handler in eventHandlers.allObjects {
             handler.onNetworkTimeSynchronized?()
+        }
+    }
+    
+    
+    //MARK: - ZegoCustomVideoRenderHandler
+    public func onRemoteVideoFrameCVPixelBuffer(_ buffer: CVPixelBuffer, param: ZegoVideoFrameParam, streamID: String) {
+        for handler in self.eventHandlers.allObjects {
+            handler.onRemoteVideoFrameCVPixelBuffer?(buffer, param: param, streamID: streamID)
+        }
+    }
+    
+    public func onCapturedVideoFrameCVPixelBuffer(_ buffer: CVPixelBuffer, param: ZegoVideoFrameParam, flipMode: ZegoVideoFlipMode, channel: ZegoPublishChannel) {
+        for handler in self.eventHandlers.allObjects {
+            handler.onCapturedVideoFrameCVPixelBuffer?(buffer, param: param, flipMode: flipMode, channel: channel)
         }
     }
 }

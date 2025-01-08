@@ -41,6 +41,15 @@
 		868F030D2B2AF2980088CEC1 /* OneOnOneCallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868F030B2B2AF2980088CEC1 /* OneOnOneCallViewController.swift */; };
 		868F030E2B2AF2980088CEC1 /* OneOnOneCallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 868F030C2B2AF2980088CEC1 /* OneOnOneCallViewController.xib */; };
 		868F03102B358DDC0088CEC1 /* ZegoCallManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868F030F2B358DDC0088CEC1 /* ZegoCallManagerInterface.swift */; };
+		86A132242D2BB948008ADC49 /* ZegoCallVideoPipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321F2D2BB948008ADC49 /* ZegoCallVideoPipView.swift */; };
+		86A132252D2BB948008ADC49 /* ZegoCallAudioPipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321C2D2BB948008ADC49 /* ZegoCallAudioPipView.swift */; };
+		86A132262D2BB948008ADC49 /* ZegoCallPipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321E2D2BB948008ADC49 /* ZegoCallPipView.swift */; };
+		86A132272D2BB948008ADC49 /* ZegoPipSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A132222D2BB948008ADC49 /* ZegoPipSourceView.swift */; };
+		86A132282D2BB948008ADC49 /* ZegoCallNarrowWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321D2D2BB948008ADC49 /* ZegoCallNarrowWindow.swift */; };
+		86A132292D2BB948008ADC49 /* ZegoMinimizeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A132212D2BB948008ADC49 /* ZegoMinimizeManager.swift */; };
+		86A1322C2D2BBC55008ADC49 /* user_phone_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A1322B2D2BBC55008ADC49 /* user_phone_icon@3x.png */; };
+		86A1322D2D2BBC55008ADC49 /* user_phone_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A1322A2D2BBC55008ADC49 /* user_phone_icon@2x.png */; };
+		86A132312D2BBE42008ADC49 /* UIColor+HEX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A132302D2BBE42008ADC49 /* UIColor+HEX.swift */; };
 		86A8ACC42A5BF11A00E4076E /* ZIMServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A8ACC32A5BF11A00E4076E /* ZIMServiceDelegate.swift */; };
 		86A8ACC82A5C102A00E4076E /* RoomSeatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A8ACC72A5C102A00E4076E /* RoomSeatService.swift */; };
 		86A8ACCC2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A8ACCB2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift */; };
@@ -130,6 +139,15 @@
 		868F030B2B2AF2980088CEC1 /* OneOnOneCallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneCallViewController.swift; sourceTree = "<group>"; };
 		868F030C2B2AF2980088CEC1 /* OneOnOneCallViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OneOnOneCallViewController.xib; sourceTree = "<group>"; };
 		868F030F2B358DDC0088CEC1 /* ZegoCallManagerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallManagerInterface.swift; sourceTree = "<group>"; };
+		86A1321C2D2BB948008ADC49 /* ZegoCallAudioPipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallAudioPipView.swift; sourceTree = "<group>"; };
+		86A1321D2D2BB948008ADC49 /* ZegoCallNarrowWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallNarrowWindow.swift; sourceTree = "<group>"; };
+		86A1321E2D2BB948008ADC49 /* ZegoCallPipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallPipView.swift; sourceTree = "<group>"; };
+		86A1321F2D2BB948008ADC49 /* ZegoCallVideoPipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallVideoPipView.swift; sourceTree = "<group>"; };
+		86A132212D2BB948008ADC49 /* ZegoMinimizeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoMinimizeManager.swift; sourceTree = "<group>"; };
+		86A132222D2BB948008ADC49 /* ZegoPipSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoPipSourceView.swift; sourceTree = "<group>"; };
+		86A1322A2D2BBC55008ADC49 /* user_phone_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "user_phone_icon@2x.png"; sourceTree = "<group>"; };
+		86A1322B2D2BBC55008ADC49 /* user_phone_icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "user_phone_icon@3x.png"; sourceTree = "<group>"; };
+		86A132302D2BBE42008ADC49 /* UIColor+HEX.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+HEX.swift"; sourceTree = "<group>"; };
 		86A8ACC32A5BF11A00E4076E /* ZIMServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIMServiceDelegate.swift; sourceTree = "<group>"; };
 		86A8ACC72A5C102A00E4076E /* RoomSeatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSeatService.swift; sourceTree = "<group>"; };
 		86A8ACCB2A5D640000E4076E /* ZegoLiveAudioRoomManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZegoLiveAudioRoomManager.swift; sourceTree = "<group>"; };
@@ -247,6 +265,7 @@
 		863B28562A56A7BB00613C8F /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				86A132192D2BB8C6008ADC49 /* PIPComponent */,
 				86A8ACFC2A67D39C00E4076E /* CallingViewController.swift */,
 				86A8ACFF2A67D39C00E4076E /* CallingViewController.xib */,
 				86A8ACFE2A67D39C00E4076E /* CallWaitingViewController.swift */,
@@ -336,6 +355,20 @@
 			path = Gift;
 			sourceTree = "<group>";
 		};
+		86A132192D2BB8C6008ADC49 /* PIPComponent */ = {
+			isa = PBXGroup;
+			children = (
+				86A1321C2D2BB948008ADC49 /* ZegoCallAudioPipView.swift */,
+				86A1321D2D2BB948008ADC49 /* ZegoCallNarrowWindow.swift */,
+				86A1321E2D2BB948008ADC49 /* ZegoCallPipView.swift */,
+				86A1321F2D2BB948008ADC49 /* ZegoCallVideoPipView.swift */,
+				86A132212D2BB948008ADC49 /* ZegoMinimizeManager.swift */,
+				86A132222D2BB948008ADC49 /* ZegoPipSourceView.swift */,
+				86A132302D2BBE42008ADC49 /* UIColor+HEX.swift */,
+			);
+			path = PIPComponent;
+			sourceTree = "<group>";
+		};
 		86A8AD082A67D3CB00E4076E /* Call */ = {
 			isa = PBXGroup;
 			children = (
@@ -410,6 +443,8 @@
 				8E7E123A2A72517600CA8791 /* ZegoDefine.swift */,
 				8E318D7529D573D4001596F3 /* Main.storyboard */,
 				8E318D7829D573D5001596F3 /* Assets.xcassets */,
+				86A1322A2D2BBC55008ADC49 /* user_phone_icon@2x.png */,
+				86A1322B2D2BBC55008ADC49 /* user_phone_icon@3x.png */,
 				8E318D7A29D573D5001596F3 /* LaunchScreen.storyboard */,
 				8E318D7D29D573D5001596F3 /* Info.plist */,
 			);
@@ -538,6 +573,8 @@
 				868F030E2B2AF2980088CEC1 /* OneOnOneCallViewController.xib in Resources */,
 				8E318D7C29D573D5001596F3 /* LaunchScreen.storyboard in Resources */,
 				86A8AD102A67D3F900E4076E /* ZegoIncomingCallDialog.xib in Resources */,
+				86A1322C2D2BBC55008ADC49 /* user_phone_icon@3x.png in Resources */,
+				86A1322D2D2BBC55008ADC49 /* user_phone_icon@2x.png in Resources */,
 				86A8AD042A67D39C00E4076E /* CallingViewController.xib in Resources */,
 				8E318D7929D573D5001596F3 /* Assets.xcassets in Resources */,
 				868F03062B2AECCE0088CEC1 /* GroupCallViewController.xib in Resources */,
@@ -573,6 +610,12 @@
 				8606247D2AF4C9E8006B04A8 /* PKConnectingView.swift in Sources */,
 				863B28632A56BE4900613C8F /* CoHostService.swift in Sources */,
 				8646974A2B60E3DB008B3005 /* GiftView.swift in Sources */,
+				86A132242D2BB948008ADC49 /* ZegoCallVideoPipView.swift in Sources */,
+				86A132252D2BB948008ADC49 /* ZegoCallAudioPipView.swift in Sources */,
+				86A132262D2BB948008ADC49 /* ZegoCallPipView.swift in Sources */,
+				86A132272D2BB948008ADC49 /* ZegoPipSourceView.swift in Sources */,
+				86A132282D2BB948008ADC49 /* ZegoCallNarrowWindow.swift in Sources */,
+				86A132292D2BB948008ADC49 /* ZegoMinimizeManager.swift in Sources */,
 				86A8ACD02A5D643700E4076E /* LiveAudioRoomViewController.swift in Sources */,
 				8646974C2B60E40A008B3005 /* Mp4PlayerManager.swift in Sources */,
 				86A8AD072A67D3AB00E4076E /* ZegoCallManager.swift in Sources */,
@@ -595,6 +638,7 @@
 				868F03102B358DDC0088CEC1 /* ZegoCallManagerInterface.swift in Sources */,
 				8606246F2AF25695006B04A8 /* PKBattleViewContainer.swift in Sources */,
 				8E7E123C2A72517600CA8791 /* ZegoDefine.swift in Sources */,
+				86A132312D2BBE42008ADC49 /* UIColor+HEX.swift in Sources */,
 				8E318D7229D573D4001596F3 /* SceneDelegate.swift in Sources */,
 				8606246A2AF0DE32006B04A8 /* Array+Extension.swift in Sources */,
 				86A8AD032A67D39C00E4076E /* CallWaitingViewController.swift in Sources */,

@@ -51,4 +51,10 @@ extension ExpressService {
         let infoStr = info.jsonString
         ZegoExpressEngine.shared().setStreamExtraInfo(infoStr)
     }
+    
+    func startSoundLevelMonitor() {
+        ZegoExpressEngine.shared().startSoundLevelMonitor()
+    }
+    
+    
 }

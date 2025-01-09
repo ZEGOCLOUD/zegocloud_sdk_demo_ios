@@ -77,7 +77,20 @@ class ZegoMinimizeManager: NSObject {
         }
     }
     
+    
+    func checkIsPictureInPictureSupported() -> Bool {
+        var supportPip = false
+        if #available(iOS 15.0, *) {
+            supportPip = AVPictureInPictureController.isPictureInPictureSupported()
+        }
+        return supportPip
+    }
     func setupPipControllerWithSourceView(sourceView: UIView, isOneOnOneVideo: Bool) {
+        
+        if checkIsPictureInPictureSupported() == false {
+            return
+        }
+        
         self.isOneOnOneVideo = isOneOnOneVideo
         if let _ = pipVC {
             destroy()
@@ -163,6 +176,7 @@ class ZegoMinimizeManager: NSObject {
             pipView.removeFromSuperview()
             self.pipView = nil
         }
+        view.backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
         self.isPKStart = ZegoLiveStreamingManager.shared.isPKStarted
         self.pipView = ZegoCallVideoPipView(frame: CGRectZero,isPKStart:self.isPKStart)
         self.pipView?.delegate = self
@@ -244,6 +258,7 @@ extension ZegoMinimizeManager: AVPictureInPictureControllerDelegate {
             let vc: AVPictureInPictureVideoCallViewController? =
             pictureInPictureController.contentSource?.activeVideoCallContentViewController
             guard let vc = vc else { return }
+            vc.view.backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
             startPIPWithView(view: vc.view)
         }
         delegate?.willStartPictureInPicture()
@@ -257,6 +272,11 @@ extension ZegoMinimizeManager: AVPictureInPictureControllerDelegate {
         enableMultiTaskForZegoSDK(enable: false)
         delegate?.willStopPictureInPicture()
         pipView?.removeFromSuperview()
+        if #available(iOS 15.0, *) {
+            pictureInPictureController.contentSource?.activeVideoCallContentViewController.view.backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
+        } else {
+            // Fallback on earlier versions
+        }
         debugPrint("pictureInPictureControllerWillStopPictureInPicture")
     }
     

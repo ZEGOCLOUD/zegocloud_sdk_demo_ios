@@ -9,6 +9,7 @@ import UIKit
 import ZegoExpressEngine
 import ZIM
 import Toast
+import AVKit
 
 
 @objc public protocol LiveStreamingCallVCDelegate: AnyObject {
@@ -120,8 +121,21 @@ class LiveStreamingViewController: UIViewController {
         liveManager.eventDelegates.add(self)
         if isMySelfHost {
             liveManager.hostUser = ZegoSDKManager.shared.currentUser
+        } else {
+            if checkIsPictureInPictureSupported() == false {
+                self.view.makeToast("pip capability not supported", position: .center)
+            }
         }
+        
         configUI()
+    }
+    
+    func checkIsPictureInPictureSupported() -> Bool {
+        var supportPip = false
+        if #available(iOS 15.0, *) {
+            supportPip = AVPictureInPictureController.isPictureInPictureSupported()
+        }
+        return supportPip
     }
     
     override func viewDidLayoutSubviews() {
@@ -131,24 +145,15 @@ class LiveStreamingViewController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        if isMySelfHost == true {
-            // 主播
+        if checkIsPictureInPictureSupported() == false {
             self.minimizationButton.isHidden = true
+            return
+        }
+        
+        if liveManager.isAudience(userID: ZegoSDKManager.shared.currentUser?.id ?? "") {
+            self.minimizationButton.isHidden = false
         } else {
-            // 观众、连麦
-            if liveManager.isPKStarted == true {
-                // 观众
-                self.minimizationButton.isHidden = false
-            } else {
-                if self.coHostButton.isHidden == false {
-                    // 观众
-                    self.minimizationButton.isHidden = false
-                } else {
-                    // 麦上
-                    self.minimizationButton.isHidden = true
-                }
-            }
-            
+            self.minimizationButton.isHidden = true
         }
         if UIApplication.shared.applicationState == .active {
             if self.minimizationButton.isHidden == false {
@@ -175,6 +180,7 @@ class LiveStreamingViewController: UIViewController {
     }
     
     func configUI() {
+        view.backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
         liveContainerView.isHidden = isMySelfHost
         preBackgroundView.isHidden = !isMySelfHost
         giftButton.isHidden = isMySelfHost
@@ -365,28 +371,7 @@ class LiveStreamingViewController: UIViewController {
     }
     
     @IBAction func onClickPip(_ sender: Any) {
-        
-//        if isMySelfHost {
-//            guard coHostVideoViews.count > 0 || liveManager.isPKStarted == true else {
-//                return
-//            }
-//        } else {
-//            
-//        }
-        
-//        if isMySelfHost == false {
-//            // 主播
-//            return;
-//        } else {
-//            // 观众、连麦
-//            if liveManager.isPKStarted == true {
-//                // 观众
-//            } else {
-//                return;
-//            }
-//            
-//        }
-
+    
         ZegoMinimizeManager.shared.pipView?.isEnablePreview = ZegoSDKManager.shared.currentUser?.streamID?.count ?? 0 > 0 ? true : false
         if #available(iOS 15.0, *) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in

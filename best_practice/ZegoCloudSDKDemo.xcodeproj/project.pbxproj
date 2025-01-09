@@ -44,7 +44,6 @@
 		86A132242D2BB948008ADC49 /* ZegoCallVideoPipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321F2D2BB948008ADC49 /* ZegoCallVideoPipView.swift */; };
 		86A132252D2BB948008ADC49 /* ZegoCallAudioPipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321C2D2BB948008ADC49 /* ZegoCallAudioPipView.swift */; };
 		86A132262D2BB948008ADC49 /* ZegoCallPipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321E2D2BB948008ADC49 /* ZegoCallPipView.swift */; };
-		86A132272D2BB948008ADC49 /* ZegoPipSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A132222D2BB948008ADC49 /* ZegoPipSourceView.swift */; };
 		86A132282D2BB948008ADC49 /* ZegoCallNarrowWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A1321D2D2BB948008ADC49 /* ZegoCallNarrowWindow.swift */; };
 		86A132292D2BB948008ADC49 /* ZegoMinimizeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A132212D2BB948008ADC49 /* ZegoMinimizeManager.swift */; };
 		86A1322C2D2BBC55008ADC49 /* user_phone_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A1322B2D2BBC55008ADC49 /* user_phone_icon@3x.png */; };
@@ -144,7 +143,6 @@
 		86A1321E2D2BB948008ADC49 /* ZegoCallPipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallPipView.swift; sourceTree = "<group>"; };
 		86A1321F2D2BB948008ADC49 /* ZegoCallVideoPipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoCallVideoPipView.swift; sourceTree = "<group>"; };
 		86A132212D2BB948008ADC49 /* ZegoMinimizeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoMinimizeManager.swift; sourceTree = "<group>"; };
-		86A132222D2BB948008ADC49 /* ZegoPipSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoPipSourceView.swift; sourceTree = "<group>"; };
 		86A1322A2D2BBC55008ADC49 /* user_phone_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "user_phone_icon@2x.png"; sourceTree = "<group>"; };
 		86A1322B2D2BBC55008ADC49 /* user_phone_icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "user_phone_icon@3x.png"; sourceTree = "<group>"; };
 		86A132302D2BBE42008ADC49 /* UIColor+HEX.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+HEX.swift"; sourceTree = "<group>"; };
@@ -363,7 +361,6 @@
 				86A1321E2D2BB948008ADC49 /* ZegoCallPipView.swift */,
 				86A1321F2D2BB948008ADC49 /* ZegoCallVideoPipView.swift */,
 				86A132212D2BB948008ADC49 /* ZegoMinimizeManager.swift */,
-				86A132222D2BB948008ADC49 /* ZegoPipSourceView.swift */,
 				86A132302D2BBE42008ADC49 /* UIColor+HEX.swift */,
 			);
 			path = PIPComponent;
@@ -613,7 +610,6 @@
 				86A132242D2BB948008ADC49 /* ZegoCallVideoPipView.swift in Sources */,
 				86A132252D2BB948008ADC49 /* ZegoCallAudioPipView.swift in Sources */,
 				86A132262D2BB948008ADC49 /* ZegoCallPipView.swift in Sources */,
-				86A132272D2BB948008ADC49 /* ZegoPipSourceView.swift in Sources */,
 				86A132282D2BB948008ADC49 /* ZegoCallNarrowWindow.swift in Sources */,
 				86A132292D2BB948008ADC49 /* ZegoMinimizeManager.swift in Sources */,
 				86A8ACD02A5D643700E4076E /* LiveAudioRoomViewController.swift in Sources */,

@@ -25,7 +25,7 @@ class ZegoCallVideoPipView: ZegoCallPipView {
     
     lazy var backgroundView: UIView = {
         let view: UIView = UIView()
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
         return view
     }()
     
@@ -51,6 +51,7 @@ class ZegoCallVideoPipView: ZegoCallPipView {
     var mixStream: Bool = false
     init(frame: CGRect,isPKStart:Bool) {
         super.init(frame: frame)
+        backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
         self.isPKStart = isPKStart
         ExpressService.shared.addEventHandler(self)
         addSubview(backgroundView)
@@ -122,7 +123,7 @@ class ZegoCallVideoPipView: ZegoCallPipView {
                     
                     if coHostUser == nil && mainHostUser == nil {
                         if ((sdkUser.streamID?.hasSuffix("_main_cohost")) != nil) {
-                            coHostUser = sdkUser as ZegoSDKUser
+//                            coHostUser = sdkUser as ZegoSDKUser
                         }
                     }
                 }
@@ -209,9 +210,9 @@ class ZegoVideoRenderView: UIView {
     var relevanceUser: ZegoSDKUser? {
         didSet {
             if relevanceUser?.id == ZegoSDKManager.shared.expressService.currentUser?.id ?? "" {
-                backgroundColor = UIColor.darkGray
+                backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
             } else {
-                backgroundColor = UIColor.black
+                backgroundColor = UIColor(hex: "#000000", alpha: 0.1)
             }
             headView.text = relevanceUser?.name
             headView.isHidden = relevanceUser?.isCameraOpen ?? true

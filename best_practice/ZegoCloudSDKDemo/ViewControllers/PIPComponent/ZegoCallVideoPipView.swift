@@ -10,9 +10,13 @@ import AVFoundation
 import AVKit
 import ZegoExpressEngine
 
+protocol ZegopipRenderDelegate: AnyObject {
+    func stopPip()
+}
+
 class ZegoCallVideoPipView: ZegoCallPipView {
     
-    
+    public weak var delegate: ZegopipRenderDelegate?
     var isEnablePreview: Bool = false {
         didSet {
             previewView.isHidden = !isEnablePreview
@@ -35,6 +39,14 @@ class ZegoCallVideoPipView: ZegoCallPipView {
         return view
     }()
     
+    lazy var closeButton: UIButton = {
+        let button = UIButton(type: .custom)
+        let image = AVPictureInPictureController.pictureInPictureButtonStopImage
+        button.setBackgroundImage(UIImage(named: "nav_close"), for: .normal)
+        button.addTarget(self, action: #selector(onClickClosePip), for: .touchUpInside)
+        return button
+    }()
+    
     var isPKStart: Bool = false
     var mixStream: Bool = false
     init(frame: CGRect,isPKStart:Bool) {
@@ -43,7 +55,11 @@ class ZegoCallVideoPipView: ZegoCallPipView {
         ExpressService.shared.addEventHandler(self)
         addSubview(backgroundView)
         addSubview(displayView)
-        addSubview(previewView)
+        // 目前只支持观众pip
+//        addSubview(previewView)
+//        addSubview(closeButton)
+//        bringSubviewToFront(closeButton)
+
         getUsers()
     }
     
@@ -58,7 +74,12 @@ class ZegoCallVideoPipView: ZegoCallPipView {
     override func layoutSubviews() {
         backgroundView.frame = bounds
         displayView.frame = bounds
-        previewView.frame = CGRect(x: Int(bounds.size.width * 0.6), y: 10, width: Int(bounds.size.width * 0.4), height: Int((bounds.size.width * 0.4)) * 16 / 9)
+//        previewView.frame = CGRect(x: Int(bounds.size.width * 0.6), y: 10, width: Int(bounds.size.width * 0.4), height: Int((bounds.size.width * 0.4)) * 16 / 9)
+//        closeButton.frame = CGRectMake(20, 20, 30, 30)
+    }
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        return super.hitTest(point, with: event)
     }
     
     func getUsers() {
@@ -134,7 +155,13 @@ class ZegoCallVideoPipView: ZegoCallPipView {
                 }
             }
         }
-        print("[log] streamID:\(String(describing: displayView.relevanceUser?.streamID))")
+        
+    }
+    
+    @objc func onClickClosePip() {
+        if #available(iOS 15.0, *) {
+            delegate?.stopPip()
+        }
     }
     
     override func onRemoteVideoFrameCVPixelBuffer(_ buffer: CVPixelBuffer, param: ZegoVideoFrameParam, streamID: String) {

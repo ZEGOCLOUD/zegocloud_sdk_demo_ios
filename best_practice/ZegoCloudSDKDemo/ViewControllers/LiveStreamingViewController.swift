@@ -35,7 +35,7 @@ class LiveStreamingViewController: UIViewController {
     }
     @IBOutlet weak var flipButtonConstraint: NSLayoutConstraint!
     
-    @IBOutlet weak var ZegoMinimizationButton: UIButton!
+    @IBOutlet weak var minimizationButton: UIButton!
     @IBOutlet weak var endCoHostButton: UIButton!
     @IBOutlet weak var coHostButton: UIButton!
     @IBOutlet weak var coHostWidthConstraint: NSLayoutConstraint!
@@ -114,7 +114,7 @@ class LiveStreamingViewController: UIViewController {
         
         ZegoMinimizeManager.shared.delegate = self
         ZegoMinimizeManager.shared.setupPipControllerWithSourceView(sourceView: view, isOneOnOneVideo: true)
-        
+
         ZegoSDKManager.shared.zimService.addEventHandler(self)
         liveManager.addPKDelegate(self)
         liveManager.eventDelegates.add(self)
@@ -127,6 +127,38 @@ class LiveStreamingViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         inviteUserPKButton.frame = CGRect(origin: CGPointMake(view.bounds.width - 135, view.bounds.height - 150), size: CGSize(width: 120, height: 30))
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if isMySelfHost == true {
+            // 主播
+            self.minimizationButton.isHidden = true
+        } else {
+            // 观众、连麦
+            if liveManager.isPKStarted == true {
+                // 观众
+                self.minimizationButton.isHidden = false
+            } else {
+                if self.coHostButton.isHidden == false {
+                    // 观众
+                    self.minimizationButton.isHidden = false
+                } else {
+                    // 麦上
+                    self.minimizationButton.isHidden = true
+                }
+            }
+            
+        }
+        if UIApplication.shared.applicationState == .active {
+            if self.minimizationButton.isHidden == false {
+                ZegoMinimizeManager.shared.destroy()
+                ZegoMinimizeManager.shared.delegate = self
+                ZegoMinimizeManager.shared.setupPipControllerWithSourceView(sourceView: view, isOneOnOneVideo: true)
+            } else {
+                ZegoMinimizeManager.shared.destroy()
+            }
+        }
     }
     
     func updateCoHostContainerFrame() {
@@ -332,26 +364,28 @@ class LiveStreamingViewController: UIViewController {
         }
     }
     
-    
     @IBAction func onClickPip(_ sender: Any) {
         
-        if isMySelfHost {
-            guard coHostVideoViews.count > 0 || liveManager.isPKStarted == true else {
-                return
-            }
-        } else {
-            
-        }
-        //  区分是否显示混流
-        if isMySelfHost == false {
-            // 主播
-        } else {
-            // 观众、连麦
-            if liveManager.isPKStarted == true {
-                // 观众
-            }
-            
-        }
+//        if isMySelfHost {
+//            guard coHostVideoViews.count > 0 || liveManager.isPKStarted == true else {
+//                return
+//            }
+//        } else {
+//            
+//        }
+        
+//        if isMySelfHost == false {
+//            // 主播
+//            return;
+//        } else {
+//            // 观众、连麦
+//            if liveManager.isPKStarted == true {
+//                // 观众
+//            } else {
+//                return;
+//            }
+//            
+//        }
 
         ZegoMinimizeManager.shared.pipView?.isEnablePreview = ZegoSDKManager.shared.currentUser?.streamID?.count ?? 0 > 0 ? true : false
         if #available(iOS 15.0, *) {
@@ -367,7 +401,7 @@ class LiveStreamingViewController: UIViewController {
 }
 extension LiveStreamingViewController: ZegoMinimizeManagerDelegate {
     func getCurrentPipRenderStreamID(streamsDict: [String : String]) -> String? {
-        return self.delegate?.getCurrentPipRenderStreamID?(streamsDicts: streamsDict)
+        return ""//self.delegate?.getCurrentPipRenderStreamID?(streamsDicts: streamsDict)
     }
     
     func willStopPictureInPicture() {
@@ -378,6 +412,10 @@ extension LiveStreamingViewController: ZegoMinimizeManagerDelegate {
             currentViewController()?.present(callVC, animated: false)
             ZegoMinimizeManager.shared.callVC = nil
         }
+    }
+    
+    func stopPipExitRoom() {
+        closeButtonAction(UIButton(type: .custom))
     }
 }
 

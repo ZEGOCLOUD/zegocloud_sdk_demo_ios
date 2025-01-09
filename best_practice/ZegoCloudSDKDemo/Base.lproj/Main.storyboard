@@ -700,7 +700,6 @@
                     </view>
                     <navigationItem key="navigationItem" id="bir-Rc-GWv"/>
                     <connections>
-                        <outlet property="ZegoMinimizationButton" destination="S9I-ly-qLd" id="Rmg-rl-QSN"/>
                         <outlet property="cameraButton" destination="e3R-i2-ROm" id="7eI-E2-EqB"/>
                         <outlet property="coHostButton" destination="c51-7G-4ED" id="a5W-IN-acP"/>
                         <outlet property="coHostWidthConstraint" destination="bmf-rP-p3g" id="6CV-R4-tA9"/>
@@ -712,6 +711,7 @@
                         <outlet property="mainVideoView" destination="YIG-Vo-AtC" id="bDj-UU-Ubt"/>
                         <outlet property="memberButton" destination="NnR-vj-zBW" id="pJc-Uv-UD4"/>
                         <outlet property="micButton" destination="DRD-oZ-0uI" id="FXe-TK-vXN"/>
+                        <outlet property="minimizationButton" destination="S9I-ly-qLd" id="PJ2-U4-7l4"/>
                         <outlet property="pkBattleContainer" destination="P0M-wt-Ggz" id="UZk-zv-MkM"/>
                         <outlet property="pkButton" destination="YWP-ge-Dpu" id="6yY-dg-qG2"/>
                         <outlet property="preBackgroundView" destination="PdE-Ir-D2I" id="LjC-1K-bgI"/>

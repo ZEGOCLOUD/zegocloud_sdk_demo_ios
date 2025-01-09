@@ -14,12 +14,16 @@ protocol ZegoMinimizeManagerDelegate: AnyObject {
     func willStartPictureInPicture()
     func willStopPictureInPicture()
     func getCurrentPipRenderStreamID(streamsDict:[String:String]) -> String?
+    
+    func stopPipExitRoom()
 }
 
- extension ZegoMinimizeManagerDelegate {
+extension ZegoMinimizeManagerDelegate {
     func willStartPictureInPicture() {}
     func willStopPictureInPicture() {}
     func getCurrentPipStreamID(streamsDict:[String:String]) {}
+    
+    func stopPipExitRoom(){}
 }
 
 class ZegoMinimizeManager: NSObject {
@@ -41,6 +45,8 @@ class ZegoMinimizeManager: NSObject {
         let narrow = ZegoCallNarrowWindow()
         return narrow
     }()
+    
+    var isEnablePip = false
     
     var isOneOnOneVideo: Bool = true
     var isPKStart: Bool = false
@@ -128,7 +134,7 @@ class ZegoMinimizeManager: NSObject {
         
         if isPKStart == true  {
             if ZegoLiveStreamingManager.shared.isHost(userID: ZegoSDKManager.shared.currentUser?.id ?? "") == true {
-            // 房主
+                // 房主
                 guard let pkInfo = ZegoLiveStreamingManager.shared.pkInfo else { return }
                 streamDict.removeAll()
                 for pkUser in pkInfo.pkUserList {
@@ -159,6 +165,7 @@ class ZegoMinimizeManager: NSObject {
         }
         self.isPKStart = ZegoLiveStreamingManager.shared.isPKStarted
         self.pipView = ZegoCallVideoPipView(frame: CGRectZero,isPKStart:self.isPKStart)
+        self.pipView?.delegate = self
         if ZegoSDKManager.shared.expressService.currentUser?.streamID?.count ?? 0 > 0 {
             pipView?.isEnablePreview = true
         } else {
@@ -215,9 +222,19 @@ class ZegoMinimizeManager: NSObject {
     }
     
     func updateCallTime(time: String) {
+        destroy()
         pipAudioView?.updateTime(time: time)
     }
     
+}
+extension ZegoMinimizeManager : ZegopipRenderDelegate {
+    func stopPip() {
+        delegate?.stopPipExitRoom()
+        DispatchQueue.main.async {
+            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+            exit(0)
+        }
+    }
 }
 
 extension ZegoMinimizeManager: AVPictureInPictureControllerDelegate {
@@ -239,6 +256,7 @@ extension ZegoMinimizeManager: AVPictureInPictureControllerDelegate {
     func pictureInPictureControllerWillStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
         enableMultiTaskForZegoSDK(enable: false)
         delegate?.willStopPictureInPicture()
+        pipView?.removeFromSuperview()
         debugPrint("pictureInPictureControllerWillStopPictureInPicture")
     }
     
@@ -290,5 +308,5 @@ extension ZegoMinimizeManager: ExpressServiceDelegate {
     func onRemoteSoundLevelUpdate(_ soundLevels: [String : NSNumber]) {
         pipView?.onRemoteSoundLevelUpdate(soundLevels)
     }
-
+    
 }
